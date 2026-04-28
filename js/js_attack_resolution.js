@@ -1,9 +1,12 @@
 export function createAttackResolution(ctx) {
+  function isTeamBattleMode() {
+    return ctx.getBattleMode() === "2v2" || ctx.getBattleMode() === "challenge2v2";
+  }
 
   function finishCurrentAttackResolution() {
     const currentAttackContexts = ctx.getCurrentAttackContexts();
 
-    if (ctx.getBattleMode() === "2v2" && currentAttackContexts.length > 0) {
+    if (isTeamBattleMode() && currentAttackContexts.length > 0) {
       const contexts = [...currentAttackContexts];
 
       ctx.setCurrentAttackContext(null);
@@ -11,7 +14,7 @@ export function createAttackResolution(ctx) {
 
       contexts.forEach((context) => {
         const attacker = context.attacker;
-        const defender = ctx.getPlayerState(context.enemyPlayer);
+        const defender = ctx.getCombatTargetState(context.enemyPlayer);
 
         const actionResult = ctx.executeUnitActionResolved(attacker, defender, {
           ...context,
@@ -36,6 +39,7 @@ export function createAttackResolution(ctx) {
     }
 
     const context = ctx.getCurrentAttackContext();
+
     if (!context) {
       ctx.redrawBattleBoards();
       ctx.renderAttackLogText("攻撃解決済み");
@@ -43,7 +47,7 @@ export function createAttackResolution(ctx) {
     }
 
     const attacker = ctx.getPlayerState(context.ownerPlayer);
-    const defender = ctx.getPlayerState(context.enemyPlayer);
+    const defender = ctx.getCombatTargetState(context.enemyPlayer);
 
     ctx.setCurrentAttackContext(null);
 
@@ -120,6 +124,7 @@ export function createAttackResolution(ctx) {
       if (damagedResult.message) {
         ctx.appendBattleNotice(damagedResult.message);
       }
+
       finishCurrentAttackResolution();
       return;
     }
@@ -147,12 +152,7 @@ export function createAttackResolution(ctx) {
       defender,
       attacker,
       attack,
-      {
-        attacker,
-        defender,
-        currentAttack,
-        attackIndex: index
-      }
+      { attacker, defender, currentAttack, attackIndex: index }
     );
 
     if (customEvade && customEvade.handled) {
@@ -203,7 +203,7 @@ export function createAttackResolution(ctx) {
   }
 
   function supportDefenseAttack(index) {
-    if (ctx.getBattleMode() !== "2v2") {
+    if (!isTeamBattleMode()) {
       ctx.appendBattleNotice("援護防御は2on2専用");
       return;
     }
@@ -221,8 +221,8 @@ export function createAttackResolution(ctx) {
 
     const focus = defenderTeam.focusUnitKey || "unit1";
     const support = focus === "unit1" ? "unit2" : "unit1";
-
     const supportUnit = defenderTeam[support];
+
     if (!supportUnit || supportUnit.evade <= 0) return;
 
     supportUnit.evade--;
