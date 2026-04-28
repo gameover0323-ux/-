@@ -1,4 +1,8 @@
 export function create2v2Actions(ctx) {
+  function isTeamBattleMode() {
+    return ctx.getBattleMode() === "2v2" || ctx.getBattleMode() === "challenge2v2";
+  }
+
   function getTeamSlotOrder(team) {
     const focusKey = team.focusUnitKey || "unit1";
     const partnerKey = focusKey === "unit1" ? "unit2" : "unit1";
@@ -59,7 +63,7 @@ export function create2v2Actions(ctx) {
       actor: unit
     });
 
-    const actionLabel = `${unit.name} ${slotNumber}. ${slot.label}`;
+    const actionLabel = `${unit.name} ${slotNumber}.${slot.label}`;
 
     if (
       result.kind === "evade" ||
@@ -122,7 +126,7 @@ export function create2v2Actions(ctx) {
   }
 
   function executeTeamSlot() {
-    if (ctx.getBattleMode() !== "2v2") {
+    if (!isTeamBattleMode()) {
       ctx.executeSlot();
       return;
     }
@@ -172,53 +176,7 @@ export function create2v2Actions(ctx) {
   }
 
   function executeSingleTeamSlot(unitKey) {
-    if (ctx.getBattleMode() !== "2v2") return;
-    if (ctx.hasPendingChoice() || ctx.getCurrentAttack().length > 0) return;
-
-    const currentPlayer = ctx.getCurrentPlayer();
-    const team = ctx.getTeam(currentPlayer);
-    if (!team) return;
-
-    ctx.setCurrentAttack([]);
-    ctx.setCurrentAttackContext(null);
-    ctx.setCurrentAttackContexts([]);
-    ctx.clearBattleNotice();
-    ctx.clearCurrentAction();
-
-    const enemyPlayer = ctx.getOpponentPlayer(currentPlayer);
-    const order = getTeamSlotOrder(team);
-
-    order.forEach((unitKey) => {
-      processTeamUnitSlot(team, unitKey, enemyPlayer);
-    });
-
-    ctx.setCurrentAttackContext({
-      ownerPlayer: currentPlayer,
-      enemyPlayer,
-      totalCount: ctx.getCurrentAttack().length,
-      hitCount: 0,
-      evadeCount: 0
-    });
-
-    ctx.setCurrentAction(
-      team.mode === "unified"
-        ? `PLAYER ${currentPlayer} の統合型スロット行動`
-        : `PLAYER ${currentPlayer} の2on2スロット行動`,
-      ""
-    );
-
-    ctx.redrawBattleBoards();
-
-    if (ctx.getCurrentAttack().length > 0) {
-      ctx.renderAttackChoices();
-      return;
-    }
-
-    ctx.renderAttackLogText("行動完了");
-  }
-
-  function executeSingleTeamSlot(unitKey) {
-    if (ctx.getBattleMode() !== "2v2") return;
+    if (!isTeamBattleMode()) return;
     if (ctx.hasPendingChoice() || ctx.getCurrentAttack().length > 0) return;
 
     const currentPlayer = ctx.getCurrentPlayer();
