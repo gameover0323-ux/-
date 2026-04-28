@@ -60,7 +60,7 @@ export function createUiController(ctx) {
     const singleTeamActionButtons = document.getElementById("singleTeamActionButtons");
 
     if (singleTeamActionButtons) {
-      singleTeamActionButtons.style.display = ctx.getBattleMode() === "2v2" ? "block" : "none";
+      singleTeamActionButtons.style.display = ctx.isTeamBattleMode() ? "block" : "none";
     }
 
     const actor = ctx.getPlayerState(ctx.getCurrentPlayer());
@@ -76,7 +76,7 @@ export function createUiController(ctx) {
   }
 
   function redrawBattleBoards() {
-    if (ctx.getBattleMode() === "2v2") {
+    if (ctx.isTeamBattleMode()) {
       const teamA = ctx.getTeam("A");
       const teamB = ctx.getTeam("B");
 
