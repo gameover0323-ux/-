@@ -74,10 +74,10 @@ export function createActionLayer(ctx) {
       }
     }
 
-    ctx.setCurrentAction(
-      `PLAYER ${ownerPlayer} の行動`,
-      `${slotNumber}. ${slot.label}`
-    );
+ctx.setCurrentAction(
+  `${actor.name} の行動`,
+  `${slotNumber}.${slot.label}`
+);
 
     ctx.redrawBattleBoards();
 
@@ -193,7 +193,7 @@ export function createActionLayer(ctx) {
       actor.evade = totalEvade;
 
       const preview = executeUnitCanUseSpecial(actor, specialKey, {
-        ownerPlayer,
+                ownerPlayer,
         enemyPlayer: ctx.getOpponentPlayer(ownerPlayer),
         currentAttackContext: ctx.getCurrentAttackContext(),
         currentAttack: ctx.getCurrentAttack()
