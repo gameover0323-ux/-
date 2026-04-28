@@ -133,6 +133,12 @@ export function createBattleFlow(ctx) {
       return;
     }
 
+    if (ctx.getCurrentAttack && ctx.getCurrentAttack().length > 0) {
+      ctx.renderAttackChoices();
+      ctx.showPopup("QTEを解決してからターン終了してください");
+      return;
+    }
+
     const actorPlayer = ctx.getCurrentPlayer();
     const enemyPlayer = ctx.getOpponentPlayer(actorPlayer);
     const actor = ctx.getPlayerState(actorPlayer);
@@ -170,14 +176,12 @@ export function createBattleFlow(ctx) {
       ctx.setCurrentTurn(ctx.getCurrentTurn() + 1);
     }
 
-    if (ctx.getBattleMode() === "2v2") {
+    if (ctx.isTeamBattleMode()) {
       const nextTeam = ctx.getTeam(ctx.getCurrentPlayer());
-
       if (nextTeam) {
         nextTeam.activeUnitKey = nextTeam.focusUnitKey || "unit1";
-
         resetActionCount(nextTeam.unit1);
-        resetActionCount(nextTeam.unit2);
+        if (nextTeam.unit2) resetActionCount(nextTeam.unit2);
       }
     } else {
       const nextActor = ctx.getPlayerState(ctx.getCurrentPlayer());
@@ -186,7 +190,7 @@ export function createBattleFlow(ctx) {
 
     const attackLog = document.getElementById("attackLog");
     if (attackLog) {
-      attackLog.textContent = "バトル開始待機中";
+      attackLog.textContent = turnEndResult.message || "バトル開始待機中";
     }
 
     ctx.redrawBattleBoards();
@@ -196,12 +200,13 @@ export function createBattleFlow(ctx) {
       return;
     }
 
-    if (turnEndResult.message) {
-  ctx.showPopup(turnEndResult.message);
+    if (ctx.isChallengeMode && ctx.isChallengeMode() && ctx.getCurrentPlayer() === "B") {
+      executeSlot();
+      return;
     }
   }
-
-  return {
+  
+return {
     ensureActionState,
     resetActionCount,
     canConsumeAction,
