@@ -96,13 +96,8 @@
 <!-- popup -->
 <div id="popup" class="popup"></div>
 
-  
-<script type="module">
-  import("./js/main_backup.js")
-    .then(() => alert("OK"))
-    .catch(e => {
-      alert("ERROR:\n" + e.message + "\n\n" + e.stack);
-    });
+  <script type="module" src="js/main_backup.js"></script>
+
 </script>
 </body>
 </html>
