@@ -1,4 +1,3 @@
-alert("js_main 読み込み成功");
 import { unitList } from "./js_units_index.js";
 import {
   createBattleState,
