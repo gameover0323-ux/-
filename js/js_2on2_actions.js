@@ -1,6 +1,8 @@
 export function create2v2Actions(ctx) {
   function isTeamBattleMode() {
-    return ctx.getBattleMode() === "2v2" || ctx.getBattleMode() === "challenge2v2";
+    return ctx.isTeamBattleMode
+      ? ctx.isTeamBattleMode()
+      : ctx.getBattleMode() === "2v2" || ctx.getBattleMode() === "challenge2v2";
   }
 
   function getTeamSlotOrder(team) {
