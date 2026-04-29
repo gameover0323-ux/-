@@ -86,10 +86,10 @@ export function createGameSetup(ctx) {
             ? `PLAYER A: ${aList.map(u => u.name).join(" / ")}`
             : "PLAYER A: 未選択";
 
-        const bText =
-          bList.length > 0
-            ? `BOSS: ${bList.map(u => u.name).join(" / ")}`
-            : "BOSS: 未選択";
+        const bLabel = ctx.getBattleMode() === "challenge2v2" ? "BOSS" : "PLAYER B";
+const bText = bList.length > 0
+  ? `${bLabel}: ${bList.map(u => u.name).join(" / ")}`
+  : `${bLabel}: 未選択`;
 
         ctx.selectedUnitsPreview.innerHTML = `${aText}<br>${bText}`;
       } else {
@@ -145,65 +145,37 @@ export function createGameSetup(ctx) {
   }
 
   function selectUnit(unit) {
-    if (ctx.getBattleMode() === "2v2" || ctx.getBattleMode() === "challenge2v2") {
-      if (!ctx.getTeamA()) ctx.setTeamA({ units: [] });
-      if (!ctx.getTeamB()) ctx.setTeamB({ units: [] });
-    }
+  const mode = ctx.getBattleMode();
 
-    if (ctx.getBattleMode() === "1v1") {
-      if (ctx.getSelectingPlayer() === "A") {
-        ctx.setSelectedUnitA(unit);
-        ctx.setSelectingPlayer("B");
-        updateSelectUi();
-        return;
-      }
-
-      ctx.setSelectedUnitB(unit);
+  if (mode === "1v1") {
+    if (ctx.getSelectingPlayer() === "A") {
+      ctx.setSelectedUnitA(unit);
+      ctx.setSelectingPlayer("B");
       updateSelectUi();
-      startBattlePreview(ctx.getSelectedUnitA(), ctx.getSelectedUnitB());
       return;
     }
 
-    if (ctx.getBattleMode() === "challenge1v1") {
-      if (ctx.getSelectingPlayer() === "A") {
-        ctx.setSelectedUnitA(unit);
-        ctx.setSelectingPlayer("B");
-        updateSelectUi();
-        return;
-      }
+    ctx.setSelectedUnitB(unit);
+    updateSelectUi();
+    ctx.init1v1(ctx.getSelectedUnitA(), ctx.getSelectedUnitB());
+    return;
+  }
 
-      ctx.setSelectedUnitB(unit);
+  if (mode === "challenge1v1") {
+    if (ctx.getSelectingPlayer() === "A") {
+      ctx.setSelectedUnitA(unit);
+      ctx.setSelectingPlayer("B");
       updateSelectUi();
-      startChallengePreview(ctx.getSelectedUnitA(), ctx.getSelectedUnitB());
       return;
     }
 
-    if (ctx.getBattleMode() === "challenge2v2") {
-      if (ctx.getSelectingPlayer() === "A") {
-        const teamA = ctx.getTeamA();
-        teamA.units.push(unit);
+    ctx.initChallenge1v1(ctx.getSelectedUnitA(), unit);
+    return;
+  }
 
-        if (teamA.units.length < 2) {
-          updateSelectUi();
-          return;
-        }
-
-        ctx.setSelectingPlayer("B");
-        updateSelectUi();
-        return;
-      }
-
-      const teamB = ctx.getTeamB();
-      teamB.units.push(unit);
-
-      updateSelectUi();
-
-      if (teamB.units.length >= 2) {
-        startChallengePreview2v2(ctx.getTeamA().units, teamB.units);
-      }
-
-      return;
-    }
+  if (mode === "2v2") {
+    if (!ctx.getTeamA()) ctx.setTeamA({ units: [] });
+    if (!ctx.getTeamB()) ctx.setTeamB({ units: [] });
 
     if (ctx.getSelectingPlayer() === "A") {
       const teamA = ctx.getTeamA();
@@ -227,8 +199,35 @@ export function createGameSetup(ctx) {
       return;
     }
 
-    startBattlePreview2v2(ctx.getTeamA().units, ctx.getTeamB().units);
+    ctx.init2v2(ctx.getTeamA().units, ctx.getTeamB().units);
+    return;
   }
+
+  if (mode === "challenge2v2") {
+    if (!ctx.getTeamA()) ctx.setTeamA({ units: [] });
+    if (!ctx.getTeamB()) ctx.setTeamB({ units: [] });
+
+    if (ctx.getSelectingPlayer() === "A") {
+      const teamA = ctx.getTeamA();
+      teamA.units.push(unit);
+
+      if (teamA.units.length < 2) {
+        updateSelectUi();
+        return;
+      }
+
+      ctx.setSelectingPlayer("B");
+      updateSelectUi();
+      return;
+    }
+
+    const teamB = ctx.getTeamB();
+    teamB.units.push(unit);
+
+    updateSelectUi();
+    return;
+  }
+}
 
   function startBattlePreview(unitA, unitB) {
     ctx.init1v1(unitA, unitB);
