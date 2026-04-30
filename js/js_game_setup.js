@@ -1,22 +1,43 @@
 export function createGameSetup(ctx) {
 
   function isChallengeMode() {
-    return ctx.getBattleMode() === "challenge1v1" || ctx.getBattleMode() === "challenge2v2";
-  }
+  return ctx.getBattleMode() === "challenge1v1" ||
+    ctx.getBattleMode() === "challenge2v2" ||
+    ctx.getBattleMode() === "vscpu1v1" ||
+    ctx.getBattleMode() === "vscpu2v2";
+}
+
+function isVsCpuMode() {
+  return ctx.getBattleMode() === "vscpu1v1" ||
+    ctx.getBattleMode() === "vscpu2v2";
+}
 
   function isChallenge2v2() {
     return ctx.getBattleMode() === "challenge2v2";
   }
 
+function isCpu2v2() {
+  return ctx.getBattleMode() === "vscpu2v2";
+}
+
+function isSelectableEnemy2v2() {
+  return ctx.getBattleMode() === "challenge2v2" ||
+    ctx.getBattleMode() === "vscpu2v2";
+}
+
   function getSelectList() {
-    if (!isChallengeMode()) return ctx.units;
+  if (!isChallengeMode()) return ctx.units;
 
-    if (ctx.getSelectingPlayer() === "B") {
-      return ctx.bosses || [];
-    }
-
-    return ctx.units;
+  if (isVsCpuMode() && ctx.getSelectingPlayer() === "B") {
+    return ctx.cpus || [];
   }
+
+  if (ctx.getSelectingPlayer() === "B") {
+    return ctx.bosses || [];
+  }
+
+  return ctx.units;
+}
 
   function loadUnitButtons() {
     ctx.unitButtons.innerHTML = "";
@@ -32,23 +53,27 @@ export function createGameSetup(ctx) {
       ctx.unitButtons.appendChild(btn);
     });
 
-    if (isChallenge2v2() && ctx.getSelectingPlayer() === "B") {
-      const decideBtn = document.createElement("button");
-      decideBtn.textContent = "決定";
+    if (isSelectableEnemy2v2() && ctx.getSelectingPlayer() === "B") {
+  const decideBtn = document.createElement("button");
+  decideBtn.textContent = "決定";
 
-      decideBtn.addEventListener("click", () => {
-        const teamB = ctx.getTeamB();
-        const bossList = teamB?.units || [];
+  decideBtn.addEventListener("click", () => {
+    const teamB = ctx.getTeamB();
+    const bossList = teamB?.units || [];
 
-        if (bossList.length < 1) {
-          return;
-        }
-
-        startChallengePreview2v2(ctx.getTeamA().units, bossList);
-      });
-
-      ctx.unitButtons.appendChild(decideBtn);
+    if (bossList.length < 1) {
+      return;
     }
+
+    if (isCpu2v2()) {
+      startChallengePreview2v2(ctx.getTeamA().units, bossList);
+    } else {
+      startChallengePreview2v2(ctx.getTeamA().units, bossList);
+    }
+  });
+
+  ctx.unitButtons.appendChild(decideBtn);
+}
 
     updateSelectUi();
   }
@@ -60,11 +85,13 @@ export function createGameSetup(ctx) {
           ctx.getSelectingPlayer() === "A"
             ? "PLAYER A の機体を選択"
             : "チャレンジボスを選択";
-      } else if (ctx.getBattleMode() === "challenge2v2") {
+      } else if (ctx.getBattleMode() === "challenge2v2" || ctx.getBattleMode() === "vscpu2v2") {
         ctx.selectGuide.textContent =
-          ctx.getSelectingPlayer() === "A"
-            ? "PLAYER A チームの機体を2機選択"
-            : "チャレンジボスを選択（1体だけなら決定）";
+  ctx.getSelectingPlayer() === "A"
+    ? "PLAYER A チームの機体を2機選択"
+    : ctx.getBattleMode() === "vscpu2v2"
+      ? "CPUチームの機体を選択（1体だけなら決定）"
+      : "チャレンジボスを選択（1体だけなら決定）";
       } else {
         ctx.selectGuide.textContent =
           ctx.getSelectingPlayer() === "A"
@@ -74,7 +101,11 @@ export function createGameSetup(ctx) {
     }
 
     if (ctx.selectedUnitsPreview) {
-      if (ctx.getBattleMode() === "2v2" || ctx.getBattleMode() === "challenge2v2") {
+      if (
+  ctx.getBattleMode() === "2v2" ||
+  ctx.getBattleMode() === "challenge2v2" ||
+  ctx.getBattleMode() === "vscpu2v2"
+) {
         const teamA = ctx.getTeamA();
         const teamB = ctx.getTeamB();
 
@@ -86,7 +117,12 @@ export function createGameSetup(ctx) {
             ? `PLAYER A: ${aList.map(u => u.name).join(" / ")}`
             : "PLAYER A: 未選択";
 
-        const bLabel = ctx.getBattleMode() === "challenge2v2" ? "BOSS" : "PLAYER B";
+        const bLabel =
+  ctx.getBattleMode() === "challenge2v2"
+    ? "BOSS"
+    : ctx.getBattleMode() === "vscpu2v2"
+      ? "CPU"
+      : "PLAYER B";
 const bText = bList.length > 0
   ? `${bLabel}: ${bList.map(u => u.name).join(" / ")}`
   : `${bLabel}: 未選択`;
@@ -125,23 +161,27 @@ const bText = bList.length > 0
       ctx.unitButtons.appendChild(btn);
     });
 
-    if (isChallenge2v2() && ctx.getSelectingPlayer() === "B") {
-      const decideBtn = document.createElement("button");
-      decideBtn.textContent = "決定";
+if (isSelectableEnemy2v2() && ctx.getSelectingPlayer() === "B") {
+  const decideBtn = document.createElement("button");
+  decideBtn.textContent = "決定";
 
-      decideBtn.addEventListener("click", () => {
-        const teamB = ctx.getTeamB();
-        const bossList = teamB?.units || [];
+  decideBtn.addEventListener("click", () => {
+    const teamB = ctx.getTeamB();
+    const bossList = teamB?.units || [];
 
-        if (bossList.length < 1) {
-          return;
-        }
-
-        startChallengePreview2v2(ctx.getTeamA().units, bossList);
-      });
-
-      ctx.unitButtons.appendChild(decideBtn);
+    if (bossList.length < 1) {
+      return;
     }
+
+    if (isCpu2v2()) {
+      startChallengePreview2v2(ctx.getTeamA().units, bossList);
+    } else {
+      startChallengePreview2v2(ctx.getTeamA().units, bossList);
+    }
+  });
+
+  ctx.unitButtons.appendChild(decideBtn);
+}
   }
 
   function selectUnit(unit) {
@@ -158,6 +198,18 @@ const bText = bList.length > 0
     ctx.setSelectedUnitB(unit);
     updateSelectUi();
     ctx.init1v1(ctx.getSelectedUnitA(), ctx.getSelectedUnitB());
+    return;
+  }
+
+  if (mode === "vscpu1v1") {
+    if (ctx.getSelectingPlayer() === "A") {
+      ctx.setSelectedUnitA(unit);
+      ctx.setSelectingPlayer("B");
+      updateSelectUi();
+      return;
+    }
+
+    ctx.initChallenge1v1(ctx.getSelectedUnitA(), unit);
     return;
   }
 
@@ -202,6 +254,36 @@ const bText = bList.length > 0
     ctx.init2v2(ctx.getTeamA().units, ctx.getTeamB().units);
     return;
   }
+
+if (mode === "vscpu2v2") {
+  if (!ctx.getTeamA()) ctx.setTeamA({ units: [] });
+  if (!ctx.getTeamB()) ctx.setTeamB({ units: [] });
+
+  if (ctx.getSelectingPlayer() === "A") {
+    const teamA = ctx.getTeamA();
+    teamA.units.push(unit);
+
+    if (teamA.units.length < 2) {
+      updateSelectUi();
+      return;
+    }
+
+    ctx.setSelectingPlayer("B");
+    updateSelectUi();
+    return;
+  }
+
+  const teamB = ctx.getTeamB();
+  teamB.units.push(unit);
+
+  if (teamB.units.length < 2) {
+    updateSelectUi();
+    return;
+  }
+
+  ctx.initChallenge2v2(ctx.getTeamA().units, ctx.getTeamB().units);
+  return;
+}
 
   if (mode === "challenge2v2") {
     if (!ctx.getTeamA()) ctx.setTeamA({ units: [] });
