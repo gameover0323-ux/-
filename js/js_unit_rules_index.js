@@ -52,6 +52,20 @@ import {
   onWingZeroResolveChoice
 } from "./js_unit_rules_wing_zero.js";
 
+import {
+  getStrikeDerivedState,
+  canUseStrikeSpecial,
+  executeStrikeSpecial,
+  onStrikeTurnEnd,
+  onStrikeBeforeSlot,
+  onStrikeEnemyBeforeSlot,
+  onStrikeAfterSlotResolved,
+  onStrikeActionResolved,
+  onStrikeDamaged,
+  modifyStrikeTakenDamage,
+  modifyStrikeEvadeAttempt,
+  onStrikeResolveChoice
+} from "./js_unit_rules_strike_gundam.js";
 
 //ボス機体//
 import { devilGundamRules } from "./js_unit_rules_devil_gundam.js";
@@ -111,6 +125,21 @@ export const unitRulesMap = {
     modifyTakenDamage: modifyWingZeroTakenDamage,
     modifyEvadeAttempt: modifyWingZeroEvadeAttempt,
     onResolveChoice: onWingZeroResolveChoice
+  },
+  
+  strike_gundam: {
+    getDerivedState: getStrikeDerivedState,
+    canUseSpecial: canUseStrikeSpecial,
+    executeSpecial: executeStrikeSpecial,
+    onTurnEnd: onStrikeTurnEnd,
+    onBeforeSlot: onStrikeBeforeSlot,
+    onEnemyBeforeSlot: onStrikeEnemyBeforeSlot,
+    onAfterSlotResolved: onStrikeAfterSlotResolved,
+    onActionResolved: onStrikeActionResolved,
+    onDamaged: onStrikeDamaged,
+    modifyTakenDamage: modifyStrikeTakenDamage,
+    modifyEvadeAttempt: modifyStrikeEvadeAttempt,
+    onResolveChoice: onStrikeResolveChoice
   },
   
   //ボス機体//
