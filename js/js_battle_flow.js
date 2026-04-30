@@ -182,6 +182,13 @@ export function createBattleFlow(ctx) {
         nextTeam.activeUnitKey = nextTeam.focusUnitKey || "unit1";
         resetActionCount(nextTeam.unit1);
         if (nextTeam.unit2) resetActionCount(nextTeam.unit2);
+        if (ctx.getBattleMode && ctx.getBattleMode() === "vscpu2v2" && ctx.getCurrentPlayer() === "B") {
+  const cpuTeam = ctx.getTeam("B");
+  if (cpuTeam) {
+    cpuTeam.focusUnitKey = Math.random() < 0.5 ? "unit1" : "unit2";
+    cpuTeam.activeUnitKey = cpuTeam.focusUnitKey;
+  }
+}
       }
     } else {
       const nextActor = ctx.getPlayerState(ctx.getCurrentPlayer());
@@ -201,9 +208,14 @@ export function createBattleFlow(ctx) {
     }
 
     if (ctx.isChallengeMode && ctx.isChallengeMode() && ctx.getCurrentPlayer() === "B") {
-      executeSlot();
-      return;
-    }
+  if (ctx.isTeamBattleMode && ctx.isTeamBattleMode() && ctx.executeTeamSlot) {
+    ctx.executeTeamSlot();
+    return;
+  }
+
+  executeSlot();
+  return;
+}
   }
   
 return {
