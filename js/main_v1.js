@@ -470,39 +470,88 @@ function autoResolveBossQteIfNeeded() {
   let hitCount = 0;
 
   while (currentAttack.length > 0) {
-    const attack = currentAttack[0];
-    const sourceLabel = attack?.sourceLabel || `${attacker.name} ${context.slotNumber}.${context.slotLabel}`;
-    const baseDamage = attack ? attack.damage : 0;
+  const attack = currentAttack[0];
+  const sourceLabel =
+    attack?.sourceLabel || `${attacker.name} ${context.slotNumber}.${context.slotLabel}`;
+  const baseDamage = attack ? attack.damage : 0;
 
-    const hitResult = resolveTakeHit({
+  // まずCPU側の特殊回避判定を試す
+  const customEvade = executeUnitModifyEvadeAttempt(
+    defender,
+    attacker,
+    attack,
+    {
       attacker,
       defender,
       currentAttack,
       attackIndex: 0,
-      modifyTakenDamage: (d, a, atk, dmg) =>
-        executeUnitModifyTakenDamage(d, a, atk, dmg)
-    });
+      currentAttackContext: context,
+      isCpuAutoResolve: true
+    }
+  );
 
-    if (!hitResult || !hitResult.cancelled) {
-      const finalDamage =
-        typeof hitResult?.finalDamage === "number"
-          ? hitResult.finalDamage
-          : baseDamage;
+  if (customEvade && customEvade.handled) {
+    if (customEvade.ok) {
+      defender.evade -= customEvade.consumeEvade || 0;
+      currentAttack.splice(0, 1);
+      context.evadeCount++;
 
-      totalDamage += finalDamage;
-      hitCount++;
-
-      damageBySource.set(
-        sourceLabel,
-        (damageBySource.get(sourceLabel) || 0) + finalDamage
-      );
-
-      const damagedResult = executeUnitOnDamaged(defender, attacker);
-      if (damagedResult.message) {
-        appendBattleNotice(damagedResult.message);
+      if (customEvade.message) {
+        appendBattleNotice(customEvade.message);
       }
+
+      continue;
+    }
+  } else {
+// 通常回避を試す
+if (shouldCpuUseEvade(defender)) {
+  const evadeResult = resolveEvadeAttack({
+    defender,
+    currentAttack,
+    attackIndex: 0
+  });
+
+  if (evadeResult.ok) {
+    context.evadeCount++;
+    continue;
+  }
+}
+  }
+
+  // 回避できなければ被弾
+  const hitResult = resolveTakeHit({
+    attacker,
+    defender,
+    currentAttack,
+    attackIndex: 0,
+    modifyTakenDamage: (d, a, atk, dmg) =>
+      executeUnitModifyTakenDamage(d, a, atk, dmg)
+  });
+
+  if (!hitResult || !hitResult.cancelled) {
+    const finalDamage =
+      typeof hitResult?.finalDamage === "number"
+        ? hitResult.finalDamage
+        : baseDamage;
+
+    totalDamage += finalDamage;
+    hitCount++;
+
+    damageBySource.set(
+      sourceLabel,
+      (damageBySource.get(sourceLabel) || 0) + finalDamage
+    );
+
+    if (hitResult?.damageMessage) {
+      appendBattleNotice(hitResult.damageMessage);
+    }
+
+    const damagedResult = executeUnitOnDamaged(defender, attacker);
+    if (damagedResult.message) {
+      appendBattleNotice(damagedResult.message);
     }
   }
+}
 
   context.hitCount += hitCount;
 
