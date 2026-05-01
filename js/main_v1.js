@@ -583,15 +583,6 @@ if (checkBattleEnd()) {
   return true;
 }
 
-function shouldCpuUseEvade(defender) {
-  if (!defender) return false;
-  if (defender.evade <= 0) return false;
-
-  const evadeMax = Math.max(1, defender.evadeMax || 1);
-  const rate = defender.evade / evadeMax;
-
-  return Math.random() < rate;
-}
 
 function isUnitDefeated(unit) {
   return !unit || unit.hp <= 0;
