@@ -157,3 +157,43 @@ button{
   font-size:13px;
   line-height:1.4;
 }
+
+.titleMenuGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  width:100%;
+  max-width:360px;
+  margin:12px auto 18px;
+}
+
+.titleMenuGrid button{
+  width:100%;
+  min-height:38px;
+  font-size:14px;
+  font-weight:bold;
+}
+
+.updateInfoBox{
+  width:100%;
+  max-width:520px;
+  margin:0 auto;
+  border:1px solid white;
+  padding:10px;
+  box-sizing:border-box;
+  text-align:left;
+}
+
+.updateInfoBox h2{
+  text-align:center;
+  margin:0 0 8px;
+}
+
+.updateInfoCell{
+  min-height:90px;
+  border:1px solid #777;
+  padding:10px;
+  line-height:1.6;
+  background:#111;
+  white-space:pre-wrap;
+}
