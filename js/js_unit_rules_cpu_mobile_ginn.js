@@ -11,7 +11,7 @@ export function getCpuMobileGinnDerivedState(state) {
 
   return {
     status: [
-      "CPU専用：初心者向け",
+      "難易度☆☆☆",
       "特性：攻撃ヒット数×5ダメージの無属性追撃"
     ],
     specials: {
