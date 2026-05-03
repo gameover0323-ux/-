@@ -1,4 +1,4 @@
-import { unitList, bossList, cpuList } from "./js_units_index.js";
+import { unitList, bossList, cpuList, cpuBeginnerList } from "./js_units_index.js";
 import {
   createBattleState,
   applyUnitDerivedState,
@@ -943,6 +943,7 @@ gameSetup = createGameSetup({
   units,
   bosses: bossList,
   cpus: cpuList,
+  cpuBeginnerList,
   unitButtons,
   selectGuide,
   selectedUnitsPreview,
