@@ -150,28 +150,36 @@ startOnline2v2Btn.addEventListener("click", () => {
 });
 
 createOnlineRoomBtn.addEventListener("click", async () => {
-  const roomId = createRoomId();
+  try {
+    const roomId = createRoomId();
 
-  onlineState.enabled = true;
-  onlineState.roomId = roomId;
-  onlineState.myPlayer = "A";
-  onlineState.isHost = true;
+    onlineState.enabled = true;
+    onlineState.roomId = roomId;
+    onlineState.myPlayer = "A";
+    onlineState.isHost = true;
 
-  await writeRoom(roomId, buildInitialRoomData({ mode: "online1v1" }));
+    onlineRoomStatus.textContent = `部屋作成中... 部屋ID：${roomId}`;
 
-  const inviteUrl = `${location.origin}${location.pathname}?mode=online1v1&room=${roomId}`;
+    await writeRoom(roomId, buildInitialRoomData({ mode: "online1v1" }));
 
-  onlineRoomStatus.textContent = `部屋を作成しました。あなたはPLAYER Aです。`;
-  onlineInviteUrl.textContent = inviteUrl;
+    const inviteUrl = `${location.origin}${location.pathname}?mode=online1v1&room=${roomId}`;
 
-  listenRoom(roomId, (roomData) => {
-    if (!roomData) return;
+    onlineRoomStatus.textContent = `部屋を作成しました。あなたはPLAYER Aです。部屋ID：${roomId}`;
+    onlineInviteUrl.textContent = inviteUrl;
 
-    const playerBJoined = roomData.players?.B?.joined;
-    onlineRoomStatus.textContent = playerBJoined
-      ? "PLAYER B が参加しました。次は機体選択同期へ進めます。"
-      : "PLAYER B の参加待ちです。";
-  });
+    listenRoom(roomId, (roomData) => {
+      if (!roomData) return;
+
+      const playerBJoined = roomData.players?.B?.joined;
+      onlineRoomStatus.textContent = playerBJoined
+        ? `PLAYER B が参加しました。部屋ID：${roomId}`
+        : `PLAYER B の参加待ちです。部屋ID：${roomId}`;
+    });
+  } catch (error) {
+    console.error(error);
+    onlineRoomStatus.textContent = "部屋作成に失敗しました";
+    showPopup(`部屋作成エラー：${error.message}`);
+  }
 });
 
 joinOnlineRoomBtn.addEventListener("click", async () => {
@@ -883,7 +891,7 @@ function bootOnlineFromUrl() {
   }
 }
 
-bootOnlineFromUrl();
+
 
 uiController = createUiController({
   screens,
@@ -1284,3 +1292,4 @@ document.getElementById("toggleTestModeBtn").addEventListener("click", toggleTes
 
 
 loadUnitButtons();
+bootOnlineFromUrl();
