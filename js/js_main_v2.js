@@ -1,3 +1,10 @@
+import {
+  createRoomId,
+  writeRoom,
+  readRoom,
+  updateRoom,
+  listenRoom
+} from "./js_online_firebase.js";
 import { unitList, bossList, cpuList, cpuBeginnerList } from "./js_units_index.js";
 import {
   createBattleState,
