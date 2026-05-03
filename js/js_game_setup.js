@@ -220,8 +220,12 @@ const bText = bList.length > 0
 }
 
   function selectUnit(unit) {
-  const mode = ctx.getBattleMode();
+  if (ctx.onSelectUnit) {
+    const handled = ctx.onSelectUnit(unit);
+    if (handled) return;
+  }
 
+  const mode = ctx.getBattleMode();
   if (mode === "1v1") {
     if (ctx.getSelectingPlayer() === "A") {
       ctx.setSelectedUnitA(unit);
