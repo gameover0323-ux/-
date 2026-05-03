@@ -8,6 +8,9 @@ import { strike_gundam } from "./js_units_strike_gundam.js";
 import { devil_gundam } from "./js_units_devil_gundam.js";
 
 
+//初心者向け//
+import { cpu_zaku_ii_soldier } from "./js_units_cpu_zaku_ii_soldier.js";
+
 //CPU専用機体//
 import { cpu_gundam_mc } from "./js_units_cpu_gundam_mc.js";
 import { cpu_z_gundam } from "./js_units_cpu_z_gundam.js";
@@ -33,4 +36,8 @@ export const cpuList = [
   cpu_shining_gundam,
   cpu_wing_zero,
   cpu_strike_gundam
+];
+
+export const cpuBeginnerList = [
+  cpu_zaku_ii_soldier
 ];
