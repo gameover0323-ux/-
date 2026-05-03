@@ -1,4 +1,4 @@
-import { unitList, bossList, cpuList } from "./js_units_index.js";
+import { unitList, bossList, cpuList, cpuBeginnerList } from "./js_units_index.js";
 import {
   createBattleState,
   applyUnitDerivedState,
@@ -45,14 +45,108 @@ import { createUiController } from "./js_ui_controller.js";
 import { createGameSetup } from "./js_game_setup.js";
 
 import { createActionLayer } from "./js_action_layer.js";
+import {
+  createRoomId,
+  writeRoom,
+  readRoom,
+  updateRoom,
+  listenRoom,
+  buildInitialRoomData
+} from "./js_online_firebase.js";
 
+import { onlineState } from "./js_online_state.js";
 
 const screens = {
   title: document.getElementById("title"),
   select: document.getElementById("select"),
-  battle: document.getElementById("battle")
+  battle: document.getElementById("battle"),
+  onlineRoom: document.getElementById("onlineRoom")
 };
+const startOnline1v1Btn = document.getElementById("startOnline1v1Btn");
+const startOnline2v2Btn = document.getElementById("startOnline2v2Btn");
+const createOnlineRoomBtn = document.getElementById("createOnlineRoomBtn");
+const joinOnlineRoomBtn = document.getElementById("joinOnlineRoomBtn");
+const backFromOnlineRoomBtn = document.getElementById("backFromOnlineRoomBtn");
+const onlineRoomIdInput = document.getElementById("onlineRoomIdInput");
+const onlineRoomStatus = document.getElementById("onlineRoomStatus");
+const onlineInviteUrl = document.getElementById("onlineInviteUrl");
 
+startOnline1v1Btn.addEventListener("click", () => {
+  battleMode = "online1v1";
+  showScreen("onlineRoom");
+});
+
+startOnline2v2Btn.addEventListener("click", () => {
+  showPopup("オンライン2on2はオンライン1on1安定後に実装予定です");
+});
+
+createOnlineRoomBtn.addEventListener("click", async () => {
+  try {
+    const roomId = createRoomId();
+
+    onlineState.enabled = true;
+    onlineState.roomId = roomId;
+    onlineState.myPlayer = "A";
+    onlineState.isHost = true;
+
+    onlineRoomStatus.textContent = `部屋作成中... 部屋ID：${roomId}`;
+
+    await writeRoom(roomId, buildInitialRoomData({ mode: "online1v1" }));
+
+    const inviteUrl = `${location.origin}${location.pathname}?mode=online1v1&room=${roomId}`;
+
+    onlineRoomStatus.textContent = `部屋を作成しました。あなたはPLAYER Aです。部屋ID：${roomId}`;
+    onlineInviteUrl.textContent = inviteUrl;
+
+    listenRoom(roomId, (roomData) => {
+      if (!roomData) return;
+
+      const playerBJoined = roomData.players?.B?.joined;
+      onlineRoomStatus.textContent = playerBJoined
+        ? `PLAYER B が参加しました。部屋ID：${roomId}`
+        : `PLAYER B の参加待ちです。部屋ID：${roomId}`;
+    });
+  } catch (error) {
+    console.error(error);
+    onlineRoomStatus.textContent = "部屋作成に失敗しました";
+    showPopup(`部屋作成エラー：${error.message}`);
+  }
+});
+
+joinOnlineRoomBtn.addEventListener("click", async () => {
+  const roomId = onlineRoomIdInput.value.trim();
+  if (!roomId) {
+    showPopup("部屋IDを入力してください");
+    return;
+  }
+
+  const snapshot = await readRoom(roomId);
+  if (!snapshot.exists()) {
+    showPopup("部屋が見つかりません");
+    return;
+  }
+
+  onlineState.enabled = true;
+  onlineState.roomId = roomId;
+  onlineState.myPlayer = "B";
+  onlineState.isHost = false;
+
+  await updateRoom(roomId, {
+    "players/B/joined": true,
+    "meta/updatedAt": Date.now()
+  });
+
+  onlineRoomStatus.textContent = "部屋に参加しました。あなたはPLAYER Bです。";
+
+  listenRoom(roomId, (roomData) => {
+    if (!roomData) return;
+    onlineRoomStatus.textContent = "オンライン部屋に接続中です。";
+  });
+});
+
+backFromOnlineRoomBtn.addEventListener("click", () => {
+  showScreen("title");
+});
 
 
 document.getElementById("start1v1Btn").addEventListener("click", () => {
@@ -583,7 +677,6 @@ if (checkBattleEnd()) {
   return true;
 }
 
-
 function isUnitDefeated(unit) {
   return !unit || unit.hp <= 0;
 }
@@ -776,6 +869,25 @@ function endTurn() {
   return battleFlow.endTurn();
 }
 
+function bootOnlineFromUrl() {
+  const params = new URLSearchParams(location.search);
+  const mode = params.get("mode");
+  const roomId = params.get("room");
+
+  if (mode !== "online1v1" || !roomId) return;
+
+  battleMode = "online1v1";
+  showScreen("onlineRoom");
+
+  if (onlineRoomIdInput) {
+    onlineRoomIdInput.value = roomId;
+  }
+
+  if (onlineRoomStatus) {
+    onlineRoomStatus.textContent = "招待URLから部屋IDを読み込みました。「部屋に入る」を押してください。";
+  }
+}
+
 
 
 uiController = createUiController({
@@ -944,6 +1056,7 @@ gameSetup = createGameSetup({
   units,
   bosses: bossList,
   cpus: cpuList,
+  cpuBeginnerList,
   unitButtons,
   selectGuide,
   selectedUnitsPreview,
@@ -987,7 +1100,27 @@ gameSetup = createGameSetup({
     selectingPlayer = "A";
     selectedUnitA = null;
     selectedUnitB = null;
+onSelectUnit: (unit) => {
+  if (!onlineState.enabled) return false;
 
+  const playerKey = onlineState.myPlayer;
+  if (playerKey !== "A" && playerKey !== "B") return false;
+
+  updateRoom(onlineState.roomId, {
+    [`players/${playerKey}/unitId`]: unit.id,
+    [`players/${playerKey}/ready`]: true,
+    "meta/updatedAt": Date.now()
+  });
+
+  if (playerKey === "A") {
+    selectedUnitA = unit;
+  } else {
+    selectedUnitB = unit;
+  }
+
+  updateSelectUi();
+  return true;
+},
     redrawBattleBoards();
     document.getElementById("attackLog").textContent = "バトル開始待機中";
     showScreen("battle");
@@ -1176,3 +1309,4 @@ document.getElementById("toggleTestModeBtn").addEventListener("click", toggleTes
 
 
 loadUnitButtons();
+bootOnlineFromUrl();
