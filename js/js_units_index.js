@@ -11,7 +11,7 @@ import { devil_gundam } from "./js_units_devil_gundam.js";
 //初心者向け//
 import { cpu_zaku_ii_soldier } from "./js_units_cpu_zaku_ii_soldier.js";
 import { cpu_gouf } from "./js_units_cpu_gouf.js";
-
+import { cpu_mobile_ginn } from "./js_units_cpu_mobile_ginn.js";
 
 //CPU専用機体//
 import { cpu_gundam_mc } from "./js_units_cpu_gundam_mc.js";
@@ -42,5 +42,6 @@ export const cpuList = [
 
 export const cpuBeginnerList = [
   cpu_zaku_ii_soldier,
-  cpu_gouf
+  cpu_gouf,
+  cpu_mobile_ginn
 ];
