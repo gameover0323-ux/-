@@ -85,6 +85,13 @@ import {
   getCpuGoufExtraWeaponResult
 } from "./js_unit_rules_cpu_gouf.js";
 
+import {
+  getCpuMobileGinnDerivedState,
+  onCpuMobileGinnBeforeSlot,
+  onCpuMobileGinnAfterSlotResolved,
+  onCpuMobileGinnActionResolved,
+  getCpuMobileGinnExtraWeaponResult
+} from "./js_unit_rules_cpu_mobile_ginn.js";
 
 //CPU専用機体//
 import {
@@ -285,7 +292,13 @@ cpu_gouf: {
   onActionResolved: onCpuGoufActionResolved,
   getExtraWeaponResult: getCpuGoufExtraWeaponResult
 },
-  
+  cpu_mobile_ginn: {
+  getDerivedState: getCpuMobileGinnDerivedState,
+  onBeforeSlot: onCpuMobileGinnBeforeSlot,
+  onAfterSlotResolved: onCpuMobileGinnAfterSlotResolved,
+  onActionResolved: onCpuMobileGinnActionResolved,
+  getExtraWeaponResult: getCpuMobileGinnExtraWeaponResult
+},
   //ボス機体//
 devil_gundam: devilGundamRules,
 };
