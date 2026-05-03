@@ -77,6 +77,14 @@ import {
   onCpuZakuIiSoldierAfterSlotResolved,
   onCpuZakuIiSoldierActionResolved
 } from "./js_unit_rules_cpu_zaku_ii_soldier.js";
+import {
+  getCpuGoufDerivedState,
+  onCpuGoufBeforeSlot,
+  onCpuGoufEnemyBeforeSlot,
+  onCpuGoufActionResolved,
+  getCpuGoufExtraWeaponResult
+} from "./js_unit_rules_cpu_gouf.js";
+
 
 //CPU専用機体//
 import {
@@ -270,7 +278,13 @@ cpu_zaku_ii_soldier: {
   onAfterSlotResolved: onCpuZakuIiSoldierAfterSlotResolved,
   onActionResolved: onCpuZakuIiSoldierActionResolved
 },
-
+cpu_gouf: {
+  getDerivedState: getCpuGoufDerivedState,
+  onBeforeSlot: onCpuGoufBeforeSlot,
+  onEnemyBeforeSlot: onCpuGoufEnemyBeforeSlot,
+  onActionResolved: onCpuGoufActionResolved,
+  getExtraWeaponResult: getCpuGoufExtraWeaponResult
+},
   
   //ボス機体//
 devil_gundam: devilGundamRules,
