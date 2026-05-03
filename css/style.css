@@ -197,3 +197,20 @@ button{
   background:#111;
   white-space:pre-wrap;
 }
+.cpuBeginnerSection {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #777;
+  border-radius: 8px;
+}
+
+.cpuBeginnerTitle {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.cpuBeginnerButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
