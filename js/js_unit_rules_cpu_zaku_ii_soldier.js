@@ -34,7 +34,7 @@ export function getCpuZakuIiSoldierDerivedState(state) {
 
   return {
     status: [
-      "CPU専用：初心者向け",
+      "難易度☆",
       "特性：10%の確率で与ダメージ2倍"
     ],
     specials: {
