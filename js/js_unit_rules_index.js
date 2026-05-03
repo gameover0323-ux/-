@@ -70,6 +70,14 @@ import {
 //ボス機体//
 import { devilGundamRules } from "./js_unit_rules_devil_gundam.js";
 
+//初心者向け//
+import {
+  getCpuZakuIiSoldierDerivedState,
+  onCpuZakuIiSoldierBeforeSlot,
+  onCpuZakuIiSoldierAfterSlotResolved,
+  onCpuZakuIiSoldierActionResolved
+} from "./js_unit_rules_cpu_zaku_ii_soldier.js";
+
 //CPU専用機体//
 import {
   getCpuGundamMcDerivedState,
@@ -253,6 +261,16 @@ cpu_strike_gundam: {
   modifyEvadeAttempt: modifyCpuStrikeEvadeAttempt,
   getExtraWeaponResult: getCpuStrikeExtraWeaponResult
 },
+
+
+//初心者向け//
+cpu_zaku_ii_soldier: {
+  getDerivedState: getCpuZakuIiSoldierDerivedState,
+  onBeforeSlot: onCpuZakuIiSoldierBeforeSlot,
+  onAfterSlotResolved: onCpuZakuIiSoldierAfterSlotResolved,
+  onActionResolved: onCpuZakuIiSoldierActionResolved
+},
+
   
   //ボス機体//
 devil_gundam: devilGundamRules,
