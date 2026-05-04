@@ -931,8 +931,7 @@ function endTurn() {
 
   return result;
 }
-  return battleFlow.endTurn();
-}
+  
 function bootOnlineFromUrl() {
   const params = new URLSearchParams(location.search);
   const mode = params.get("mode");
