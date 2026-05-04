@@ -119,7 +119,7 @@ if (ctx.onSlotActionResolved) {
 }
 
 ctx.redrawBattleBoards();
-
+  }
   function simulateSlot() {
     const attacker = ctx.getPlayerState(ctx.getCurrentPlayer());
     if (!attacker) return;
