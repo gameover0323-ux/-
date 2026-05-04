@@ -870,6 +870,11 @@ function clampEvadeToMax(state) {
 }
 
 function executeSlot() {
+  if (!canOperateOnlinePlayer()) {
+    showPopup("相手のターンです");
+    return;
+  }
+
   return battleFlow.executeSlot();
 }
 
