@@ -987,6 +987,48 @@ function canOperateOnlinePlayer() {
   return currentPlayer === onlineState.myPlayer;
 }
 
+function publishOnlineQteAction(kind, index) {
+  if (!onlineState.enabled) return;
+  if (onlineState.isApplyingRemote) return;
+
+  onlineActionSeq += 1;
+  onlineState.lastAppliedActionId = onlineActionSeq;
+
+  updateRoom(onlineState.roomId, {
+    action: {
+      actionId: onlineActionSeq,
+      actor: onlineState.myPlayer,
+      type: "qte",
+      payload: {
+        kind,
+        index
+      },
+      createdAt: Date.now()
+    },
+    "meta/updatedAt": Date.now()
+  });
+}
+
+function publishOnlineEndTurnAction() {
+  if (!onlineState.enabled) return;
+  if (onlineState.isApplyingRemote) return;
+  if (currentPlayer !== onlineState.myPlayer) return;
+
+  onlineActionSeq += 1;
+  onlineState.lastAppliedActionId = onlineActionSeq;
+
+  updateRoom(onlineState.roomId, {
+    action: {
+      actionId: onlineActionSeq,
+      actor: onlineState.myPlayer,
+      type: "endTurn",
+      payload: {},
+      createdAt: Date.now()
+    },
+    "meta/updatedAt": Date.now()
+  });
+}
+
 function publishOnlineSlotAction(ownerPlayer, slotKey) {
   if (!onlineState.enabled) return;
   if (onlineState.isApplyingRemote) return;
