@@ -1006,6 +1006,28 @@ function canOperateOnlinePlayer() {
   return currentPlayer === onlineState.myPlayer;
 }
 
+function publishOnlineSpecialAction(ownerPlayer, specialKey) {
+  if (!onlineState.enabled) return;
+  if (onlineState.isApplyingRemote) return;
+  if (ownerPlayer !== onlineState.myPlayer) return;
+
+  onlineActionSeq += 1;
+  onlineState.lastAppliedActionId = onlineActionSeq;
+
+  updateRoom(onlineState.roomId, {
+    action: {
+      actionId: onlineActionSeq,
+      actor: ownerPlayer,
+      type: "special",
+      payload: {
+        specialKey
+      },
+      createdAt: Date.now()
+    },
+    "meta/updatedAt": Date.now()
+  });
+}
+
 function publishOnlineQteAction(kind, index) {
   if (!onlineState.enabled) return;
   if (onlineState.isApplyingRemote) return;
