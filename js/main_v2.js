@@ -1189,6 +1189,8 @@ setCurrentAttackContexts,
   redrawBattleBoards,
   startSlotAction,
 
+onSlotActionResolved: publishOnlineSlotAction,
+  
   getRollableSlotKeys,
   getRandomSlotKey,
   getSlotByKey,
