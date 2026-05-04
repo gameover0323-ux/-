@@ -925,9 +925,9 @@ function endTurn() {
 
   const result = battleFlow.endTurn();
 
-  if (onlineState.enabled && beforePlayer !== currentPlayer) {
-    publishOnlineEndTurnAction();
-  }
+if (onlineState.enabled && beforePlayer !== currentPlayer) {
+  publishOnlineEndTurnAction(beforePlayer);
+}
 
   return result;
 }
