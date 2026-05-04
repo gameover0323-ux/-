@@ -794,6 +794,9 @@ function takeHit(i) {
 
   const result = attackResolution.takeHit(i);
   checkBattleEnd();
+
+  publishOnlineQteAction("hit", i);
+
   return result;
 }
 
@@ -803,7 +806,11 @@ function evadeAttack(i) {
     return;
   }
 
-  return attackResolution.evadeAttack(i);
+  const result = attackResolution.evadeAttack(i);
+
+  publishOnlineQteAction("evade", i);
+
+  return result;
 }
 
 function supportDefenseAttack(i) {
@@ -814,6 +821,9 @@ function supportDefenseAttack(i) {
 
   const result = attackResolution.supportDefenseAttack(i);
   checkBattleEnd();
+
+  publishOnlineQteAction("supportDefense", i);
+
   return result;
 }
 function finishCurrentAttackResolution() {
