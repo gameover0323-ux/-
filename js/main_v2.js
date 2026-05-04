@@ -1060,25 +1060,56 @@ function applyOnlineAction(action) {
   onlineActionSeq = Math.max(onlineActionSeq, action.actionId);
 
   if (action.actor === onlineState.myPlayer) return;
-  if (action.type !== "slot") return;
-
-  const slotKey = action.payload?.slotKey;
-  if (!slotKey) return;
 
   onlineState.isApplyingRemote = true;
 
-  const actor = getPlayerState(action.actor);
-  if (!actor) {
+  if (action.type === "slot") {
+    const slotKey = action.payload?.slotKey;
+    if (!slotKey) {
+      onlineState.isApplyingRemote = false;
+      return;
+    }
+
+    const actor = getPlayerState(action.actor);
+    if (!actor) {
+      onlineState.isApplyingRemote = false;
+      return;
+    }
+
+    ensureActionState(actor);
+
+    const started = startSlotAction(action.actor, slotKey);
+    if (started) {
+      consumeActionCount(actor, 1);
+      redrawBattleBoards();
+    }
+
     onlineState.isApplyingRemote = false;
     return;
   }
 
-  ensureActionState(actor);
+  if (action.type === "qte") {
+    const kind = action.payload?.kind;
+    const index = action.payload?.index;
 
-  const started = startSlotAction(action.actor, slotKey);
-  if (started) {
-    consumeActionCount(actor, 1);
-    redrawBattleBoards();
+    if (kind === "hit") {
+      attackResolution.takeHit(index);
+      checkBattleEnd();
+    } else if (kind === "evade") {
+      attackResolution.evadeAttack(index);
+    } else if (kind === "supportDefense") {
+      attackResolution.supportDefenseAttack(index);
+      checkBattleEnd();
+    }
+
+    onlineState.isApplyingRemote = false;
+    return;
+  }
+
+  if (action.type === "endTurn") {
+    battleFlow.endTurn();
+    onlineState.isApplyingRemote = false;
+    return;
   }
 
   onlineState.isApplyingRemote = false;
