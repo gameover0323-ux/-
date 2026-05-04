@@ -82,44 +82,45 @@ export function createBattleFlow(ctx) {
   }
 
   function executeSlot() {
-    if (ctx.hasPendingChoice()) {
-      ctx.renderPendingChoice();
-      return;
-    }
-
-    const attacker = ctx.getPlayerState(ctx.getCurrentPlayer());
-    if (!attacker) return;
-
-    ensureActionState(attacker);
-
-    if (!canConsumeAction(attacker, 1)) {
-      ctx.showPopup("残り行動数が足りない");
-      return;
-    }
-
-    const rollableSlotKeys = ctx.getRollableSlotKeys(attacker);
-    if (!Array.isArray(rollableSlotKeys) || rollableSlotKeys.length === 0) {
-      ctx.showPopup("使用可能なスロットがない");
-      return;
-    }
-
-    const slotKey = rollableSlotKeys[
-      Math.floor(Math.random() * rollableSlotKeys.length)
-    ];
-
-    const ownerPlayer = ctx.getCurrentPlayer();
-
-const started = ctx.startSlotAction(ownerPlayer, slotKey);
-if (!started) return;
-
-consumeActionCount(attacker, 1);
-
-if (ctx.onSlotActionResolved) {
-  ctx.onSlotActionResolved(ownerPlayer, slotKey);
-}
-
-ctx.redrawBattleBoards();
+  if (ctx.hasPendingChoice()) {
+    ctx.renderPendingChoice();
+    return;
   }
+
+  const attacker = ctx.getPlayerState(ctx.getCurrentPlayer());
+  if (!attacker) return;
+
+  ensureActionState(attacker);
+
+  if (!canConsumeAction(attacker, 1)) {
+    ctx.showPopup("残り行動数が足りない");
+    return;
+  }
+
+  const rollableSlotKeys = ctx.getRollableSlotKeys(attacker);
+  if (!Array.isArray(rollableSlotKeys) || rollableSlotKeys.length === 0) {
+    ctx.showPopup("使用可能なスロットがない");
+    return;
+  }
+
+  const slotKey = rollableSlotKeys[
+    Math.floor(Math.random() * rollableSlotKeys.length)
+  ];
+
+  const ownerPlayer = ctx.getCurrentPlayer();
+
+  const started = ctx.startSlotAction(ownerPlayer, slotKey);
+  if (!started) return;
+
+  consumeActionCount(attacker, 1);
+
+  if (ctx.onSlotActionResolved) {
+    ctx.onSlotActionResolved(ownerPlayer, slotKey);
+  }
+
+  ctx.redrawBattleBoards();
+  }
+  
   function simulateSlot() {
     const attacker = ctx.getPlayerState(ctx.getCurrentPlayer());
     if (!attacker) return;
