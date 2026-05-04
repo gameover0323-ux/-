@@ -777,22 +777,45 @@ function renderAttackChoices() {
 
   clearBattleNotice();
 }
+function canOperateQteDefender() {
+  if (!onlineState.enabled) return true;
+
+  const context = currentAttackContext;
+  if (!context) return false;
+
+  return context.enemyPlayer === onlineState.myPlayer;
+}
+
 function takeHit(i) {
+  if (!canOperateQteDefender()) {
+    showPopup("防御側プレイヤーのみ操作できます");
+    return;
+  }
+
   const result = attackResolution.takeHit(i);
   checkBattleEnd();
   return result;
 }
 
 function evadeAttack(i) {
+  if (!canOperateQteDefender()) {
+    showPopup("防御側プレイヤーのみ操作できます");
+    return;
+  }
+
   return attackResolution.evadeAttack(i);
 }
 
 function supportDefenseAttack(i) {
+  if (!canOperateQteDefender()) {
+    showPopup("防御側プレイヤーのみ操作できます");
+    return;
+  }
+
   const result = attackResolution.supportDefenseAttack(i);
   checkBattleEnd();
   return result;
 }
-
 function finishCurrentAttackResolution() {
   return attackResolution.finishCurrentAttackResolution();
 }
@@ -883,9 +906,13 @@ function simulateSlot() {
 }
 
 function endTurn() {
+  if (!canOperateOnlinePlayer()) {
+    showPopup("相手のターンです");
+    return;
+  }
+
   return battleFlow.endTurn();
 }
-
 function bootOnlineFromUrl() {
   const params = new URLSearchParams(location.search);
   const mode = params.get("mode");
