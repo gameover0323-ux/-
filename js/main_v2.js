@@ -89,7 +89,8 @@ createOnlineRoomBtn.addEventListener("click", async () => {
     onlineState.roomId = roomId;
     onlineState.myPlayer = "A";
     onlineState.isHost = true;
-
+onlineSelectEntered = false;
+onlineBattleStarted = false;
     onlineRoomStatus.textContent = `部屋作成中... 部屋ID：${roomId}`;
 
     await writeRoom(roomId, buildInitialRoomData({ mode: "online1v1" }));
@@ -137,7 +138,8 @@ joinOnlineRoomBtn.addEventListener("click", async () => {
   onlineState.roomId = roomId;
   onlineState.myPlayer = "B";
   onlineState.isHost = false;
-
+onlineSelectEntered = false;
+onlineBattleStarted = false;
   await updateRoom(roomId, {
     "players/B/joined": true,
     "meta/updatedAt": Date.now()
