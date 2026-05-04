@@ -843,7 +843,16 @@ function resolveSlot(slot, slotMeta = {}) {
 }
 
 function executeSpecial(ownerPlayer, specialKey) {
-  return actionLayer.executeSpecial(ownerPlayer, specialKey);
+  if (onlineState.enabled && ownerPlayer !== onlineState.myPlayer) {
+    showPopup("相手側の特殊行動は操作できません");
+    return;
+  }
+
+  const result = actionLayer.executeSpecial(ownerPlayer, specialKey);
+
+  publishOnlineSpecialAction(ownerPlayer, specialKey);
+
+  return result;
 }
 
 function resolvePendingChoice(selectedValue) {
