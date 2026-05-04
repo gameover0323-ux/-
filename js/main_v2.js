@@ -901,6 +901,7 @@ function bootOnlineFromUrl() {
 }
 
 let onlineBattleStarted = false;
+let onlineActionSeq = 0;
 let onlineSelectEntered = false;
 function getUnitById(unitId) {
   return unitList.find(unit => unit.id === unitId) || null;
