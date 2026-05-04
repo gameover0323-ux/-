@@ -921,6 +921,16 @@ function endTurn() {
     return;
   }
 
+  const beforePlayer = currentPlayer;
+
+  const result = battleFlow.endTurn();
+
+  if (onlineState.enabled && beforePlayer !== currentPlayer) {
+    publishOnlineEndTurnAction();
+  }
+
+  return result;
+}
   return battleFlow.endTurn();
 }
 function bootOnlineFromUrl() {
