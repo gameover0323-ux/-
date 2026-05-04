@@ -922,7 +922,7 @@ function applyOnlineRoomData(roomData) {
   }
 
   updateSelectUi();
-
+applyOnlineAction(roomData.action);
   if (
     !onlineBattleStarted &&
     playerA.ready &&
