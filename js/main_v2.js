@@ -933,6 +933,8 @@ function applyOnlineRoomData(roomData) {
 }
 
 function enterOnlineSelect() {
+  if (onlineSelectEntered) return;
+
   battleMode = "online1v1";
   teamA = null;
   teamB = null;
@@ -940,11 +942,11 @@ function enterOnlineSelect() {
   selectedUnitB = null;
   selectingPlayer = onlineState.myPlayer === "B" ? "B" : "A";
   onlineBattleStarted = false;
+  onlineSelectEntered = true;
 
   showScreen("select");
   updateSelectUi();
 }
-
 function initOnline1v1Battle(unitA, unitB) {
   playerAState = createBattleState(unitA);
   playerBState = createBattleState(unitB);
