@@ -1028,10 +1028,10 @@ function publishOnlineQteAction(kind, index) {
   });
 }
 
-function publishOnlineEndTurnAction() {
+function publishOnlineEndTurnAction(actorPlayer) {
   if (!onlineState.enabled) return;
   if (onlineState.isApplyingRemote) return;
-  if (currentPlayer !== onlineState.myPlayer) return;
+  if (actorPlayer !== onlineState.myPlayer) return;
 
   onlineActionSeq += 1;
   onlineState.lastAppliedActionId = onlineActionSeq;
@@ -1039,7 +1039,7 @@ function publishOnlineEndTurnAction() {
   updateRoom(onlineState.roomId, {
     action: {
       actionId: onlineActionSeq,
-      actor: onlineState.myPlayer,
+      actor: actorPlayer,
       type: "endTurn",
       payload: {},
       createdAt: Date.now()
