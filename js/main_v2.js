@@ -1,3 +1,13 @@
+import {
+  createRoomId,
+  writeRoom,
+  readRoom,
+  updateRoom,
+  listenRoom,
+  buildInitialRoomData
+} from "./js_online_firebase.js";
+
+import { onlineState } from "./js_online_state.js";
 import { unitList, bossList, cpuList, cpuBeginnerList } from "./js_units_index.js";
 import {
   createBattleState,
@@ -45,16 +55,7 @@ import { createUiController } from "./js_ui_controller.js";
 import { createGameSetup } from "./js_game_setup.js";
 
 import { createActionLayer } from "./js_action_layer.js";
-import {
-  createRoomId,
-  writeRoom,
-  readRoom,
-  updateRoom,
-  listenRoom,
-  buildInitialRoomData
-} from "./js_online_firebase.js";
 
-import { onlineState } from "./js_online_state.js";
 
 const screens = {
   title: document.getElementById("title"),
@@ -99,13 +100,19 @@ createOnlineRoomBtn.addEventListener("click", async () => {
     onlineInviteUrl.textContent = inviteUrl;
 
     listenRoom(roomId, (roomData) => {
-      if (!roomData) return;
+  if (!roomData) return;
 
-      const playerBJoined = roomData.players?.B?.joined;
-      onlineRoomStatus.textContent = playerBJoined
-        ? `PLAYER B が参加しました。部屋ID：${roomId}`
-        : `PLAYER B の参加待ちです。部屋ID：${roomId}`;
-    });
+  const playerBJoined = roomData.players?.B?.joined;
+
+  if (playerBJoined) {
+    onlineRoomStatus.textContent = `PLAYER B が参加しました。部屋ID：${roomId}`;
+    enterOnlineSelect();
+  } else {
+    onlineRoomStatus.textContent = `PLAYER B の参加待ちです。部屋ID：${roomId}`;
+  }
+
+  applyOnlineRoomData(roomData);
+});
   } catch (error) {
     console.error(error);
     onlineRoomStatus.textContent = "部屋作成に失敗しました";
@@ -139,9 +146,12 @@ joinOnlineRoomBtn.addEventListener("click", async () => {
   onlineRoomStatus.textContent = "部屋に参加しました。あなたはPLAYER Bです。";
 
   listenRoom(roomId, (roomData) => {
-    if (!roomData) return;
-    onlineRoomStatus.textContent = "オンライン部屋に接続中です。";
-  });
+  if (!roomData) return;
+
+  onlineRoomStatus.textContent = "オンライン部屋に接続中です。";
+  enterOnlineSelect();
+  applyOnlineRoomData(roomData);
+});
 });
 
 backFromOnlineRoomBtn.addEventListener("click", () => {
@@ -888,7 +898,76 @@ function bootOnlineFromUrl() {
   }
 }
 
+let onlineBattleStarted = false;
 
+function getUnitById(unitId) {
+  return unitList.find(unit => unit.id === unitId) || null;
+}
+
+function applyOnlineRoomData(roomData) {
+  if (!onlineState.enabled || !roomData) return;
+
+  const playerA = roomData.players?.A || {};
+  const playerB = roomData.players?.B || {};
+
+  if (playerA.unitId) {
+    selectedUnitA = getUnitById(playerA.unitId);
+  }
+
+  if (playerB.unitId) {
+    selectedUnitB = getUnitById(playerB.unitId);
+  }
+
+  updateSelectUi();
+
+  if (
+    !onlineBattleStarted &&
+    playerA.ready &&
+    playerB.ready &&
+    selectedUnitA &&
+    selectedUnitB
+  ) {
+    onlineBattleStarted = true;
+    initOnline1v1Battle(selectedUnitA, selectedUnitB);
+  }
+}
+
+function enterOnlineSelect() {
+  battleMode = "online1v1";
+  teamA = null;
+  teamB = null;
+  selectedUnitA = null;
+  selectedUnitB = null;
+  selectingPlayer = onlineState.myPlayer === "B" ? "B" : "A";
+  onlineBattleStarted = false;
+
+  showScreen("select");
+  updateSelectUi();
+}
+
+function initOnline1v1Battle(unitA, unitB) {
+  playerAState = createBattleState(unitA);
+  playerBState = createBattleState(unitB);
+
+  resetActionCount(playerAState);
+  resetActionCount(playerBState);
+
+  currentTurn = 1;
+  currentPlayer = "A";
+  currentAttack = [];
+  currentAttackContext = null;
+  currentAttackContexts = [];
+  battleNotice = "";
+  currentActionHeader = "";
+  currentActionLabel = "";
+  pendingChoice = null;
+
+  isTestMode = false;
+
+  redrawBattleBoards();
+  document.getElementById("attackLog").textContent = "オンラインバトル開始";
+  showScreen("battle");
+}
 
 uiController = createUiController({
   screens,
@@ -918,7 +997,7 @@ isTeamBattleMode,
 
   getSlotNumberFromKey,
 
-  ensureActionState,
+ensureActionState,
 
   applyUnitDerivedState,
   renderPlayerState,
@@ -1060,7 +1139,32 @@ gameSetup = createGameSetup({
   unitButtons,
   selectGuide,
   selectedUnitsPreview,
+
+  onSelectUnit: (unit) => {
+    if (!onlineState.enabled) return false;
+
+    const playerKey = onlineState.myPlayer;
+    if (playerKey !== "A" && playerKey !== "B") return false;
+
+    updateRoom(onlineState.roomId, {
+      [`players/${playerKey}/unitId`]: unit.id,
+      [`players/${playerKey}/ready`]: true,
+      "meta/updatedAt": Date.now()
+    });
+
+    if (playerKey === "A") {
+      selectedUnitA = unit;
+    } else {
+      selectedUnitB = unit;
+    }
+
+    updateSelectUi();
+    return true;
+  },
+
   getBattleMode: () => battleMode,
+  
+
   isTeamBattleMode,
   isChallengeMode,
 
@@ -1093,34 +1197,14 @@ gameSetup = createGameSetup({
     currentAttackContexts = [];
     battleNotice = "";
     currentActionHeader = "";
-    currentActionLabel = "";
+currentActionLabel = "";
     pendingChoice = null;
 
     isTestMode = false;
     selectingPlayer = "A";
     selectedUnitA = null;
     selectedUnitB = null;
-onSelectUnit: (unit) => {
-  if (!onlineState.enabled) return false;
 
-  const playerKey = onlineState.myPlayer;
-  if (playerKey !== "A" && playerKey !== "B") return false;
-
-  updateRoom(onlineState.roomId, {
-    [`players/${playerKey}/unitId`]: unit.id,
-    [`players/${playerKey}/ready`]: true,
-    "meta/updatedAt": Date.now()
-  });
-
-  if (playerKey === "A") {
-    selectedUnitA = unit;
-  } else {
-    selectedUnitB = unit;
-  }
-
-  updateSelectUi();
-  return true;
-},
     redrawBattleBoards();
     document.getElementById("attackLog").textContent = "バトル開始待機中";
     showScreen("battle");
