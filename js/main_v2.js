@@ -950,6 +950,66 @@ function enterOnlineSelect() {
   showScreen("select");
   updateSelectUi();
 }
+function canOperateOnlinePlayer() {
+  if (!onlineState.enabled) return true;
+  return currentPlayer === onlineState.myPlayer;
+}
+
+function publishOnlineSlotAction(ownerPlayer, slotKey) {
+  if (!onlineState.enabled) return;
+  if (onlineState.isApplyingRemote) return;
+  if (ownerPlayer !== onlineState.myPlayer) return;
+
+  onlineActionSeq += 1;
+  onlineState.lastAppliedActionId = onlineActionSeq;
+
+  updateRoom(onlineState.roomId, {
+    action: {
+      actionId: onlineActionSeq,
+      actor: ownerPlayer,
+      type: "slot",
+      payload: {
+        slotKey
+      },
+      createdAt: Date.now()
+    },
+    "meta/updatedAt": Date.now()
+  });
+}
+
+function applyOnlineAction(action) {
+  if (!onlineState.enabled || !action) return;
+  if (typeof action.actionId !== "number") return;
+  if (action.actionId <= onlineState.lastAppliedActionId) return;
+
+  onlineState.lastAppliedActionId = action.actionId;
+  onlineActionSeq = Math.max(onlineActionSeq, action.actionId);
+
+  if (action.actor === onlineState.myPlayer) return;
+  if (action.type !== "slot") return;
+
+  const slotKey = action.payload?.slotKey;
+  if (!slotKey) return;
+
+  onlineState.isApplyingRemote = true;
+
+  const actor = getPlayerState(action.actor);
+  if (!actor) {
+    onlineState.isApplyingRemote = false;
+    return;
+  }
+
+  ensureActionState(actor);
+
+  const started = startSlotAction(action.actor, slotKey);
+  if (started) {
+    consumeActionCount(actor, 1);
+    redrawBattleBoards();
+  }
+
+  onlineState.isApplyingRemote = false;
+}
+
 function initOnline1v1Battle(unitA, unitB) {
   playerAState = createBattleState(unitA);
   playerBState = createBattleState(unitB);
