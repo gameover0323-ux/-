@@ -107,12 +107,18 @@ export function createBattleFlow(ctx) {
       Math.floor(Math.random() * rollableSlotKeys.length)
     ];
 
-    const started = ctx.startSlotAction(ctx.getCurrentPlayer(), slotKey);
-    if (!started) return;
+    const ownerPlayer = ctx.getCurrentPlayer();
 
-    consumeActionCount(attacker, 1);
-    ctx.redrawBattleBoards();
-  }
+const started = ctx.startSlotAction(ownerPlayer, slotKey);
+if (!started) return;
+
+consumeActionCount(attacker, 1);
+
+if (ctx.onSlotActionResolved) {
+  ctx.onSlotActionResolved(ownerPlayer, slotKey);
+}
+
+ctx.redrawBattleBoards();
 
   function simulateSlot() {
     const attacker = ctx.getPlayerState(ctx.getCurrentPlayer());
