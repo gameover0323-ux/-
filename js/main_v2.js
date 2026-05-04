@@ -1129,6 +1129,19 @@ function applyOnlineAction(action) {
     return;
   }
 
+if (action.type === "special") {
+    const specialKey = action.payload?.specialKey;
+    if (!specialKey) {
+      onlineState.isApplyingRemote = false;
+      return;
+    }
+
+    actionLayer.executeSpecial(action.actor, specialKey);
+
+    onlineState.isApplyingRemote = false;
+    return;
+}
+  
   if (action.type === "qte") {
     const kind = action.payload?.kind;
     const index = action.payload?.index;
