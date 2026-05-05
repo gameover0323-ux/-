@@ -24,6 +24,7 @@ function makeNumberInputChoice(state, context, options = {}) {
     currentValue: ""
   };
 }
+
 function clearWingOverEvadeState(state) {
   state.overEvadeMode = false;
   state.overEvadeCap = state.evadeMax;
@@ -187,7 +188,7 @@ export function getWingZeroDerivedState(state) {
     if (state.wingMode === "hit") {
       result.slots.slot6 = {
         label: "6EX 変形ビームソード 40ダメージ",
-        desc: "40ダメージ、ビーム、格闘+ヒット時のみ、MS形態へと移行。現在の所持回避数を、MS形態の回避ストック上限数を超えて倍にした状態で引き継ぎ、再度MS形態の上限値以下に消費されるまでその値を保持する。",
+desc: "40ダメージ、ビーム、格闘+ヒット時のみ、MS形態へと移行。現在の所持回避数を、MS形態の回避ストック上限数を超えて倍にした状態で引き継ぎ、再度MS形態の上限値以下に消費されるまでその値を保持する。",
         effect: {
           type: "attack",
           damage: 40,
@@ -365,7 +366,8 @@ export function executeWingZeroSpecial(state, specialKey, context = {}) {
       message: null
     };
   }
-if (special.effectType === "buster_unlock") {
+
+ if (special.effectType === "buster_unlock") {
   return {
     handled: true,
     redraw: true,
@@ -391,47 +393,9 @@ if (special.effectType === "buster_unlock") {
     }
   };
 }
-  
-    if (!hpCost || hpCost <= 0) {
-      return {
-        handled: true,
-        redraw: false,
-        message: null
-      };
-    }
+    
 
-    if (hpCost >= state.hp) {
-      return {
-        handled: true,
-        redraw: false,
-        message: "HPが足りません"
-      };
-    }
-
-    state.evade = 0;
-    state.hp -= hpCost;
-    state.wingBusterUnlockUsedThisAction = true;
-
-    const bonus = Math.floor(hpCost / 2);
-    const appendAttacks = createAttack(bonus, 1, {
-      type: "shoot",
-      beam: true,
-      cannotEvade: false,
-      ignoreReduction: false,
-      ignoreDefense: false,
-      special: null,
-      source: "バスターライフル・出力解放"
-    });
-
-    return {
-      handled: true,
-      redraw: true,
-      message: null,
-      appendAttacks
-    };
-  }
-
-  return {
+ return {
     handled: false,
     redraw: false,
     message: null
@@ -637,47 +601,7 @@ export function modifyWingZeroEvadeAttempt(defender, attacker, attack, context =
 
 export function onWingZeroResolveChoice(state, pendingChoice, selectedValue, context = {}) {
   ensureWingZeroState(state);
-if (pendingChoice.source === "wing_buster_hp_input") {
-  const hpCost = parseInt(selectedValue, 10);
 
-  if (!hpCost || hpCost <= 0) {
-    return {
-      handled: true,
-      redraw: false,
-      message: null
-    };
-  }
-
-  if (hpCost >= state.hp) {
-    return {
-      handled: true,
-      redraw: false,
-      message: "HPが足りません"
-    };
-  }
-
-  state.evade = 0;
-  state.hp -= hpCost;
-  state.wingBusterUnlockUsedThisAction = true;
-
-  const bonus = Math.floor(hpCost / 2);
-  const appendAttacks = createAttack(bonus, 1, {
-    type: "shoot",
-    beam: true,
-    cannotEvade: false,
-    ignoreReduction: false,
-    ignoreDefense: false,
-    special: null,
-    source: "バスターライフル・出力解放"
-  });
-
-  return {
-    handled: true,
-    redraw: true,
-    message: null,
-    appendAttacks
-  };
-}
   if (pendingChoice.source === "wing_zero_chase") {
     if (selectedValue !== "run") {
       return {
@@ -700,7 +624,7 @@ if (pendingChoice.source === "wing_buster_hp_input") {
     return {
       handled: true,
       redraw: true,
-      message: null,
+            message: null,
       startSlotAction: {
         slotKey: pendingChoice.slotKey
       }
