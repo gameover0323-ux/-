@@ -333,7 +333,54 @@ export function renderPendingChoiceUI({
     });
     wrap.appendChild(btn);
   });
+if (choice.choiceType === "numberInput") {
+  const display = document.createElement("div");
+  display.style.fontSize = "20px";
+  display.style.marginBottom = "8px";
+  display.textContent = choice.currentValue || "0";
+  attackLog.appendChild(display);
 
+  const keypad = document.createElement("div");
+
+  for (let i = 0; i <= 9; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+
+    btn.addEventListener("click", () => {
+      if (choice.currentValue.length >= choice.digits) return;
+
+      choice.currentValue += String(i);
+      renderPendingChoiceUI({
+        ...choice,
+        onChoose
+      });
+    });
+
+    keypad.appendChild(btn);
+  }
+
+  const okBtn = document.createElement("button");
+  okBtn.textContent = "決定";
+  okBtn.addEventListener("click", () => {
+    onChoose(choice.currentValue);
+  });
+
+  const clearBtn = document.createElement("button");
+  clearBtn.textContent = "クリア";
+  clearBtn.addEventListener("click", () => {
+    choice.currentValue = "";
+    renderPendingChoiceUI({
+      ...choice,
+      onChoose
+    });
+  });
+
+  attackLog.appendChild(keypad);
+  attackLog.appendChild(okBtn);
+  attackLog.appendChild(clearBtn);
+
+  return;
+}
   attackLog.appendChild(wrap);
 }
 
