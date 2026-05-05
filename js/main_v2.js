@@ -271,7 +271,19 @@ let uiController = null;
 let gameSetup = null;
 
 let actionLayer = null;
+function resetOnlineStateForLocalBattle() {
+  onlineState.enabled = false;
+  onlineState.roomId = null;
+  onlineState.myPlayer = null;
+  onlineState.isHost = false;
+  onlineState.lastAppliedActionId = 0;
+  onlineState.isApplyingRemote = false;
 
+  onlineBattleStarted = false;
+  onlineBattleFinished = false;
+  onlineSelectEntered = false;
+  onlineActionSeq = 0;
+}
 function isTeamBattleMode() {
   return battleMode === "2v2" ||
     battleMode === "challenge2v2" ||
