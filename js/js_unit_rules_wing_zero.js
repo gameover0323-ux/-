@@ -370,11 +370,25 @@ if (special.effectType === "buster_unlock") {
     handled: true,
     redraw: true,
     message: null,
-    requestChoice: makeNumberInputChoice(state, context, {
-      source: "wing_buster_hp_input",
+    requestChoice: {
+      choiceType: "numberInput",
+      source: "wing_buster_unlock",
+      effectType: "hp_cost_append_attack",
+      ownerPlayer: context.ownerPlayer,
+      enemyPlayer: context.enemyPlayer,
       title: "消費HPを入力",
-      digits: 3
-    })
+      digits: 3,
+      currentValue: "",
+      params: {
+        damageRate: 0.5,
+        zeroEvade: true,
+        setFlag: "wingBusterUnlockUsedThisAction",
+        count: 1,
+        attackType: "shoot",
+        beam: true,
+        sourceLabel: "バスターライフル・出力解放"
+      }
+    }
   };
 }
   
