@@ -1015,6 +1015,30 @@ function canOperateOnlinePlayer() {
   return currentPlayer === onlineState.myPlayer;
 }
 
+function publishOnlineChoiceAction(selectedValue) {
+  if (!onlineState.enabled) return;
+  if (onlineState.isApplyingRemote) return;
+
+  const choice = pendingChoice;
+  if (!choice) return;
+
+  onlineActionSeq += 1;
+  onlineState.lastAppliedActionId = onlineActionSeq;
+
+  updateRoom(onlineState.roomId, {
+    action: {
+      actionId: onlineActionSeq,
+      actor: choice.ownerPlayer,
+      type: "choice",
+      payload: {
+        selectedValue
+      },
+      createdAt: Date.now()
+    },
+    "meta/updatedAt": Date.now()
+  });
+}
+
 function publishOnlineSpecialAction(ownerPlayer, specialKey) {
   if (!onlineState.enabled) return;
   if (onlineState.isApplyingRemote) return;
