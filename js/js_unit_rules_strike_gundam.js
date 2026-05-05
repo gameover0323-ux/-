@@ -379,6 +379,7 @@ if (special.effectType === "short_decisive_battle") {
   };
 }
 
+
 if (special.effectType === "agni_output_unlock") {
   return {
     handled: true,
@@ -401,7 +402,7 @@ if (special.effectType === "agni_output_unlock") {
     }
   };
 }
-  
+
   return { handled: false, redraw: false, message: null };
 }
 
@@ -628,17 +629,7 @@ export function modifyStrikeEvadeAttempt(defender, attacker, attack, context = {
   return { handled: false };
 }
 
-function makeNumberInputChoice(state, context, options = {}) {
-  return {
-    choiceType: "numberInput",
-    source: options.source || "number_input",
-    ownerPlayer: context.ownerPlayer,
-    enemyPlayer: context.enemyPlayer,
-    title: options.title || "数値を入力",
-    digits: options.digits || 3,
-    currentValue: ""
-  };
-}
+
 
 export function onStrikeResolveChoice(state, pendingChoice, selectedValue, context = {}) {
   ensureStrikeState(state);
@@ -673,6 +664,6 @@ state.strikePackCooldown = 0;
     };
   }
 
-  
+
   return { handled: false, redraw: false, message: null };
 }
