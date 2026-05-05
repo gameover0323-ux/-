@@ -312,6 +312,9 @@ function buildAttackTags(attack) {
 export function renderPendingChoiceUI({
   title,
   choices,
+  choiceType,
+  currentValue,
+  digits,
   onChoose
 }) {
   const attackLog = document.getElementById("attackLog");
@@ -323,64 +326,82 @@ export function renderPendingChoiceUI({
   titleDiv.textContent = title;
   attackLog.appendChild(titleDiv);
 
-  const wrap = document.createElement("div");
+  // =========================
+  // 数値入力モード
+  // =========================
+  if (choiceType === "numberInput") {
+    let value = currentValue || "";
 
-  choices.forEach((choice) => {
-    const btn = document.createElement("button");
-    btn.textContent = choice.label;
-    btn.addEventListener("click", () => {
-      onChoose(choice.value);
+    const display = document.createElement("div");
+    display.style.fontSize = "20px";
+    display.style.marginBottom = "8px";
+    display.textContent = value || "0";
+    attackLog.appendChild(display);
+
+    const keypad = document.createElement("div");
+
+    for (let i = 0; i <= 9; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+
+      btn.addEventListener("click", () => {
+        if (value.length >= digits) return;
+
+        value += String(i);
+
+        renderPendingChoiceUI({
+          title,
+          choiceType,
+          currentValue: value,
+          digits,
+          onChoose
+        });
+      });
+
+      keypad.appendChild(btn);
+    }
+
+    const okBtn = document.createElement("button");
+    okBtn.textContent = "決定";
+    okBtn.addEventListener("click", () => {
+      onChoose(value);
     });
-    wrap.appendChild(btn);
-  });
-if (choice.choiceType === "numberInput") {
-  const display = document.createElement("div");
-  display.style.fontSize = "20px";
-  display.style.marginBottom = "8px";
-  display.textContent = choice.currentValue || "0";
-  attackLog.appendChild(display);
 
-  const keypad = document.createElement("div");
-
-  for (let i = 0; i <= 9; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = i;
-
-    btn.addEventListener("click", () => {
-      if (choice.currentValue.length >= choice.digits) return;
-
-      choice.currentValue += String(i);
+    const clearBtn = document.createElement("button");
+    clearBtn.textContent = "クリア";
+    clearBtn.addEventListener("click", () => {
       renderPendingChoiceUI({
-        ...choice,
+        title,
+        choiceType,
+        currentValue: "",
+        digits,
         onChoose
       });
     });
 
-    keypad.appendChild(btn);
+    attackLog.appendChild(keypad);
+    attackLog.appendChild(okBtn);
+    attackLog.appendChild(clearBtn);
+
+    return;
   }
 
-  const okBtn = document.createElement("button");
-  okBtn.textContent = "決定";
-  okBtn.addEventListener("click", () => {
-    onChoose(choice.currentValue);
-  });
+  // =========================
+  // 通常選択
+  // =========================
+  const wrap = document.createElement("div");
 
-  const clearBtn = document.createElement("button");
-  clearBtn.textContent = "クリア";
-  clearBtn.addEventListener("click", () => {
-    choice.currentValue = "";
-    renderPendingChoiceUI({
-      ...choice,
-      onChoose
+  (choices || []).forEach((choice) => {
+    const btn = document.createElement("button");
+    btn.textContent = choice.label;
+
+    btn.addEventListener("click", () => {
+      onChoose(choice.value);
     });
+
+    wrap.appendChild(btn);
   });
 
-  attackLog.appendChild(keypad);
-  attackLog.appendChild(okBtn);
-  attackLog.appendChild(clearBtn);
-
-  return;
-}
   attackLog.appendChild(wrap);
 }
 
