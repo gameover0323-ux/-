@@ -36,24 +36,26 @@ export function createUiController(ctx) {
   }
 
   function renderPendingChoice() {
-    const pendingChoice = ctx.getPendingChoice();
-    if (!pendingChoice) return;
+  const pendingChoice = ctx.getPendingChoice();
+  if (!pendingChoice) return;
 
-    const choices =
-      Array.isArray(pendingChoice.choices) && pendingChoice.choices.length > 0
-        ? pendingChoice.choices
-        : (pendingChoice.slotKeys || []).map((slotKey) => ({
-            label: String(ctx.getSlotNumberFromKey(slotKey)),
-            value: slotKey
-          }));
+  const choices =
+    Array.isArray(pendingChoice.choices) && pendingChoice.choices.length > 0
+      ? pendingChoice.choices
+      : (pendingChoice.slotKeys || []).map((slotKey) => ({
+          label: String(ctx.getSlotNumberFromKey(slotKey)),
+          value: slotKey
+        }));
 
-    ctx.renderPendingChoiceUI({
-      title: pendingChoice.title,
-      choices,
-      onChoose: (value) => ctx.resolvePendingChoice(value)
-    });
+  ctx.renderPendingChoiceUI({
+    title: pendingChoice.title,
+    choices,
+    choiceType: pendingChoice.choiceType,
+    currentValue: pendingChoice.currentValue,
+    digits: pendingChoice.digits,
+    onChoose: (value) => ctx.resolvePendingChoice(value)
+  });
   }
-
   function updateBattleCenterUi() {
     const actionCounterValue = document.getElementById("actionCounterValue");
     const toggleTestModeBtn = document.getElementById("toggleTestModeBtn");
