@@ -1027,12 +1027,9 @@ function canOperateOnlinePlayer() {
   if (!onlineState.enabled) return true;
   return currentPlayer === onlineState.myPlayer;
 }
-
-function publishOnlineChoiceAction(selectedValue) {
+function publishOnlineChoiceAction(choice, selectedValue) {
   if (!onlineState.enabled) return;
   if (onlineState.isApplyingRemote) return;
-
-  const choice = pendingChoice;
   if (!choice) return;
 
   onlineActionSeq += 1;
@@ -1044,6 +1041,8 @@ function publishOnlineChoiceAction(selectedValue) {
       actor: choice.ownerPlayer,
       type: "choice",
       payload: {
+        source: choice.source || null,
+        choiceType: choice.choiceType || null,
         selectedValue
       },
       createdAt: Date.now()
