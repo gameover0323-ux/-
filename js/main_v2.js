@@ -1254,6 +1254,8 @@ function initOnline1v1Battle(unitA, unitB) {
   currentActionLabel = "";
   pendingChoice = null;
 
+onlineBattleFinished = false;
+  
   isTestMode = false;
 
   redrawBattleBoards();
