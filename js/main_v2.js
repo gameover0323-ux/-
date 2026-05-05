@@ -739,7 +739,9 @@ function finishBattle(winnerPlayer) {
     selectingPlayer = "A";
     currentTurn = 1;
     currentPlayer = "A";
+publishOnlineBattleEnd(winnerPlayer);
 
+  const popup = document.getElementById("popup");
     showScreen("title");
   });
 }
