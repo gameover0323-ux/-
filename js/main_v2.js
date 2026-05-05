@@ -1215,7 +1215,18 @@ if (action.type === "choice") {
     onlineState.isApplyingRemote = false;
     return;
   }
+if (action.type === "battleEnd") {
+  const winner = action.payload?.winner;
+  if (!winner) {
+    onlineState.isApplyingRemote = false;
+    return;
+  }
 
+  finishBattle(winner);
+
+  onlineState.isApplyingRemote = false;
+  return;
+}
   if (action.type === "endTurn") {
     battleFlow.endTurn();
     onlineState.isApplyingRemote = false;
