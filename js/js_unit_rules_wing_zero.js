@@ -365,11 +365,19 @@ export function executeWingZeroSpecial(state, specialKey, context = {}) {
       message: null
     };
   }
-
-  if (special.effectType === "buster_unlock") {
-    const hpInput = prompt("消費するHPを入力");
-    const hpCost = parseInt(hpInput, 10);
-
+if (special.effectType === "buster_unlock") {
+  return {
+    handled: true,
+    redraw: true,
+    message: null,
+    requestChoice: makeNumberInputChoice(state, context, {
+      source: "wing_buster_hp_input",
+      title: "消費HPを入力",
+      digits: 3
+    })
+  };
+}
+  
     if (!hpCost || hpCost <= 0) {
       return {
         handled: true,
