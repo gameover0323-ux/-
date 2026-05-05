@@ -856,7 +856,20 @@ function executeSpecial(ownerPlayer, specialKey) {
 }
 
 function resolvePendingChoice(selectedValue) {
-  return actionLayer.resolvePendingChoice(selectedValue);
+  if (onlineState.enabled && pendingChoice) {
+    const ownerPlayer = pendingChoice.ownerPlayer;
+
+    if (ownerPlayer !== onlineState.myPlayer) {
+      showPopup("選択権のあるプレイヤーのみ操作できます");
+      return;
+    }
+  }
+
+  const result = actionLayer.resolvePendingChoice(selectedValue);
+
+  publishOnlineChoiceAction(selectedValue);
+
+  return result;
 }
 
 function executeNextQueuedSlot() {
