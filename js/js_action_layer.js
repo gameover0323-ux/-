@@ -427,6 +427,7 @@ if (ctx.getCurrentAttack() && ctx.getCurrentAttack().length > 0) {
 }
 
 ctx.renderAttackLogText(result.message || "選択完了");
+  }
 
   function executeNextQueuedSlot() {
     const team = ctx.getTeam(ctx.getCurrentPlayer());
