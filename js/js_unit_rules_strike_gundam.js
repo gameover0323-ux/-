@@ -637,6 +637,18 @@ export function modifyStrikeEvadeAttempt(defender, attacker, attack, context = {
   return { handled: false };
 }
 
+function makeNumberInputChoice(state, context, options = {}) {
+  return {
+    choiceType: "numberInput",
+    source: options.source || "number_input",
+    ownerPlayer: context.ownerPlayer,
+    enemyPlayer: context.enemyPlayer,
+    title: options.title || "数値を入力",
+    digits: options.digits || 3,
+    currentValue: ""
+  };
+}
+
 export function onStrikeResolveChoice(state, pendingChoice, selectedValue, context = {}) {
   ensureStrikeState(state);
 
