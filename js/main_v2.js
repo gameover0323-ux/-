@@ -162,6 +162,8 @@ backFromOnlineRoomBtn.addEventListener("click", () => {
 
 
 document.getElementById("start1v1Btn").addEventListener("click", () => {
+  resetOnlineStateForLocalBattle();
+
   battleMode = "1v1";
   teamA = null;
   teamB = null;
@@ -173,6 +175,8 @@ document.getElementById("start1v1Btn").addEventListener("click", () => {
 });
 
 document.getElementById("start2v2Btn").addEventListener("click", () => {
+  resetOnlineStateForLocalBattle();
+
   battleMode = "2v2";
   teamA = null;
   teamB = null;
@@ -184,6 +188,8 @@ document.getElementById("start2v2Btn").addEventListener("click", () => {
 });
 
 document.getElementById("startChallenge1v1Btn").addEventListener("click", () => {
+  resetOnlineStateForLocalBattle();
+
   battleMode = "challenge1v1";
   teamA = null;
   teamB = null;
@@ -195,6 +201,8 @@ document.getElementById("startChallenge1v1Btn").addEventListener("click", () => 
 });
 
 document.getElementById("startChallenge2v2Btn").addEventListener("click", () => {
+  resetOnlineStateForLocalBattle();
+
   battleMode = "challenge2v2";
   teamA = null;
   teamB = null;
@@ -205,6 +213,8 @@ document.getElementById("startChallenge2v2Btn").addEventListener("click", () => 
   updateSelectUi();
 });
 document.getElementById("startVsCpu1v1Btn").addEventListener("click", () => {
+  resetOnlineStateForLocalBattle();
+
   battleMode = "vscpu1v1";
   teamA = null;
   teamB = null;
@@ -216,6 +226,8 @@ document.getElementById("startVsCpu1v1Btn").addEventListener("click", () => {
 });
 
 document.getElementById("startVsCpu2v2Btn").addEventListener("click", () => {
+  resetOnlineStateForLocalBattle();
+
   battleMode = "vscpu2v2";
   teamA = null;
   teamB = null;
@@ -225,6 +237,7 @@ document.getElementById("startVsCpu2v2Btn").addEventListener("click", () => {
   showScreen("select");
   updateSelectUi();
 });
+
 const units = unitList;
 
 const unitButtons = document.getElementById("unitButtons");
