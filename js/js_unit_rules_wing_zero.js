@@ -623,7 +623,47 @@ export function modifyWingZeroEvadeAttempt(defender, attacker, attack, context =
 
 export function onWingZeroResolveChoice(state, pendingChoice, selectedValue, context = {}) {
   ensureWingZeroState(state);
+if (pendingChoice.source === "wing_buster_hp_input") {
+  const hpCost = parseInt(selectedValue, 10);
 
+  if (!hpCost || hpCost <= 0) {
+    return {
+      handled: true,
+      redraw: false,
+      message: null
+    };
+  }
+
+  if (hpCost >= state.hp) {
+    return {
+      handled: true,
+      redraw: false,
+      message: "HPが足りません"
+    };
+  }
+
+  state.evade = 0;
+  state.hp -= hpCost;
+  state.wingBusterUnlockUsedThisAction = true;
+
+  const bonus = Math.floor(hpCost / 2);
+  const appendAttacks = createAttack(bonus, 1, {
+    type: "shoot",
+    beam: true,
+    cannotEvade: false,
+    ignoreReduction: false,
+    ignoreDefense: false,
+    special: null,
+    source: "バスターライフル・出力解放"
+  });
+
+  return {
+    handled: true,
+    redraw: true,
+    message: null,
+    appendAttacks
+  };
+}
   if (pendingChoice.source === "wing_zero_chase") {
     if (selectedValue !== "run") {
       return {
