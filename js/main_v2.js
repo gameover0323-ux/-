@@ -1174,6 +1174,15 @@ if (action.type === "special") {
     onlineState.isApplyingRemote = false;
     return;
 }
+
+if (action.type === "choice") {
+    const selectedValue = action.payload?.selectedValue;
+
+    actionLayer.resolvePendingChoice(selectedValue);
+
+    onlineState.isApplyingRemote = false;
+    return;
+}
   
   if (action.type === "qte") {
     const kind = action.payload?.kind;
