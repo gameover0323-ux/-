@@ -16,6 +16,101 @@ import { resolveSlotEffect } from "./js_slot_effects.js";
 import { executeCommonSpecial } from "./js_special_actions.js";
 
 export function createActionLayer(ctx) {
+ function resolveCommonPendingChoice(actor, choice, selectedValue, context = {}) {
+  if (!choice || !choice.effectType) {
+    return { handled: false };
+  }
+
+  if (choice.effectType === "hp_cost_damage_bonus") {
+    const hpCost = parseInt(selectedValue, 10);
+
+    if (!hpCost || hpCost <= 0) {
+      return { handled: true, redraw: false, message: null };
+    }
+
+    if (hpCost >= actor.hp) {
+      return { handled: true, redraw: false, message: "HPが足りません" };
+    }
+
+    actor.hp -= hpCost;
+
+    if (choice.params?.setFlag) {
+      actor[choice.params.setFlag] = true;
+    }
+
+    if (choice.params?.zeroEvade) {
+      actor.evade = 0;
+    }
+
+    const rate =
+      typeof choice.params?.damageRate === "number"
+        ? choice.params.damageRate
+        : 0.5;
+
+    const bonus = Math.floor(hpCost * rate);
+
+    if (Array.isArray(context.currentAttack)) {
+      context.currentAttack.forEach((attack) => {
+        attack.damage += bonus;
+      });
+    }
+
+    return {
+      handled: true,
+      redraw: true,
+      message: `${choice.params?.messagePrefix || "出力解放"}: ${bonus}ダメージ加算`
+    };
+  }
+
+  if (choice.effectType === "hp_cost_append_attack") {
+    const hpCost = parseInt(selectedValue, 10);
+
+    if (!hpCost || hpCost <= 0) {
+      return { handled: true, redraw: false, message: null };
+    }
+
+    if (hpCost >= actor.hp) {
+      return { handled: true, redraw: false, message: "HPが足りません" };
+    }
+
+    actor.hp -= hpCost;
+
+    if (choice.params?.setFlag) {
+      actor[choice.params.setFlag] = true;
+    }
+
+    if (choice.params?.zeroEvade) {
+      actor.evade = 0;
+    }
+
+    const rate =
+      typeof choice.params?.damageRate === "number"
+        ? choice.params.damageRate
+        : 0.5;
+
+    const damage = Math.floor(hpCost * rate);
+
+    const appendAttacks = createAttack(damage, choice.params?.count || 1, {
+      type: choice.params?.attackType || "shoot",
+      beam: !!choice.params?.beam,
+      cannotEvade: !!choice.params?.cannotEvade,
+      ignoreReduction: !!choice.params?.ignoreReduction,
+      ignoreDefense: !!choice.params?.ignoreDefense,
+      special: choice.params?.special || null,
+      source: choice.params?.sourceLabel || "追加攻撃"
+    });
+
+    return {
+      handled: true,
+      redraw: true,
+      message: choice.params?.message || null,
+      appendAttacks
+    };
+  }
+
+  return { handled: false };
+ }
+  
   function runAfterSlotResolvedHook(actor, slotNumber, resolveResult, slotMeta = {}) {
     const afterResult = executeUnitAfterSlotResolved(actor, slotNumber, {
       ...slotMeta,
