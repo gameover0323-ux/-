@@ -384,11 +384,21 @@ if (special.effectType === "agni_output_unlock") {
     handled: true,
     redraw: true,
     message: null,
-    requestChoice: makeNumberInputChoice(state, context, {
-      source: "agni_hp_input",
+    requestChoice: {
+      choiceType: "numberInput",
+      source: "strike_agni_output_unlock",
+      effectType: "hp_cost_damage_bonus",
+      ownerPlayer: context.ownerPlayer,
+      enemyPlayer: context.enemyPlayer,
       title: "消費HPを入力",
-      digits: 3
-    })
+      digits: 3,
+      currentValue: "",
+      params: {
+        damageRate: 0.5,
+        setFlag: "strikeAgniOutputUsedThisAction",
+        messagePrefix: "アグニ出力解放"
+      }
+    }
   };
 }
   
