@@ -856,8 +856,12 @@ function executeSpecial(ownerPlayer, specialKey) {
 }
 
 function resolvePendingChoice(selectedValue) {
-  if (onlineState.enabled && pendingChoice) {
-    const ownerPlayer = pendingChoice.ownerPlayer;
+
+function resolvePendingChoice(selectedValue) {
+  const choice = pendingChoice;
+
+  if (onlineState.enabled && choice) {
+    const ownerPlayer = choice.ownerPlayer;
 
     if (ownerPlayer !== onlineState.myPlayer) {
       showPopup("選択権のあるプレイヤーのみ操作できます");
@@ -865,13 +869,11 @@ function resolvePendingChoice(selectedValue) {
     }
   }
 
-  const result = actionLayer.resolvePendingChoice(selectedValue);
+  publishOnlineChoiceAction(choice, selectedValue);
 
-  publishOnlineChoiceAction(selectedValue);
-
-  return result;
+  return actionLayer.resolvePendingChoice(selectedValue);
 }
-
+  
 function executeNextQueuedSlot() {
   return actionLayer.executeNextQueuedSlot();
 }
