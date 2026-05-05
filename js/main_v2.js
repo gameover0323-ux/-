@@ -708,19 +708,28 @@ function isSideDefeated(playerKey) {
 }
 
 function finishBattle(winnerPlayer) {
+  if (onlineBattleFinished) return;
+  onlineBattleFinished = true;
+
+  publishOnlineBattleEnd(winnerPlayer);
+
   const popup = document.getElementById("popup");
   if (!popup) return;
 
-  popup.innerHTML = `
+  popup.innerHTML = "";
+
+  const message = document.createElement("div");
+  message.innerHTML = `
     PLAYER ${winnerPlayer} の勝利！
     <br><br>
-    <button id="backToTitleBtn">タイトルへ戻る</button>
   `;
 
-  popup.style.display = "block";
+  const button = document.createElement("button");
+  button.textContent = "タイトルへ戻る";
 
-  document.getElementById("backToTitleBtn").addEventListener("click", () => {
+  button.addEventListener("click", () => {
     popup.style.display = "none";
+    popup.innerHTML = "";
 
     currentAttack = [];
     currentAttackContext = null;
@@ -739,11 +748,25 @@ function finishBattle(winnerPlayer) {
     selectingPlayer = "A";
     currentTurn = 1;
     currentPlayer = "A";
-publishOnlineBattleEnd(winnerPlayer);
 
-  const popup = document.getElementById("popup");
+    onlineState.enabled = false;
+    onlineState.roomId = null;
+    onlineState.myPlayer = null;
+    onlineState.isHost = false;
+    onlineState.lastAppliedActionId = 0;
+    onlineState.isApplyingRemote = false;
+
+    onlineBattleStarted = false;
+    onlineBattleFinished = false;
+    onlineSelectEntered = false;
+    onlineActionSeq = 0;
+
     showScreen("title");
   });
+
+  popup.appendChild(message);
+  popup.appendChild(button);
+  popup.style.display = "block";
 }
 
 function checkBattleEnd() {
