@@ -379,38 +379,19 @@ if (special.effectType === "short_decisive_battle") {
   };
 }
 
-
-  if (special.effectType === "agni_output_unlock") {
-    const hpInput = prompt("消費するHPを入力");
-    const hpCost = parseInt(hpInput, 10);
-
-    if (!hpCost || hpCost <= 0) {
-      return { handled: true, redraw: false, message: null };
-    }
-
-    if (hpCost >= state.hp) {
-      return { handled: true, redraw: false, message: "HPが足りません" };
-    }
-
-    state.hp -= hpCost;
-    state.strikeAgniOutputUsedThisAction = true;
-    markStrikeActivity(state);
-
-    const bonus = Math.floor(hpCost / 2);
-
-    if (Array.isArray(context.currentAttack)) {
-      context.currentAttack.forEach((attack) => {
-        attack.damage += bonus;
-      });
-    }
-
-    return {
-      handled: true,
-      redraw: true,
-      message: `アグニ出力解放: ${bonus}ダメージ加算`
-    };
-  }
-
+if (special.effectType === "agni_output_unlock") {
+  return {
+    handled: true,
+    redraw: true,
+    message: null,
+    requestChoice: makeNumberInputChoice(state, context, {
+      source: "agni_hp_input",
+      title: "消費HPを入力",
+      digits: 3
+    })
+  };
+}
+  
   return { handled: false, redraw: false, message: null };
 }
 
@@ -682,6 +663,34 @@ state.strikePackCooldown = 0;
     };
   }
 
+if (pendingChoice.source === "agni_hp_input") {
+  const hpCost = parseInt(selectedValue, 10);
 
+  if (!hpCost || hpCost <= 0) {
+    return { handled: true, redraw: false, message: null };
+  }
+
+  if (hpCost >= state.hp) {
+    return { handled: true, redraw: false, message: "HPが足りません" };
+  }
+
+  state.hp -= hpCost;
+  state.strikeAgniOutputUsedThisAction = true;
+  markStrikeActivity(state);
+
+  const bonus = Math.floor(hpCost / 2);
+
+  if (Array.isArray(context.currentAttack)) {
+    context.currentAttack.forEach((attack) => {
+      attack.damage += bonus;
+    });
+  }
+
+  return {
+    handled: true,
+    redraw: true,
+    message: `アグニ出力解放: ${bonus}ダメージ加算`
+  };
+}
   return { handled: false, redraw: false, message: null };
 }
