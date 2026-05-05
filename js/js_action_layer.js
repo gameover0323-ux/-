@@ -1,3 +1,5 @@
+import { createAttack } from "./js_battle_system.js";
+
 import {
   getSlotByKey,
   getSlotNumberFromKey,
