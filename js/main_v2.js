@@ -856,8 +856,6 @@ function executeSpecial(ownerPlayer, specialKey) {
 }
 
 function resolvePendingChoice(selectedValue) {
-
-function resolvePendingChoice(selectedValue) {
   const choice = pendingChoice;
 
   if (onlineState.enabled && choice) {
