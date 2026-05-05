@@ -906,89 +906,22 @@ function executeSpecial(ownerPlayer, specialKey) {
 }
 
 function resolvePendingChoice(selectedValue) {
-  const pendingChoice = ctx.getPendingChoice();
-  if (!pendingChoice) return;
-
   const choice = pendingChoice;
-  const ownerPlayer = choice.ownerPlayer;
-  const enemyPlayer = choice.enemyPlayer || ctx.getOpponentPlayer(ownerPlayer);
 
-  const actor = ctx.getPlayerState(ownerPlayer);
-  const defender = ctx.getPlayerState(enemyPlayer);
+  if (onlineState.enabled && choice) {
+    const ownerPlayer = choice.ownerPlayer;
 
-  if (!actor) {
-    ctx.clearPendingChoice();
-    return;
-  }
-
-  const choiceContext = {
-    ownerPlayer,
-    enemyPlayer,
-    enemyState: defender,
-    currentAttackContext: ctx.getCurrentAttackContext(),
-    currentAttack: ctx.getCurrentAttack()
-  };
-
-  let result = resolveCommonPendingChoice(actor, choice, selectedValue, choiceContext);
-
-  if (!result.handled) {
-    result = executeUnitResolveChoice(actor, choice, selectedValue, choiceContext);
-  }
-
-  ctx.clearPendingChoice();
-
-  if (!result.handled) {
-    ctx.redrawBattleBoards();
-    ctx.renderAttackLogText("選択完了");
-    return;
-  }
-
-  if (result.requestChoice) {
-    ctx.handleChoiceRequest(result.requestChoice);
-    return;
-  }
-
-  if (result.startSlotAction) {
-    if (ctx.isUnifiedTeam(ownerPlayer)) {
-      ctx.executeUnifiedSelectedSlot(ownerPlayer, result.startSlotAction.slotKey);
+    if (ownerPlayer !== onlineState.myPlayer) {
+      showPopup("選択権のあるプレイヤーのみ操作できます");
       return;
     }
-
-    startSlotAction(
-      ownerPlayer,
-      result.startSlotAction.slotKey,
-      result.startSlotAction.slotData || null
-    );
-    return;
   }
 
-  if (Array.isArray(result.appendAttacks) && result.appendAttacks.length > 0) {
-    const currentAttack = ctx.getCurrentAttack();
-    const currentAttackContext = ctx.getCurrentAttackContext();
+  publishOnlineChoiceAction(choice, selectedValue);
 
-    currentAttack.push(...result.appendAttacks);
-
-    if (currentAttackContext) {
-      currentAttackContext.totalCount += result.appendAttacks.length;
-    }
-
-    ctx.setCurrentAttack(currentAttack);
-    ctx.setCurrentAttackContext(currentAttackContext);
-  }
-
-  ctx.redrawBattleBoards();
-
-  if (result.message) {
-    ctx.appendBattleNotice(result.message);
-  }
-
-  if (ctx.getCurrentAttack() && ctx.getCurrentAttack().length > 0) {
-    ctx.renderAttackChoices();
-    return;
-  }
-
-  ctx.renderAttackLogText(result.message || "選択完了");
+  return actionLayer.resolvePendingChoice(selectedValue);
 }
+
   
 function executeNextQueuedSlot() {
   return actionLayer.executeNextQueuedSlot();
