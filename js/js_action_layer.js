@@ -416,8 +416,17 @@ function resolvePendingChoice(selectedValue) {
     }
 
     ctx.redrawBattleBoards();
-    ctx.renderAttackLogText(result.message || "選択完了");
-  }
+
+if (result.message) {
+  ctx.appendBattleNotice(result.message);
+}
+
+if (ctx.getCurrentAttack() && ctx.getCurrentAttack().length > 0) {
+  ctx.renderAttackChoices();
+  return;
+}
+
+ctx.renderAttackLogText(result.message || "選択完了");
 
   function executeNextQueuedSlot() {
     const team = ctx.getTeam(ctx.getCurrentPlayer());
