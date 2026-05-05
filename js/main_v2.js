@@ -1247,6 +1247,27 @@ function initOnline1v1Battle(unitA, unitB) {
   showScreen("battle");
 }
 
+function publishOnlineBattleEnd(winnerPlayer) {
+  if (!onlineState.enabled) return;
+  if (onlineState.isApplyingRemote) return;
+
+  onlineActionSeq += 1;
+  onlineState.lastAppliedActionId = onlineActionSeq;
+
+  updateRoom(onlineState.roomId, {
+    action: {
+      actionId: onlineActionSeq,
+      actor: winnerPlayer,
+      type: "battleEnd",
+      payload: {
+        winner: winnerPlayer
+      },
+      createdAt: Date.now()
+    },
+    "meta/updatedAt": Date.now()
+  });
+}
+
 uiController = createUiController({
   screens,
 
