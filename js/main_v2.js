@@ -976,6 +976,7 @@ function bootOnlineFromUrl() {
 }
 
 let onlineBattleStarted = false;
+let onlineBattleFinished = false;
 let onlineActionSeq = 0;
 let onlineSelectEntered = false;
 function getUnitById(unitId) {
