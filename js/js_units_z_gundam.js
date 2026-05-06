@@ -57,7 +57,7 @@ export const z_gundam = {
         },
         slot5: {
           label: "バイオセンサー",
-          desc: "3ターンの間、バイオセンサー状態に強化される。",
+          desc: "5ターンの間、バイオセンサー状態に強化される。",
           effect: {
             type: "custom",
             effectId: "biosensor_activate"
