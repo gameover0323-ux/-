@@ -47,10 +47,16 @@ function lantaoSlots() {
       effect: { type: "attack", damage: 50, count: 2, attackType: "melee" }
     },
     slot2: {
-      label: "ガンダムヘッド",
-      desc: "10ダメージ×4回 射撃。1命中ごとに相手回避-1",
-      effect: { type: "attack", damage: 10, count: 4, attackType: "shoot", special: "devil_head_each_hit" }
-    },
+  label: "ガンダムヘッド",
+  desc: "10ダメージ×4回 射撃。フルヒット時、相手回避-1",
+  effect: {
+    type: "attack",
+    damage: 10,
+    count: 4,
+    attackType: "shoot",
+    special: "devil_head_full_hit"
+  }
+},
     slot3: {
       label: "回復",
       desc: "70回復",
