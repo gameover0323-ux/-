@@ -26,21 +26,17 @@ function isSelectableEnemy2v2() {
 }
 
   function getSelectList() {
-  if (!isChallengeMode()) return ctx.units;
+  const extraUnits =
+    typeof ctx.getExtraUnlockedUnits === "function"
+      ? ctx.getExtraUnlockedUnits()
+      : [];
 
-  if (isVsCpuMode() && ctx.getSelectingPlayer() === "B") {
-    return [
-      ...(ctx.cpus || []),
-      ...(ctx.cpuBeginnerList || [])
-    ];
+  if (!isChallengeMode()) {
+    if (ctx.getBattleMode && String(ctx.getBattleMode()).startsWith("online")) {
+      return ctx.units;
+    }
+    return [...ctx.units, ...extraUnits];
   }
-
-  if (ctx.getSelectingPlayer() === "B") {
-    return ctx.bosses || [];
-  }
-
-  return ctx.units;
-}
 
   function loadUnitButtons() {
     ctx.unitButtons.innerHTML = "";
