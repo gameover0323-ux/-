@@ -54,6 +54,22 @@ function isSelectableEnemy2v2() {
   if (ctx.confirmSelectedUnitBtn) {
     ctx.confirmSelectedUnitBtn.disabled = false;
   }
+       if (ctx.confirmSelectedUnitBtn) {
+  ctx.confirmSelectedUnitBtn.disabled = !ctx.getPendingSelectedUnit();
+  ctx.confirmSelectedUnitBtn.onclick = () => {
+    const unit = ctx.getPendingSelectedUnit();
+    if (!unit) return;
+    ctx.setPendingSelectedUnit(null);
+    ctx.confirmSelectedUnitBtn.disabled = true;
+    selectUnit(unit);
+  };
+}
+
+if (ctx.backFromSelectBtn) {
+  ctx.backFromSelectBtn.onclick = () => {
+    ctx.showTitle();
+  };
+}
   updateSelectUi();
 });
 
