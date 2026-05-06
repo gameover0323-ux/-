@@ -223,7 +223,8 @@ const playerABox = document.getElementById("playerA");
 const playerBBox = document.getElementById("playerB");
 const selectGuide = document.getElementById("selectGuide");
 const selectedUnitsPreview = document.getElementById("selectedUnitsPreview");
-
+const confirmSelectedUnitBtn = document.getElementById("confirmSelectedUnitBtn");
+const backFromSelectBtn = document.getElementById("backFromSelectBtn");
 let selectingPlayer = "A";
 let selectedUnitA = null;
 let selectedUnitB = null;
