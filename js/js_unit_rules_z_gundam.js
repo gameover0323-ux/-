@@ -526,17 +526,23 @@ export function onZGundamActionResolved(attacker, defender, context = {}) {
         messages.push("バイオセンサー状態を3ターン延長");
       }
     }
+if (context.slotNumber === 4 && context.hitCount > 0) {
+  setStateEffect(attacker, "z_bio_next_sure_hit", {
+    turns: 1,
+    pendingActivation: true,
+    activeForTurn: false
+  });
 
-    if (context.slotNumber === 4 && context.hitCount > 0) {
-      setStateEffect(attacker, "z_bio_next_sure_hit", {
-        turns: 1,
-        pendingActivation: true,
-        activeForTurn: false
-      });
-      redraw = true;
-      messages.push("次ターン中の攻撃が必中");
-    }
+  const bioEffect = getStateEffect(attacker, "z_biosensor");
+  if (bioEffect) {
+    bioEffect.turns += 1;
+  }
 
+  redraw = true;
+  messages.push("次ターン中の攻撃が必中");
+  messages.push("バイオセンサー状態+1ターン");
+}
+  
     if (context.slotNumber === 5 && context.hitCount > 0) {
       defender.confuseStock = (defender.confuseStock || 0) + context.hitCount;
       redraw = true;
