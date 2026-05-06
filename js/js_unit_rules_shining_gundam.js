@@ -302,22 +302,16 @@ export function executeShiningSpecial(state, specialKey, context = {}) {
   }
 
   if (special.effectType === "miki_action") {
-   state.evade = Math.max(0, state.evade - 1);
-    state.shiningMikiUsedThisTurn += 1;
+  state.evade = Math.max(0, state.evade - 1);
+  state.shiningMikiUsedThisTurn += 1;
 
-    if (typeof state.actionCount !== "number") {
-      state.actionCount = 0;
-    }
-    state.actionCount += 1;
+  if (typeof state.actionCount !== "number") {
+    state.actionCount = 0;
+  }
 
-    consumeActiveModeTurns(state, 1);
-    
+  state.actionCount += 1;
 
-    return {
-      handled: true,
-      redraw: true,
-      message: null
-    };
+  return { handled: true, redraw: true, message: null };
   }
 
   if (special.effectType === "spirit_focus") {
