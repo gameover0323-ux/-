@@ -1522,7 +1522,7 @@ showTitle: () => {
   teamA = null;
   teamB = null;
   showScreen("title");
-}
+},
   onSelectUnit: (unit) => {
     if (!onlineState.enabled) return false;
 
