@@ -77,7 +77,7 @@ function activateBiosensor(state) {
   }
 
   setStateEffect(state, "z_biosensor", {
-    turns: 3,
+    turns: 5,
     skipNextTick: true
   });
 
