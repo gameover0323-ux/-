@@ -105,7 +105,7 @@ document.getElementById("startChallenge2v2Btn").addEventListener("click", () => 
   teamB = null;
   selectingPlayer = "A";
   selectedUnitA = null;
-  selectedUnitB = bossList[0];
+  selectedUnitB = null;
   showScreen("select");
   updateSelectUi();
 });
@@ -115,7 +115,7 @@ document.getElementById("startVsCpu1v1Btn").addEventListener("click", () => {
   teamB = null;
   selectingPlayer = "A";
   selectedUnitA = null;
-  selectedUnitB = cpuList[0];
+  selectedUnitB = null;
   showScreen("select");
   updateSelectUi();
 });
