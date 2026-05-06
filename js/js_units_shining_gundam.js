@@ -76,7 +76,7 @@ export const shining_gundam = {
           name: "見切り行動",
           effectType: "miki_action",
           timing: "self",
-          desc: "所持回避数を1消費して行動回数を1追加する。強化ターン中は使用数分だけ強化ターンを消費する。1ターンに2回まで。",
+          desc: "所持回避数を1消費して行動回数を1追加する。1ターンに2回まで。",
           actionType: "instant"
         },
         {
@@ -160,7 +160,7 @@ export const shining_gundam = {
           name: "見切り行動",
           effectType: "miki_action",
           timing: "self",
-          desc: "所持回避数を1消費して行動回数を1追加する。強化ターン中は使用数分だけ強化ターンを消費する。1ターンに2回まで。",
+          desc: "所持回避数を1消費して行動回数を1追加する。1ターンに2回まで。",
           actionType: "instant"
         },
         {
@@ -245,7 +245,7 @@ export const shining_gundam = {
           name: "見切り行動",
           effectType: "miki_action",
           timing: "self",
-          desc: "所持回避数を1消費して行動回数を1追加する。強化ターン中は使用数分だけ強化ターンを消費する。1ターンに2回まで。",
+          desc: "所持回避数を1消費して行動回数を1追加する。1ターンに2回まで。",
           actionType: "instant"
         },
         {
