@@ -207,8 +207,12 @@ const bText = bList.length > 0
       const btn = document.createElement("button");
       btn.textContent = unit.name;
       btn.addEventListener("click", () => {
-        selectUnit(unit);
-      });
+  ctx.setPendingSelectedUnit(unit);
+  if (ctx.confirmSelectedUnitBtn) {
+    ctx.confirmSelectedUnitBtn.disabled = false;
+  }
+  updateSelectUi();
+});
       ctx.unitButtons.appendChild(btn);
     });
   }
