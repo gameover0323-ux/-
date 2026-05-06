@@ -195,7 +195,7 @@ document.getElementById("startChallenge1v1Btn").addEventListener("click", () => 
   teamB = null;
   selectingPlayer = "A";
   selectedUnitA = null;
-  selectedUnitB = bossList[0];
+  selectedUnitB = null;
   showScreen("select");
   updateSelectUi();
 });
@@ -208,7 +208,7 @@ document.getElementById("startChallenge2v2Btn").addEventListener("click", () => 
   teamB = null;
   selectingPlayer = "A";
   selectedUnitA = null;
-  selectedUnitB = bossList[0];
+  selectedUnitB = null;
   showScreen("select");
   updateSelectUi();
 });
@@ -220,7 +220,7 @@ document.getElementById("startVsCpu1v1Btn").addEventListener("click", () => {
   teamB = null;
   selectingPlayer = "A";
   selectedUnitA = null;
-  selectedUnitB = cpuList[0];
+  selectedUnitB = null;
   showScreen("select");
   updateSelectUi();
 });
@@ -1505,7 +1505,20 @@ gameSetup = createGameSetup({
   unitButtons,
   selectGuide,
   selectedUnitsPreview,
-
+confirmSelectedUnitBtn,
+backFromSelectBtn,
+getPendingSelectedUnit: () => pendingSelectedUnit,
+setPendingSelectedUnit: (unit) => { pendingSelectedUnit = unit; },
+getExtraUnlockedUnits: () => extraUnlockedUnits,
+setExtraUnlockedUnits: (units) => { extraUnlockedUnits = units; },
+showTitle: () => {
+  pendingSelectedUnit = null;
+  selectedUnitA = null;
+  selectedUnitB = null;
+  teamA = null;
+  teamB = null;
+  showScreen("title");
+}
   onSelectUnit: (unit) => {
     if (!onlineState.enabled) return false;
 
