@@ -228,6 +228,8 @@ const backFromSelectBtn = document.getElementById("backFromSelectBtn");
 let selectingPlayer = "A";
 let selectedUnitA = null;
 let selectedUnitB = null;
+let pendingSelectedUnit = null;
+let extraUnlockedUnits = [];
 
 let currentTurn = 1;
 let currentPlayer = "A";
