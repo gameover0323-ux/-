@@ -6,7 +6,7 @@ import {
   listenRoom,
   buildInitialRoomData
 } from "./js_online_firebase.js";
-
+/*
 import { onlineState } from "./js_online_state.js";
 import { unitList, bossList, cpuList, cpuBeginnerList } from "./js_units_index.js";
 import {
@@ -55,7 +55,7 @@ import { createUiController } from "./js_ui_controller.js";
 import { createGameSetup } from "./js_game_setup.js";
 
 import { createActionLayer } from "./js_action_layer.js";
-
+*/
 
 const screens = {
   title: document.getElementById("title"),
