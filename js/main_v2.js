@@ -32,12 +32,14 @@ import {
   executeUnitModifyTakenDamage,
   executeUnitModifyEvadeAttempt
 } from "./js_unit_runtime.js";
-alert(" import OK");
-/*
+
 import {
   takeHit as resolveTakeHit,
   evadeAttack as resolveEvadeAttack
 } from "./js_battle_system.js";
+
+alert(" import OK");
+/*
 import { resolveSlotEffect } from "./js_slot_effects.js";
 import { executeCommonSpecial } from "./js_special_actions.js";
 import {
