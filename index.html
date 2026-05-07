@@ -176,10 +176,20 @@
 <div id="popup" class="popup"></div>
 
 <div style="position:fixed;top:0;left:0;z-index:99999;background:red;color:white;padding:8px;">
-  INDEX HTML v999
+  INDEX HTML v114514
 </div>
 
-<script type="module" src="./js/main_v2.js?v=999"></script>
+<script type="module">
+  alert("index inline module start");
 
+  import("./js/main_v2.js?v=1000")
+    .then(() => {
+      alert("main_v2 import success");
+    })
+    .catch((error) => {
+      alert("main_v2 import error: " + error.message);
+      console.error(error);
+    });
+</script>
 </body>
 </html>
