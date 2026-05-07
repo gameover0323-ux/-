@@ -124,17 +124,15 @@ if (onHitMessage) {
 }
 
 currentAttack.splice(attackIndex, 1);
-return { defender, attacker, currentAttack, attack, finalDamage, damageMessage };
-  return {
-    defender,
-    attacker,
-    currentAttack,
-    attack,
-    finalDamage,
-    damageMessage
-  };
-}
 
+return {
+  defender,
+  attacker,
+  currentAttack,
+  attack,
+  finalDamage,
+  damageMessage
+};
 export function evadeAttack({
   defender,
   currentAttack,
