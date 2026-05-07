@@ -9,9 +9,10 @@ import {
   buildInitialRoomData
 } from "./js_online_firebase.js";
 
-alert("js_online_firebase import OK");
-/*
 import { onlineState } from "./js_online_state.js";
+alert(" import OK");
+
+/*
 import { unitList, bossList, cpuList, cpuBeginnerList } from "./js_units_index.js";
 import {
   createBattleState,
