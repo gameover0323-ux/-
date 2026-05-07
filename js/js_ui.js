@@ -306,6 +306,10 @@ function buildAttackTags(attack) {
     tags.push(renderTag("[ビ]", !!attack.addedBeam));
   }
 
+if (attack.moonlightButterfly) {
+  tags.push(renderTag("[月光蝶]"));
+}
+  
   return tags.join("");
 }
 
