@@ -75,4 +75,18 @@ export const extreme_gundam = {
       evadeMax: 0,
       slots: {
         slot1: { label: "忘我墜星(オブビリオン・メテオ)", desc: "30ダメージ×4回。射撃。", effect: { type: "attack", damage: 30, count: 4, attackType: "shoot" } },
-        slot2
+        slot2: { label: "天上麗舞(ソレスタル・ビューティング)", desc: "120ダメージ。射撃、軽減不可。ヒット時、相手回避-5。", effect: { type: "attack", damage: 120, count: 1, attackType: "shoot", ignoreReduction: true, special: "extreme_evade_minus_5" } },
+        slot3: { label: "終焉摂理(デスティネイトプラン)", desc: "イクス・ファンネルミサイル。10ダメージ×8回。射撃。相手が4回以上回避すると、もう一度スロット行動する。", effect: { type: "attack", damage: 10, count: 8, attackType: "shoot", special: "extreme_reroll_if_evade_4" } },
+        slot4: { label: "人馬一神・乱れ突き", desc: "攻撃8回判定。1つでも当たると120ダメージ。格闘、軽減不可。", effect: { type: "attack", damage: 120, count: 8, attackType: "melee", ignoreReduction: true, special: "extreme_once_hit_mystic" } },
+        slot5: { label: "絶望蝶", desc: "相手の現在HPの半分ダメージ。月光蝶、軽減不可。", effect: { type: "attack", damage: 0, count: 1, attackType: "shoot", moonlightButterfly: true, ignoreReduction: true, special: "extreme_half_current_hp" } },
+        slot6: { label: "換装解除", desc: "エクストリームガンダムに戻る。次のターン、回避可能な攻撃を全て回避する。", effect: { type: "custom", effectId: "extreme_form_normal_full_evade" } }
+      },
+      slotOrder: ["slot1", "slot2", "slot3", "slot4", "slot5", "slot6"]
+    }
+  },
+
+  slots: {},
+  slotOrder: [],
+  specials: {},
+  specialOrder: []
+};
