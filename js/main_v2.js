@@ -11,8 +11,7 @@ import {
 
 import { onlineState } from "./js_online_state.js";
 import { unitList, bossList, cpuList, cpuBeginnerList } from "./js_units_index.js";
-alert(" import OK");
-/*
+
 import {
   createBattleState,
   applyUnitDerivedState,
@@ -33,7 +32,8 @@ import {
   executeUnitModifyTakenDamage,
   executeUnitModifyEvadeAttempt
 } from "./js_unit_runtime.js";
-
+alert(" import OK");
+/*
 import {
   takeHit as resolveTakeHit,
   evadeAttack as resolveEvadeAttack
