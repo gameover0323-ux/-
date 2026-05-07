@@ -133,6 +133,7 @@ return {
   finalDamage,
   damageMessage
 };
+}
 export function evadeAttack({
   defender,
   currentAttack,
