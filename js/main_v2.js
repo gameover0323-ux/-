@@ -31,6 +31,8 @@ import {
   executeUnitModifyTakenDamage,
   executeUnitModifyEvadeAttempt
 } from "./js_unit_runtime.js";
+alert(" import OK");
+/*
 import {
   takeHit as resolveTakeHit,
   evadeAttack as resolveEvadeAttack
@@ -44,8 +46,7 @@ import {
   renderAttackChoicesUI,
   renderPendingChoiceUI
 } from "./js_ui.js";
-alert(" import OK");
-/*
+
 import { create2v2Helpers } from "./js_2on2_helpers.js";
 import { create2v2Actions } from "./js_2on2_actions.js";
 
