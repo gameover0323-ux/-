@@ -17,7 +17,10 @@ export function createAttack(damage, count, options = {}) {
 
       special: options.special || null,
       source: options.source || null,
-      onHit: options.onHit || null
+      onHit: options.onHit || null,
+
+      moonlightButterfly: options.moonlightButterfly || false,
+      minEvadeRequired: options.minEvadeRequired || 0
     });
   }
 
