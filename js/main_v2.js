@@ -258,9 +258,21 @@ let currentTurn = 1;
 let currentPlayer = "A";
 let isTestMode = false;
 
-let battleMode = "1v1"; // "1v1" or "2v2" or "challenge1v1" or "challenge2v2"
+let battleMode = "1v1";
+
+/*
+  battleMode:
+  - 1v1
+  - 2v2
+  - challenge1v1
+  - challenge2v2
+  - vscpu1v1
+  - vscpu2v2
+  - online1v1
+*/
 
 // 2on2用チーム構造
+let teamA = null;
 let teamA = null;
 let teamB = null;
 
