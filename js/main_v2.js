@@ -1,3 +1,5 @@
+alert("main_v2 start");
+
 import {
   createRoomId,
   writeRoom,
@@ -6,6 +8,8 @@ import {
   listenRoom,
   buildInitialRoomData
 } from "./js_online_firebase.js";
+
+alert("js_online_firebase import OK");
 /*
 import { onlineState } from "./js_online_state.js";
 import { unitList, bossList, cpuList, cpuBeginnerList } from "./js_units_index.js";
@@ -55,7 +59,7 @@ import { createUiController } from "./js_ui_controller.js";
 import { createGameSetup } from "./js_game_setup.js";
 
 import { createActionLayer } from "./js_action_layer.js";
-*/
+
 
 const screens = {
   title: document.getElementById("title"),
@@ -269,7 +273,7 @@ let battleMode = "1v1";
   - vscpu1v1
   - vscpu2v2
   - online1v1
-*/
+
 
 // 2on2用チーム構造
 let teamA = null;
@@ -1789,3 +1793,4 @@ document.getElementById("toggleTestModeBtn").addEventListener("click", toggleTes
 
 loadUnitButtons();
 bootOnlineFromUrl();
+*/
