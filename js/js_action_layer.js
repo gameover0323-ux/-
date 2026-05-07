@@ -277,7 +277,10 @@ ctx.setCurrentAction(
     }
 
     if (extra.attacks.length > 0) {
-      startAttackQte(extra.attacks);
+      startAttackQte(extra.attacks, {
+  appendedOnly: true,
+  sourceLabel: extra.attacks[0]?.source || "追加攻撃"
+});
       return;
     }
 
