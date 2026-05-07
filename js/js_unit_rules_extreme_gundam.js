@@ -526,7 +526,43 @@ export function onExtremeGundamActionResolved(attacker, defender, context) {
     messages.push("タキオンフェイズ特性：次のターン行動不能。行動不能中は被ダメージ半減");
     redraw = true;
   }
+if (context.slotLabel === "カルネージストライカー連射" && context.hitCount > 0) {
+  return {
+    redraw: true,
+    message: messages.concat("カルネージストライカー連射：1回以上被弾したため本命攻撃").join("\n"),
+    appendAttackLabel: "カルネージストライカー連射",
+    appendAttacks: [
+      {
+        damage: 60,
+        type: "shoot",
+        beam: false,
+        cannotEvade: false,
+        ignoreReduction: false,
+        ignoreDefense: false,
+        source: "カルネージストライカー連射"
+      }
+    ]
+  };
+}
 
+if (context.slotLabel === "人馬一神・乱れ突き" && context.hitCount > 0) {
+  return {
+    redraw: true,
+    message: messages.concat("人馬一神・乱れ突き：1回以上被弾したため本命攻撃").join("\n"),
+    appendAttackLabel: "人馬一神・乱れ突き",
+    appendAttacks: [
+      {
+        damage: 120,
+        type: "melee",
+        beam: false,
+        cannotEvade: false,
+        ignoreReduction: true,
+        ignoreDefense: false,
+        source: "人馬一神・乱れ突き"
+      }
+    ]
+  };
+}
   return { redraw, message: messages.join("\n") || null };
 }
 
@@ -545,18 +581,29 @@ export function modifyExtremeGundamTakenDamage(state, attacker, attack, damage) 
   let nextDamage = damage;
   const messages = [];
 
-  if (state.extremeHighAltitudeActive) {
+if (state.extremeHighAltitudeActive) {
   state.extremeHighAltitudeActive = false;
-  messages.push("高高度カルネージストライカー：相手攻撃を無効化");
+  state.pendingReservedAttacks = state.pendingReservedAttacks || [];
+  state.pendingReservedAttacks.push({
+    delay: 0,
+    label: "高高度カルネージストライカー",
+    enemyPlayer: null,
+    attacks: [
+      {
+        damage: 200,
+        type: "shoot",
+        beam: false,
+        cannotEvade: false,
+        ignoreReduction: false,
+        ignoreDefense: false,
+        source: "高高度カルネージストライカー"
+      }
+    ]
+  });
 
-  if (attacker) {
-    attacker.hp -= 200;
-    if (attacker.hp < 0) attacker.hp = 0;
-    messages.push(`${attacker.name} に200ダメージ`);
-  }
-
-    return { damage: 0, message: messages.join("\n") };
-  }
+  messages.push("高高度カルネージストライカー：相手攻撃を無効化。反撃を予約");
+  return { damage: 0, message: messages.join("\n") };
+}
 
   if (state.formId === "carnage") {
     nextDamage = Math.max(0, nextDamage - 30);
