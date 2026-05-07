@@ -307,7 +307,7 @@ function buildAttackTags(attack) {
   }
 
 if (attack.moonlightButterfly) {
-  tags.push(renderTag("[月光蝶]"));
+    tags.push(renderTag("[月光蝶]"));
 }
   
   return tags.join("");
