@@ -7,7 +7,7 @@ import { strike_gundam } from "./js_units_strike_gundam.js";
 
 //ボス機体//
 import { devil_gundam } from "./js_units_devil_gundam.js";
-import { extreme_gundam } from "./js_units_extreme_gundam.js";
+
 
 //初心者向け//
 import { cpu_zaku_ii_soldier } from "./js_units_cpu_zaku_ii_soldier.js";
@@ -30,8 +30,7 @@ export const unitList = [
 ];
 
 export const bossList = [
-  devil_gundam,
-  extreme_gundam
+  devil_gundam
 ];
 
 export const cpuList = [
