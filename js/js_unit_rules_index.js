@@ -300,5 +300,7 @@ cpu_gouf: {
   getExtraWeaponResult: getCpuMobileGinnExtraWeaponResult
 },
 //ボス機体//
-devil_gundam: devilGundamRules,
+devil_gundam: devilGundamRules
+
+};
 
