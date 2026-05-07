@@ -131,13 +131,13 @@ function carnageSlots() {
     },
     slot4: {
       label: "高高度カルネージストライカー",
-      desc: "次のターン、相手の攻撃を無効化し、その後200ダメージの射撃攻撃を行う。",
+      desc: "相手の攻撃を無効化し、200ダメージの射撃攻撃を行う。",
       effect: { type: "custom", effectId: "extreme_high_altitude_carnage" }
     },
     slot5: {
       label: "カルネージストライカー連射",
-      desc: "3回判定。1度でも当たると150ダメージ。射撃。",
-      effect: { type: "attack", damage: 150, count: 3, attackType: "shoot", special: "extreme_once_hit_carnage" }
+      desc: "60ダメージ×3回。射撃。",
+      effect: { type: "attack", damage: 60, count: 3, attackType: "shoot", special: "extreme_once_hit_carnage" }
     },
     slot6: {
       label: "換装解除",
@@ -253,7 +253,7 @@ function mysticSlots() {
     },
     slot4: {
       label: "人馬一神・乱れ突き",
-      desc: "攻撃8回判定。1つでも当たると120ダメージ。格闘、軽減不可。",
+      desc: "20ダメージ×8回。格闘、軽減不可。",
       effect: { type: "attack", damage: 120, count: 8, attackType: "melee", ignoreReduction: true, special: "extreme_once_hit_mystic" }
     },
     slot5: {
@@ -502,21 +502,8 @@ export function onExtremeGundamActionResolved(attacker, defender, context) {
     redraw = true;
   }
 
-  if (
-    context.slotLabel === "カルネージストライカー連射" &&
-    context.hitCount > 0 &&
-    context.hitCount < context.totalCount
-  ) {
-    messages.push("カルネージストライカー連射：1度命中したため、残り命中分は演出扱い");
-  }
 
-  if (
-    context.slotLabel === "人馬一神・乱れ突き" &&
-    context.hitCount > 0 &&
-    context.hitCount < context.totalCount
-  ) {
-    messages.push("人馬一神・乱れ突き：1度命中したため、残り命中分は演出扱い");
-  }
+  
 
   if (context.slotLabel === "サンダースラッシュ" && context.hitCount > 0) {
     defender.evade = Math.max(0, defender.evade - 2);
@@ -561,17 +548,14 @@ export function modifyExtremeGundamTakenDamage(state, attacker, attack, damage) 
   const messages = [];
 
   if (state.extremeHighAltitudeActive) {
-    state.extremeHighAltitudeActive = false;
-    messages.push("高高度カルネージストライカー：相手攻撃を無効化");
+  state.extremeHighAltitudeActive = false;
+  messages.push("高高度カルネージストライカー：相手攻撃を無効化");
 
-    if (attacker && Array.isArray(attacker.pendingCounterAttacks)) {
-      attacker.pendingCounterAttacks.push({
-        damage: 200,
-        count: 1,
-        attackType: "shoot",
-        label: "高高度カルネージストライカー"
-      });
-    }
+  if (attacker) {
+    attacker.hp -= 200;
+    if (attacker.hp < 0) attacker.hp = 0;
+    messages.push(`${attacker.name} に200ダメージ`);
+  }
 
     return { damage: 0, message: messages.join("\n") };
   }
