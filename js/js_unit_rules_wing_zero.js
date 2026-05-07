@@ -573,10 +573,20 @@ export function modifyWingZeroEvadeAttempt(defender, attacker, attack, context =
 
   if (attack.cannotEvade) {
     if (defender.evade <= 0) {
-      return { handled: true, ok: false, reason: "noEvade", message: "回避が足りない" };
+      return {
+        handled: true,
+        ok: false,
+        reason: "noEvade",
+        message: "回避が足りない"
+      };
     }
 
-    return { handled: true, ok: true, consumeEvade: 1, message: null };
+    return {
+      handled: true,
+      ok: true,
+      consumeEvade: 1,
+      message: null
+    };
   }
 
   return {
@@ -586,6 +596,14 @@ export function modifyWingZeroEvadeAttempt(defender, attacker, attack, context =
     message: null
   };
 }
+
+export function onWingZeroResolveChoice(
+  state,
+  pendingChoice,
+  selectedValue,
+  context = {}
+) {
+  ensureWingZeroState(state);
 
   if (pendingChoice.source === "wing_zero_chase") {
     if (selectedValue !== "run") {
@@ -609,7 +627,7 @@ export function modifyWingZeroEvadeAttempt(defender, attacker, attack, context =
     return {
       handled: true,
       redraw: true,
-            message: null,
+      message: null,
       startSlotAction: {
         slotKey: pendingChoice.slotKey
       }
@@ -655,3 +673,4 @@ export function modifyWingZeroEvadeAttempt(defender, attacker, attack, context =
     message: null
   };
 }
+    
