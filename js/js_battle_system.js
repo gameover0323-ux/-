@@ -156,6 +156,15 @@ export function evadeAttack({
     };
   }
 
+  if (attack.minEvadeRequired && defender.evade < attack.minEvadeRequired) {
+    return {
+      ok: false,
+      reason: "minEvadeRequired"
+    };
+  }
+
+  if (defender.evade <= 0) {
+
   if (defender.evade <= 0) {
     return {
       ok: false,
