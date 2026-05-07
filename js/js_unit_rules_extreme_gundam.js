@@ -410,10 +410,16 @@ export function onExtremeGundamEnemyBeforeSlot(state) {
   return { redraw: messages.length > 0, message: messages.join("\n") || null };
 }
 
-export function onExtremeGundamAfterSlotResolved(state, slot, result) {
+
+      export function onExtremeGundamAfterSlotResolved(state, slotNumber, context = {}) {
   ensureExtremeState(state);
 
+  const result = context.resolveResult || {};
+  const slotKey = `slot${slotNumber}`;
+  const slot = state.slots?.[slotKey] || null;
+
   const effectId = result?.customEffectId || slot?.effect?.effectId || null;
+
   if (!effectId) {
     return { redraw: false, message: null };
   }
@@ -474,7 +480,7 @@ export function onExtremeGundamAfterSlotResolved(state, slot, result) {
   }
 
   return { redraw: false, message: null };
-}
+      }
 
 export function onExtremeGundamActionResolved(attacker, defender, context) {
   ensureExtremeState(attacker);
