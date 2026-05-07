@@ -1,3 +1,4 @@
+alert("main_v2 読み込み開始");
 import {
   createRoomId,
   writeRoom,
@@ -55,7 +56,7 @@ import { createUiController } from "./js_ui_controller.js";
 import { createGameSetup } from "./js_game_setup.js";
 
 import { createActionLayer } from "./js_action_layer.js";
-
+alert("import 完了");
 
 const screens = {
   title: document.getElementById("title"),
@@ -300,6 +301,7 @@ let uiController = null;
 let gameSetup = null;
 
 let actionLayer = null;
+
 function resetOnlineStateForLocalBattle() {
   onlineState.enabled = false;
   onlineState.roomId = null;
