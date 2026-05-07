@@ -25,16 +25,34 @@ export function createAttackResolution(ctx) {
         });
 
         if (actionResult.message) {
-          ctx.appendBattleNotice(actionResult.message);
-        }
+  ctx.appendBattleNotice(actionResult.message);
+}
 
-        if (actionResult.requestChoice) {
-          ctx.handleChoiceRequest(actionResult.requestChoice);
-        }
-      });
+if (Array.isArray(actionResult.appendAttacks) && actionResult.appendAttacks.length > 0) {
+  ctx.setCurrentAttack(actionResult.appendAttacks);
+  ctx.setCurrentAttackContext({
+    ownerPlayer: context.ownerPlayer,
+    enemyPlayer: context.enemyPlayer,
+    slotKey: context.slotKey,
+    slotNumber: context.slotNumber,
+    slotLabel: actionResult.appendSlotLabel || actionResult.appendAttackLabel || "追加攻撃",
+    slotDesc: actionResult.appendSlotDesc || "",
+    totalCount: actionResult.appendAttacks.length,
+    hitCount: 0,
+    evadeCount: 0,
+    appendedFrom: context.slotLabel || null
+  });
+  ctx.redrawBattleBoards();
+  ctx.renderAttackChoices();
+  return;
+}
 
-      ctx.redrawBattleBoards();
-      ctx.renderAttackLogText("攻撃解決済み");
+if (actionResult.requestChoice) {
+  ctx.handleChoiceRequest(actionResult.requestChoice);
+  return;
+}
+
+ctx.renderAttackLogText("攻撃解決済み");
       return;
     }
 
