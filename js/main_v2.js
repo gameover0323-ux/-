@@ -1790,4 +1790,3 @@ document.getElementById("toggleTestModeBtn").addEventListener("click", toggleTes
 
 loadUnitButtons();
 bootOnlineFromUrl();
-*/
