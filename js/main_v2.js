@@ -37,9 +37,6 @@ import {
   takeHit as resolveTakeHit,
   evadeAttack as resolveEvadeAttack
 } from "./js_battle_system.js";
-
-alert(" import OK");
-/*
 import { resolveSlotEffect } from "./js_slot_effects.js";
 import { executeCommonSpecial } from "./js_special_actions.js";
 import {
@@ -62,7 +59,8 @@ import { createUiController } from "./js_ui_controller.js";
 import { createGameSetup } from "./js_game_setup.js";
 
 import { createActionLayer } from "./js_action_layer.js";
-
+alert(" import OK");
+/*
 
 const screens = {
   title: document.getElementById("title"),
