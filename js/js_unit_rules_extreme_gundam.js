@@ -495,13 +495,11 @@ export function onExtremeGundamActionResolved(attacker, defender, context) {
     redraw = true;
   }
 
-  if (context.slotLabel === "ファイヤーバンカー" && context.hitCount > 0) {
-    defender.extremeStunnedByFireBunker = true;
-    defender.skipNextSlot = true;
-    messages.push(`${defender.name} は次のターン行動不能`);
-    redraw = true;
-  }
-
+ if (context.slotLabel === "ファイヤーバンカー" && context.hitCount > 0) {
+  defender.pendingActionPenalty = Number(defender.pendingActionPenalty || 0) + 1;
+  messages.push(`${defender.name} は次の行動権-1`);
+  redraw = true;
+}
 
   
 
