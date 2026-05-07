@@ -44,7 +44,8 @@ import {
   renderAttackChoicesUI,
   renderPendingChoiceUI
 } from "./js_ui.js";
-
+alert(" import OK");
+/*
 import { create2v2Helpers } from "./js_2on2_helpers.js";
 import { create2v2Actions } from "./js_2on2_actions.js";
 
@@ -57,8 +58,7 @@ import { createUiController } from "./js_ui_controller.js";
 import { createGameSetup } from "./js_game_setup.js";
 
 import { createActionLayer } from "./js_action_layer.js";
-alert(" import OK");
-/*
+
 
 const screens = {
   title: document.getElementById("title"),
