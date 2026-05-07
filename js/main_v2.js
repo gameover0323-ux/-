@@ -1,5 +1,3 @@
-alert("main_v2 start");
-
 import {
   createRoomId,
   writeRoom,
@@ -59,8 +57,6 @@ import { createUiController } from "./js_ui_controller.js";
 import { createGameSetup } from "./js_game_setup.js";
 
 import { createActionLayer } from "./js_action_layer.js";
-alert(" import OK");
-/*
 
 const screens = {
   title: document.getElementById("title"),
@@ -274,7 +270,7 @@ let battleMode = "1v1";
   - vscpu1v1
   - vscpu2v2
   - online1v1
-
+*/
 
 // 2on2用チーム構造
 let teamA = null;
