@@ -88,6 +88,34 @@ export function createBattleFlow(ctx) {
   }
 
   const attacker = ctx.getPlayerState(ctx.getCurrentPlayer());
+    if (attacker.pendingReservedAttacks && attacker.pendingReservedAttacks.length > 0) {
+  attacker.pendingReservedAttacks.forEach((reserved) => {
+    reserved.delay = Number(reserved.delay || 0) - 1;
+  });
+
+  const readyIndex = attacker.pendingReservedAttacks.findIndex((reserved) => Number(reserved.delay || 0) <= 0);
+
+  if (readyIndex >= 0) {
+    const reserved = attacker.pendingReservedAttacks.splice(readyIndex, 1)[0];
+    ctx.setCurrentAction(`${attacker.name} の予約攻撃`, reserved.label || "予約攻撃");
+    ctx.setCurrentAttack(reserved.attacks || []);
+    ctx.setCurrentAttackContext({
+      ownerPlayer: ctx.getCurrentPlayer(),
+      enemyPlayer: ctx.getOpponentPlayer(ctx.getCurrentPlayer()),
+      slotKey: null,
+      slotNumber: null,
+      slotLabel: reserved.label || "予約攻撃",
+      slotDesc: reserved.desc || "",
+      totalCount: (reserved.attacks || []).length,
+      hitCount: 0,
+      evadeCount: 0,
+      reservedAttack: true
+    });
+    ctx.redrawBattleBoards();
+    ctx.renderAttackChoices();
+    return;
+  }
+    }
   if (!attacker) return;
 
   ensureActionState(attacker);
