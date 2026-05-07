@@ -51,12 +51,13 @@ if (actionResult.requestChoice) {
   ctx.handleChoiceRequest(actionResult.requestChoice);
   return;
 }
-
 ctx.renderAttackLogText("攻撃解決済み");
-      return;
-    }
+    });
 
-    const context = ctx.getCurrentAttackContext();
+    return;
+  }
+
+  const context = ctx.getCurrentAttackContext();
 
     if (!context) {
       ctx.redrawBattleBoards();
