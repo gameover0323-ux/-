@@ -33,7 +33,17 @@ export const extreme_gundam = {
         slot2: { label: "ビームジャミングボール", desc: "30ダメージ。射撃。ヒット時、3ターン間相手の攻撃を3回分無効化する。", effect: { type: "attack", damage: 30, count: 1, attackType: "shoot", special: "extreme_confuse_3" } },
         slot3: { label: "カルネージ・ストライカー", desc: "150ダメージ。射撃、軽減不可。", effect: { type: "attack", damage: 150, count: 1, attackType: "shoot", ignoreReduction: true } },
         slot4: { label: "高高度カルネージストライカー", desc: "次のターン、相手の攻撃を無効化し、その後200ダメージの射撃攻撃を行う。", effect: { type: "custom", effectId: "extreme_high_altitude_carnage" } },
-        slot5: { label: "カルネージストライカー連射", desc: "3回判定。1度でも当たると150ダメージ。射撃。", effect: { type: "attack", damage: 150, count: 3, attackType: "shoot", special: "extreme_once_hit_carnage" } },
+        slot5: {
+  label: "カルネージストライカー連射",
+  desc: "60ダメージ×3回。射撃。1回以上被弾した場合のみダメージ。",
+  effect: {
+    type: "attack",
+    damage: 0,
+    count: 3,
+    attackType: "shoot",
+    special: "extreme_once_hit_carnage"
+  }
+},
         slot6: { label: "換装解除", desc: "エクストリームガンダムに戻る。次のターン、回避可能な攻撃を全て回避する。", effect: { type: "custom", effectId: "extreme_form_normal_full_evade" } }
       },
       slotOrder: ["slot1", "slot2", "slot3", "slot4", "slot5", "slot6"]
