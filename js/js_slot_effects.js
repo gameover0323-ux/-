@@ -56,7 +56,7 @@ function resolveStructuredEffect({ slot, actor }) {
     count = Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  const attacks = createAttack(damage, count, {
+const attacks = createAttack(damage, count, {
       type: effect.attackType || "shoot",
       beam: !!effect.beam,
       cannotEvade: !!effect.cannotEvade,
@@ -69,9 +69,12 @@ function resolveStructuredEffect({ slot, actor }) {
 
       special: effect.special || null,
       source: effect.source || slot?.key || null,
-      onHit: effect.onHit || null
-    });
+      onHit: effect.onHit || null,
 
+      moonlightButterfly: !!effect.moonlightButterfly,
+      minEvadeRequired: Number(effect.minEvadeRequired || 0)
+    });
+    
     return {
       kind: "attack",
       attacks,
