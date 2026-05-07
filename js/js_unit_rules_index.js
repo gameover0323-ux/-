@@ -311,15 +311,17 @@ cpu_gouf: {
 },
 //ボス機体//
 devil_gundam: devilGundamRules,
-extreme_gundam: {
-  getDerivedState: getExtremeGundamDerivedState,
-  onTurnEnd: onExtremeGundamTurnEnd,
-  onBeforeSlot: onExtremeGundamBeforeSlot,
-  onEnemyBeforeSlot: onExtremeGundamEnemyBeforeSlot,
-  onAfterSlotResolved: onExtremeGundamAfterSlotResolved,
-  onActionResolved: onExtremeGundamActionResolved,
-  onDamaged: onExtremeGundamDamaged,
-  modifyTakenDamage: modifyExtremeGundamTakenDamage,
-  modifyEvadeAttempt: modifyExtremeGundamEvadeAttempt
-};
 
+extreme_gundam: {
+  getDerivedState: getExtremeGundamDerivedState,
+  onTurnEnd: onExtremeGundamTurnEnd,
+  onBeforeSlot: onExtremeGundamBeforeSlot,
+  onEnemyBeforeSlot: onExtremeGundamEnemyBeforeSlot,
+  onAfterSlotResolved: onExtremeGundamAfterSlotResolved,
+  onActionResolved: onExtremeGundamActionResolved,
+  onDamaged: onExtremeGundamDamaged,
+  modifyTakenDamage: modifyExtremeGundamTakenDamage,
+  modifyEvadeAttempt: modifyExtremeGundamEvadeAttempt
+}
+
+};
