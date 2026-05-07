@@ -240,23 +240,23 @@ ctx.setCurrentAction(
     return merged;
   }
 
-  function startAttackQte(attacks) {
-    ctx.setCurrentAttack(attacks);
-    ctx.setCurrentAttackContext({
-      ownerPlayer: slotMeta.ownerPlayer,
-      enemyPlayer: slotMeta.enemyPlayer,
-      slotKey: slotMeta.slotKey,
-      slotNumber: slotMeta.slotNumber,
-      slotLabel: slot.label,
-      slotDesc: slot.desc,
-      totalCount: attacks.length,
-      hitCount: 0,
-      evadeCount: 0
-    });
-
-    ctx.redrawBattleBoards();
-    ctx.renderAttackChoices();
-  }
+  function startAttackQte(attacks, extraContext = {}) {
+  ctx.setCurrentAttack(attacks);
+  ctx.setCurrentAttackContext({
+    ownerPlayer: slotMeta.ownerPlayer,
+    enemyPlayer: slotMeta.enemyPlayer,
+    slotKey: slotMeta.slotKey,
+    slotNumber: slotMeta.slotNumber,
+    slotLabel: slot.label,
+    slotDesc: slot.desc,
+    totalCount: attacks.length,
+    hitCount: 0,
+    evadeCount: 0,
+    ...extraContext
+  });
+  ctx.redrawBattleBoards();
+  ctx.renderAttackChoices();
+}
 
   if (
     result.kind === "evade" ||
