@@ -199,4 +199,4 @@ export function resolveSlotEffect({ slot, actor }) {
     desc: slot?.desc || "",
     actor
   });
-      }
+}
