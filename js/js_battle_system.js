@@ -101,8 +101,12 @@ export function takeHit({
   }
 
   let finalDamage = calculateDamage(attack, defender);
-  let damageMessage = null;
 
+  if (attack.special === "extreme_half_current_hp") {
+    finalDamage = Math.floor(defender.hp / 2);
+  }
+
+  let damageMessage = null;
   if (typeof modifyTakenDamage === "function") {
     const modified = modifyTakenDamage(defender, attacker, attack, finalDamage) || {};
     finalDamage = typeof modified.damage === "number" ? modified.damage : finalDamage;
