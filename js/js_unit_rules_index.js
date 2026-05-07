@@ -69,7 +69,17 @@ import {
 
 //ボス機体//
 import { devilGundamRules } from "./js_unit_rules_devil_gundam.js";
-
+import {
+  getExtremeGundamDerivedState,
+  onExtremeGundamTurnEnd,
+  onExtremeGundamBeforeSlot,
+  onExtremeGundamEnemyBeforeSlot,
+  onExtremeGundamAfterSlotResolved,
+  onExtremeGundamActionResolved,
+  onExtremeGundamDamaged,
+  modifyExtremeGundamTakenDamage,
+  modifyExtremeGundamEvadeAttempt
+} from "./js_unit_rules_extreme_gundam.js";
 //初心者向け//
 import {
   getCpuZakuIiSoldierDerivedState,
@@ -300,7 +310,16 @@ cpu_gouf: {
   getExtraWeaponResult: getCpuMobileGinnExtraWeaponResult
 },
 //ボス機体//
-devil_gundam: devilGundamRules
-
+devil_gundam: devilGundamRules,
+extreme_gundam: {
+  getDerivedState: getExtremeGundamDerivedState,
+  onTurnEnd: onExtremeGundamTurnEnd,
+  onBeforeSlot: onExtremeGundamBeforeSlot,
+  onEnemyBeforeSlot: onExtremeGundamEnemyBeforeSlot,
+  onAfterSlotResolved: onExtremeGundamAfterSlotResolved,
+  onActionResolved: onExtremeGundamActionResolved,
+  onDamaged: onExtremeGundamDamaged,
+  modifyTakenDamage: modifyExtremeGundamTakenDamage,
+  modifyEvadeAttempt: modifyExtremeGundamEvadeAttempt
 };
 
