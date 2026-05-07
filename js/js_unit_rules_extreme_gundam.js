@@ -1,16 +1,16 @@
 import {
-  setForm,
-  getStateEffect,
-  setStateEffect,
-  clearStateEffect
+  setForm,
+  getStateEffect,
+  setStateEffect,
+  clearStateEffect
 } from "./js_unit_runtime.js";
 
 const FORM_MAX_HP = {
-  normal: 1000,
-  carnage: 1750,
-  tachyon: 2000,
-  ignis: 2000,
-  mystic: 2500
+  normal: 1000,
+  carnage: 1750,
+  tachyon: 2000,
+  ignis: 2000,
+  mystic: 2500
 };
 
 function ensureExtremeState(state) {
