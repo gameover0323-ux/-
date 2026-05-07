@@ -91,7 +91,18 @@ export function createBattleFlow(ctx) {
   if (!attacker) return;
 
   ensureActionState(attacker);
+if (Number(attacker.pendingActionPenalty || 0) > 0) {
+  const penalty = Math.min(attacker.actionCount, Number(attacker.pendingActionPenalty || 0));
+  attacker.pendingActionPenalty = Math.max(0, Number(attacker.pendingActionPenalty || 0) - penalty);
+  attacker.actionCount = Math.max(0, attacker.actionCount - penalty);
 
+  ctx.redrawBattleBoards();
+  ctx.renderAttackLogText(`${attacker.name} は行動不能：行動権-${penalty}`);
+
+  if (!canConsumeAction(attacker, 1)) {
+    return;
+  }
+}
   if (!canConsumeAction(attacker, 1)) {
     ctx.showPopup("残り行動数が足りない");
     return;
