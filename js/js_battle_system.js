@@ -164,8 +164,6 @@ export function evadeAttack({
   }
 
   if (defender.evade <= 0) {
-
-  if (defender.evade <= 0) {
     return {
       ok: false,
       reason: "noEvade"
