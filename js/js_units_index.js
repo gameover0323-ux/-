@@ -4,6 +4,7 @@ import { shining_gundam } from "./js_units_shining_gundam.js";
 import { wing_zero } from "./js_units_wing_zero.js";
 import { strike_gundam } from "./js_units_strike_gundam.js";
 
+
 //ボス機体//
 import { devil_gundam } from "./js_units_devil_gundam.js";
 import { extreme_gundam } from "./js_units_extreme_gundam.js";
