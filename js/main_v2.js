@@ -1459,7 +1459,7 @@ actionLayer = createActionLayer({
 
   setCurrentAction,
   appendBattleNotice,
-
+processReservedActionsForTrigger,
   redrawBattleBoards,
   renderAttackChoices,
   renderAttackLogText,
