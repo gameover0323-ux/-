@@ -943,7 +943,13 @@ function resolvePendingChoice(selectedValue) {
 function executeNextQueuedSlot() {
   return actionLayer.executeNextQueuedSlot();
 }
+function reserveAction(state, action) {
+    return actionLayer.reserveAction(state, action);
+  }
 
+  function processReservedActionsForTrigger(ownerPlayer, trigger) {
+    return actionLayer.processReservedActionsForTrigger(ownerPlayer, trigger);
+  }
 function getPendingChoice() {
   return pendingChoice;
 }
