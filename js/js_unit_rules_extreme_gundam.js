@@ -361,11 +361,7 @@ export function onExtremeGundamBeforeSlot(state) {
 
   state.extremeMeleeNullThisTurn = false;
 
-  if (state.extremeHighAltitudePending) {
-    state.extremeHighAltitudePending = false;
-    state.extremeHighAltitudeActive = true;
-    messages.push("高高度カルネージストライカー：次の相手攻撃を無効化");
-  }
+
 
   if (state.extremeFullEvadePending) {
     state.extremeFullEvadePending = false;
@@ -396,11 +392,7 @@ export function onExtremeGundamEnemyBeforeSlot(state) {
 
   const messages = [];
 
-  if (state.extremeHighAltitudePending) {
-    state.extremeHighAltitudePending = false;
-    state.extremeHighAltitudeActive = true;
-    messages.push("高高度カルネージストライカー：次の相手攻撃を無効化");
-  }
+
 
   if (state.extremeFullEvadePending) {
     state.extremeFullEvadePending = false;
