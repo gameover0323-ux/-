@@ -254,7 +254,7 @@ function mysticSlots() {
     slot4: {
       label: "人馬一神・乱れ突き",
       desc: "20ダメージ×8回。格闘、軽減不可。",
-      effect: { type: "attack", damage: 20, count: 8, attackType: "melee", ignoreReduction: true, special: "extreme_once_hit_mystic" }
+      effect: { type: "attack", damage: 10, count: 8, attackType: "melee", ignoreReduction: true, special: "extreme_once_hit_mystic" }
     },
     slot5: {
       label: "絶望蝶",
@@ -543,7 +543,26 @@ export function onExtremeGundamActionResolved(attacker, defender, context) {
     messages.push("終焉摂理：相手が4回以上回避したため、行動回数+1");
     redraw = true;
   }
+if (context.slotLabel === "人馬一神・乱れ突き" && context.hitCount > 0) {
+    messages.push("人馬一神・乱れ突き：1回以上被弾したためフィニッシュ突きが発動");
+    redraw = true;
 
+    return {
+      redraw,
+      message: messages.join("\n") || null,
+      appendAttackLabel: "人馬一神・乱れ突き フィニッシュ突き",
+      appendSlotLabel: "人馬一神・乱れ突き フィニッシュ突き",
+      appendSlotDesc: "120ダメージ。格闘、軽減不可。",
+      appendAttacks: [
+        {
+          damage: 120,
+          type: "melee",
+          ignoreReduction: true,
+          source: "人馬一神・乱れ突き フィニッシュ突き"
+        }
+      ]
+    };
+}
   if (attacker.formId === "tachyon" && context.totalCount > 0 && context.allEvaded) {
     attacker.extremeTachyonAllEvadedStunPending = true;
     messages.push("タキオンフェイズ特性：次のターン行動不能。行動不能中は被ダメージ半減");
@@ -568,24 +587,7 @@ if (context.slotLabel === "カルネージストライカー連射" && context.h
   };
 }
 
-if (context.slotLabel === "人馬一神・乱れ突き" && context.hitCount > 0) {
-  return {
-    redraw: true,
-    message: messages.concat("人馬一神・乱れ突き：1回以上被弾したため本命攻撃").join("\n"),
-    appendAttackLabel: "人馬一神・乱れ突き",
-    appendAttacks: [
-      {
-        damage: 120,
-        type: "melee",
-        beam: false,
-        cannotEvade: false,
-        ignoreReduction: true,
-        ignoreDefense: false,
-        source: "人馬一神・乱れ突き"
-      }
-    ]
-  };
-}
+
   return { redraw, message: messages.join("\n") || null };
 }
 
