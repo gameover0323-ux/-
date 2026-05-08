@@ -606,29 +606,6 @@ export function modifyExtremeGundamTakenDamage(state, attacker, attack, damage) 
   let nextDamage = damage;
   const messages = [];
 
-if (state.extremeHighAltitudeActive) {
-  state.extremeHighAltitudeActive = false;
-  state.pendingReservedAttacks = state.pendingReservedAttacks || [];
-  state.pendingReservedAttacks.push({
-    delay: 0,
-    label: "高高度カルネージストライカー",
-    enemyPlayer: null,
-    attacks: [
-      {
-        damage: 200,
-        type: "shoot",
-        beam: false,
-        cannotEvade: false,
-        ignoreReduction: false,
-        ignoreDefense: false,
-        source: "高高度カルネージストライカー"
-      }
-    ]
-  });
-
-  messages.push("高高度カルネージストライカー：相手攻撃を無効化。反撃を予約");
-  return { damage: 0, message: messages.join("\n") };
-}
 
   if (state.formId === "carnage") {
     nextDamage = Math.max(0, nextDamage - 30);
