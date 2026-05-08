@@ -16,6 +16,93 @@ import { resolveSlotEffect } from "./js_slot_effects.js";
 import { executeCommonSpecial } from "./js_special_actions.js";
 
 export function createActionLayer(ctx) {
+  function ensureReservedActions(state) {
+    if (!state) return [];
+    if (!Array.isArray(state.pendingReservedActions)) {
+      state.pendingReservedActions = [];
+    }
+    return state.pendingReservedActions;
+  }
+
+  function reserveAction(state, action) {
+    const list = ensureReservedActions(state);
+    list.push({
+      id: action.id || `reserved_${Date.now()}_${Math.random()}`,
+      delay: Number(action.delay || 0),
+      trigger: action.trigger || "turn_start",
+      ownerPlayer: action.ownerPlayer,
+      enemyPlayer: action.enemyPlayer,
+      type: action.type || "attack",
+      label: action.label || "予約アクション",
+      attacks: Array.isArray(action.attacks) ? action.attacks : [],
+      specialKey: action.specialKey || null,
+      payload: action.payload || null
+    });
+  }
+
+  function processReservedActionsForTrigger(ownerPlayer, trigger) {
+    const actor = ctx.getPlayerState(ownerPlayer);
+    if (!actor) return false;
+
+    const list = ensureReservedActions(actor);
+    if (list.length === 0) return false;
+
+    list.forEach((action) => {
+      if (action.trigger === trigger) {
+        action.delay -= 1;
+      }
+    });
+
+    const index = list.findIndex((action) => {
+      return action.trigger === trigger && action.delay <= 0;
+    });
+
+    if (index < 0) return false;
+
+    const action = list.splice(index, 1)[0];
+    return startReservedAction(action);
+  }
+
+  function startReservedAction(action) {
+    if (!action) return false;
+
+    const ownerPlayer = action.ownerPlayer || ctx.getCurrentPlayer();
+    const enemyPlayer = action.enemyPlayer || ctx.getOpponentPlayer(ownerPlayer);
+
+    if (action.type === "attack") {
+      ctx.setCurrentAction(
+        `PLAYER ${ownerPlayer} の予約アクション`,
+        action.label
+      );
+
+      ctx.setCurrentAttack(action.attacks);
+      ctx.setCurrentAttackContext({
+        ownerPlayer,
+        enemyPlayer,
+        slotKey: null,
+        slotNumber: null,
+        slotLabel: action.label,
+        slotDesc: action.label,
+        reservedActionId: action.id,
+        reservedActionLabel: action.label,
+        totalCount: action.attacks.length,
+        hitCount: 0,
+        evadeCount: 0
+      });
+
+      ctx.redrawBattleBoards();
+      ctx.renderAttackChoices();
+      return true;
+    }
+
+    if (action.type === "special" && action.specialKey) {
+      executeSpecial(ownerPlayer, action.specialKey);
+      return true;
+    }
+
+    ctx.renderAttackLogText(`${action.label}：未対応の予約アクション`);
+    return true;
+  }
  function resolveCommonPendingChoice(actor, choice, selectedValue, context = {}) {
   if (!choice || !choice.effectType) {
     return { handled: false };
@@ -566,6 +653,8 @@ function resolvePendingChoice(selectedValue) {
     runAfterSlotResolvedHook,
     executeSpecial,
     resolvePendingChoice,
+    reserveAction,
+    processReservedActionsForTrigger,
     executeNextQueuedSlot
   };
 }
