@@ -451,8 +451,31 @@ export function onExtremeGundamEnemyBeforeSlot(state) {
   }
 
   if (effectId === "extreme_high_altitude_carnage") {
-    state.extremeHighAltitudePending = true;
-    return { redraw: true, message: "高高度カルネージストライカー準備。次のターン、相手の攻撃を無効化し200ダメージ攻撃を行う" };
+    if (!Array.isArray(state.pendingReservedActions)) {
+      state.pendingReservedActions = [];
+    }
+
+    state.pendingReservedActions.push({
+      id: "extreme_high_altitude_carnage",
+      delay: 1,
+      trigger: "turn_start",
+      ownerPlayer: context.ownerPlayer,
+      enemyPlayer: context.enemyPlayer,
+      type: "attack",
+      label: "高高度カルネージストライカー",
+      attacks: [
+        {
+          damage: 200,
+          type: "shoot",
+          source: "高高度カルネージストライカー"
+        }
+      ]
+    });
+
+    return {
+      redraw: true,
+      message: "高高度カルネージストライカー：上空退避。次の自ターン開始時に200ダメージ射撃を行う"
+    };
   }
 
   if (effectId === "extreme_overlimit") {
