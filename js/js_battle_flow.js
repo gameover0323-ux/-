@@ -88,6 +88,13 @@ export function createBattleFlow(ctx) {
   }
 
   const attacker = ctx.getPlayerState(ctx.getCurrentPlayer());
+  const reservedStarted =
+      ctx.processReservedActionsForTrigger &&
+      ctx.processReservedActionsForTrigger(ctx.getCurrentPlayer(), "turn_start");
+
+    if (reservedStarted) {
+      return;
+    }
     if (attacker.pendingReservedAttacks && attacker.pendingReservedAttacks.length > 0) {
   attacker.pendingReservedAttacks.forEach((reserved) => {
     reserved.delay = Number(reserved.delay || 0) - 1;
