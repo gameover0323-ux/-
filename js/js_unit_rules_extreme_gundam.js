@@ -131,7 +131,7 @@ function carnageSlots() {
     },
     slot4: {
       label: "高高度カルネージストライカー",
-      desc: "相手の攻撃を無効化し、200ダメージの射撃攻撃を行う。",
+      desc: "上空に退避して相手の攻撃を無効化し、次のターンに200ダメージの射撃攻撃を行う。",
       effect: { type: "custom", effectId: "extreme_high_altitude_carnage" }
     },
     slot5: {
@@ -253,7 +253,7 @@ function mysticSlots() {
     },
     slot4: {
       label: "人馬一神・乱れ突き",
-      desc: "10ダメージ×8回。格闘、軽減不可。",
+      desc: "10ダメージ×8回。格闘、軽減不可。1回以上被弾した場合、フィニッシュ突き120ダメージを追加。",
       effect: { type: "attack", damage: 10, count: 8, attackType: "melee", ignoreReduction: true, special: "extreme_once_hit_mystic" }
     },
     slot5: {
