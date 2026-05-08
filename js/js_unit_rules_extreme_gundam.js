@@ -306,9 +306,10 @@ function getStatusForForm(state) {
   if (state.formId === "mystic") {
     status.push("特性: 被ダメージ常時半減");
   }
-
-  if (state.extremeHighAltitudeActive) status.push("高高度カルネージストライカー: 次攻撃無効化");
-  if (state.extremeFullEvadeActive) status.push("換装解除効果: 回避可能攻撃を全回避");
+if (Array.isArray(state.pendingReservedActions) && state.pendingReservedActions.some((action) => action.id === "extreme_high_altitude_carnage")) {
+    status.push("高高度カルネージストライカー: 予約中");
+}
+   if (state.extremeFullEvadeActive) status.push("換装解除効果: 回避可能攻撃を全回避");
 
   return status;
 }
