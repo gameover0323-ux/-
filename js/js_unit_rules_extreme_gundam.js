@@ -254,7 +254,7 @@ function mysticSlots() {
     slot4: {
       label: "人馬一神・乱れ突き",
       desc: "20ダメージ×8回。格闘、軽減不可。",
-      effect: { type: "attack", damage: 120, count: 8, attackType: "melee", ignoreReduction: true, special: "extreme_once_hit_mystic" }
+      effect: { type: "attack", damage: 20, count: 8, attackType: "melee", ignoreReduction: true, special: "extreme_once_hit_mystic" }
     },
     slot5: {
       label: "絶望蝶",
