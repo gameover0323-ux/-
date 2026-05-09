@@ -67,6 +67,21 @@ import {
   onStrikeResolveChoice
 } from "./js_unit_rules_strike_gundam.js";
 
+import {
+  getJeganDerivedState,
+  canUseJeganSpecial,
+  executeJeganSpecial,
+  onJeganTurnEnd,
+  onJeganBeforeSlot,
+  onJeganEnemyBeforeSlot,
+  onJeganAfterSlotResolved,
+  onJeganActionResolved,
+  onJeganDamaged,
+  modifyJeganTakenDamage,
+  modifyJeganEvadeAttempt,
+  onJeganResolveChoice
+} from "./js_unit_rules_jegan_d_type.js";
+
 //ボス機体//
 import { devilGundamRules } from "./js_unit_rules_devil_gundam.js";
 import {
@@ -287,7 +302,21 @@ cpu_strike_gundam: {
   getExtraWeaponResult: getCpuStrikeExtraWeaponResult
 },
 
-
+jegan_d_type: {
+  getDerivedState: getJeganDerivedState,
+  canUseSpecial: canUseJeganSpecial,
+  executeSpecial: executeJeganSpecial,
+  onTurnEnd: onJeganTurnEnd,
+  onBeforeSlot: onJeganBeforeSlot,
+  onEnemyBeforeSlot: onJeganEnemyBeforeSlot,
+  onAfterSlotResolved: onJeganAfterSlotResolved,
+  onActionResolved: onJeganActionResolved,
+  onDamaged: onJeganDamaged,
+  modifyTakenDamage: modifyJeganTakenDamage,
+  modifyEvadeAttempt: modifyJeganEvadeAttempt,
+  onResolveChoice: onJeganResolveChoice
+},
+  
 //初心者向け//
 cpu_zaku_ii_soldier: {
   getDerivedState: getCpuZakuIiSoldierDerivedState,
