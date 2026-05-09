@@ -288,15 +288,16 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
         redraw: false,
         message: null,
         requestChoice: {
-          choiceType: "slot_predict",
-          source: "jegan_assault_predict",
-          ownerPlayer: context.ownerPlayer,
-          enemyPlayer: context.enemyPlayer,
-          title: `PLAYER ${context.ownerPlayer} 突貫`,
-          slotKeys: context.enemyPredictableSlotKeys || []
-        }
+  choiceType: "slot_predict",
+  source: "jegan_assault_predict",
+  ownerPlayer: context.ownerPlayer,
+  enemyPlayer: context.enemyPlayer,
+  title: `PLAYER ${context.ownerPlayer} 突貫`,
+  slotKeys: ["slot1", "slot2", "slot3", "slot4", "slot5", "slot6"]
+}
       };
     }
+    
 
     case "jegan_stark_release": {
       return {
