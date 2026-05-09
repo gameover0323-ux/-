@@ -221,23 +221,33 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
     }
 
     case "jegan_limiter_base": {
-      if (!canPayHp(state, 120)) {
-        return { handled: true, redraw: true, message: "HPが足りない" };
-      }
+  if (!canPayHp(state, 120)) {
+    return { handled: true, redraw: true, message: "HPが足りない" };
+  }
 
-      payHp(state, 120);
-      state.jeganLimiterTurns = 3;
-      state.baseActionCount = 2;
+  payHp(state, 120);
 
-      if (state.jeganLimiterRestTurns > 0) {
-        state.actionCount += 1;
-        return { handled: true, redraw: true, message: "リミッター解除：反動中に強引に行動権+1" };
-      }
+  if (state.jeganLimiterRestTurns > 0) {
+    state.jeganForcedActionReady = true;
+    state.actionCount = Math.max(state.actionCount, 1);
 
-      state.actionCount = Math.max(state.actionCount, 2);
-      return { handled: true, redraw: true, message: "リミッター解除：3ターンの間2回行動" };
-    }
+    return {
+      handled: true,
+      redraw: true,
+      message: "リミッター解除：反動中に強引に行動権+1"
+    };
+  }
 
+  state.jeganLimiterTurns = 3;
+  state.baseActionCount = 2;
+  state.actionCount = Math.max(state.actionCount, 2);
+
+  return {
+    handled: true,
+    redraw: true,
+    message: "リミッター解除：3ターンの間2回行動"
+  };
+}
     case "jegan_shield": {
       if (state.jeganShieldHalfCount <= 0) {
         return { handled: true, redraw: true, message: "シールド残数がない" };
