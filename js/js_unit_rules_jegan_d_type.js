@@ -499,6 +499,13 @@ export function onJeganTurnEnd(state, context = {}) {
   };
 }
 export function onJeganBeforeSlot(state, rolledSlotNumber, context = {}) {
+  if (isJeganRestLocked(state)) {
+  return {
+    redraw: true,
+    message: "リミッター反動：このターン休み",
+    cancelSlot: true
+  };
+  }
   ensureJeganState(state);
 
   const messages = [];
