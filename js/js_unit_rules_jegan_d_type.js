@@ -454,26 +454,11 @@ export function onJeganTurnEnd(state, context = {}) {
 export function onJeganBeforeSlot(state, rolledSlotNumber, context = {}) {
   ensureJeganState(state);
 
-  state.jeganTurnCount += 1;
-
   const messages = [];
 
   if (state.jeganLimiterRestTurns > 0) {
-    state.jeganLimiterRestTurns -= 1;
     state.actionCount = 0;
     messages.push("リミッター反動：このターン休み");
-  }
-
-  if (state.jeganLimiterTurns > 0) {
-    state.jeganLimiterTurns -= 1;
-    state.baseActionCount = 2;
-    state.actionCount = Math.max(state.actionCount, 2);
-
-    if (state.jeganLimiterTurns <= 0) {
-      state.baseActionCount = 1;
-      state.jeganLimiterRestTurns = 1;
-      messages.push("リミッター解除終了：次の行動開始時に休み");
-    }
   }
 
   if (state.formId === "stark" && state.jeganTurnCount % 2 === 0) {
@@ -484,28 +469,6 @@ export function onJeganBeforeSlot(state, rolledSlotNumber, context = {}) {
   if (state.formId === "escort" && state.jeganTurnCount % 2 === 1) {
     state.evade += 1;
     messages.push("警戒：奇数ターン回避+1");
-  }
-
-  if (state.jeganStarkTurns > 0) {
-    state.jeganStarkTurns -= 1;
-    if (state.jeganStarkTurns <= 0 && state.formId === "stark") {
-      changeForm(state, "base");
-      messages.push("スターク換装終了：ジェガンD型に戻った");
-
-      if (state.jeganStarkLimiterActive) {
-        state.jeganStarkLimiterActive = false;
-        state.jeganLimiterRestTurns = 1;
-        messages.push("スタークリミッター反動：次の行動開始時に休み");
-      }
-    }
-  }
-
-  if (state.jeganEscortTurns > 0) {
-    state.jeganEscortTurns -= 1;
-    if (state.jeganEscortTurns <= 0 && state.formId === "escort") {
-      changeForm(state, "base");
-      messages.push("エスコート換装終了：ジェガンD型に戻った");
-    }
   }
 
   return {
