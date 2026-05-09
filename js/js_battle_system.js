@@ -61,7 +61,11 @@ function applyAttackOnHitSpecial({ attacker, defender, attack }) {
     defender.overEvadeBaseMax = defender.evadeMax;
     return `${defender.name} の回避が消滅`;
   }
-
+if (attack.special === "jegan_evade_plus_1") {
+  attacker.evade += 1;
+  return `${attacker.name} ハンドグレネード命中：回避+1`;
+}
+  
   return null;
 }
 
