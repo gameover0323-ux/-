@@ -616,6 +616,13 @@ export function executeUnitModifyTakenDamage(defender, attacker, attack, damage)
   if (rules && rules.modifyTakenDamage) {
     return rules.modifyTakenDamage(defender, attacker, attack, damage);
   }
+
+  return {
+    damage,
+    message: null
+  };
+}
+
 export function addPendingAttack(state, pendingAttack) {
   if (!state) return;
   if (!Array.isArray(state.pendingAttacks)) state.pendingAttacks = [];
@@ -663,9 +670,4 @@ export function hasPendingAttackLock(state, specialEffectType) {
     Array.isArray(item.lockSpecials) &&
     item.lockSpecials.includes(specialEffectType)
   );
-}
-  return {
-    damage,
-    message: null
-  };
 }
