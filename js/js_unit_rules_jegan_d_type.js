@@ -249,19 +249,13 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
     }
 
     case "jegan_request_arms": {
-      return {
-        handled: true,
-        redraw: false,
-        message: null,
-        requestChoice: {
-          choiceType: "slot_select",
-          source: "jegan_request_arms",
-          ownerPlayer: context.ownerPlayer,
-          title: `PLAYER ${context.ownerPlayer} 兵装要請`,
-          slotKeys: ["slot6"]
-        }
-      };
-    }
+  if (state.jeganStarkRightUsed && state.jeganEscortRightUsed) {
+    return {
+      handled: true,
+      redraw: true,
+      message: "両使用権放棄済み：6SP使用可能"
+    };
+  }
 
     case "jegan_assault_predict": {
       if (!consumeAction(state, 1)) {
