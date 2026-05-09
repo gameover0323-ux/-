@@ -599,7 +599,7 @@ export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
       return { redraw: true, message: "スターク換装の使用権は放棄済み" };
     }
 
-    state.jeganStarkRightUsed = true;
+    
     state.jeganStarkTurns = 5;
     changeForm(state, "stark");
 
@@ -611,7 +611,7 @@ export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
       return { redraw: true, message: "エスコート換装の使用権は放棄済み" };
     }
 
-    state.jeganEscortRightUsed = true;
+  
     state.jeganEscortTurns = 5;
     changeForm(state, "escort");
 if (state.jeganForcedActionReady) {
