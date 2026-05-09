@@ -444,13 +444,58 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
 export function onJeganTurnEnd(state, context = {}) {
   ensureJeganState(state);
 
+  const messages = [];
+
+  state.jeganTurnCount += 1;
+
   state.jeganShieldActive = false;
   state.jeganBarrierTurns = Math.max(0, state.jeganBarrierTurns - 1);
   state.jeganEwacSupportFireUsedThisTurn = false;
 
-  return { redraw: false, message: null };
-}
+  if (state.jeganLimiterRestTurns > 0) {
+    state.jeganLimiterRestTurns -= 1;
+    state.baseActionCount = 1;
+    messages.push("リミッター反動終了");
+  } else if (state.jeganLimiterTurns > 0) {
+    state.jeganLimiterTurns -= 1;
+    state.baseActionCount = 2;
 
+    if (state.jeganLimiterTurns <= 0) {
+      state.baseActionCount = 1;
+      state.jeganLimiterRestTurns = 1;
+      messages.push("リミッター解除終了：次の自機ターンは休み");
+    }
+  }
+
+  if (state.jeganStarkTurns > 0) {
+    state.jeganStarkTurns -= 1;
+
+    if (state.jeganStarkTurns <= 0 && state.formId === "stark") {
+      changeForm(state, "base");
+      messages.push("スターク換装終了：ジェガンD型に戻った");
+
+      if (state.jeganStarkLimiterActive) {
+        state.jeganStarkLimiterActive = false;
+        state.jeganLimiterRestTurns = 1;
+        messages.push("スタークリミッター反動：次の自機ターンは休み");
+      }
+    }
+  }
+
+  if (state.jeganEscortTurns > 0) {
+    state.jeganEscortTurns -= 1;
+
+    if (state.jeganEscortTurns <= 0 && state.formId === "escort") {
+      changeForm(state, "base");
+      messages.push("エスコート換装終了：ジェガンD型に戻った");
+    }
+  }
+
+  return {
+    redraw: messages.length > 0,
+    message: messages.join(" / ") || null
+  };
+}
 export function onJeganBeforeSlot(state, rolledSlotNumber, context = {}) {
   ensureJeganState(state);
 
