@@ -663,19 +663,6 @@ export function modifyJeganEvadeAttempt(defender, attacker, attack, context = {}
 export function onJeganResolveChoice(state, pendingChoice, selectedValue, context = {}) {
   ensureJeganState(state);
 
-  if (pendingChoice.source === "jegan_request_arms") {
-    if (state.jeganStarkRightUsed && state.jeganEscortRightUsed) {
-      return { handled: true, redraw: true, message: "両使用権放棄済み：6SP使用可能" };
-    }
-
-    if (state.jeganSlot6Mode === "stark") {
-      state.jeganSlot6Mode = "escort";
-      return { handled: true, redraw: true, message: "兵装要請：6EX換装に切替" };
-    }
-
-    state.jeganSlot6Mode = "stark";
-    return { handled: true, redraw: true, message: "兵装要請：6換装に切替" };
-  }
 
   if (pendingChoice.source === "jegan_assault_predict") {
     state.jeganAssaultGuessSlotKey = selectedValue;
