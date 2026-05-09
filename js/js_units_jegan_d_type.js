@@ -16,12 +16,12 @@ export const jegan_d_type = {
           label: "ハンドグレネード 40ダメージ",
           desc: "40ダメージ。射撃。命中時、回避+1",
           effect: {
-            type: "attack",
-            attackType: "shoot",
-            damage: 40,
-            count: 1,
-            onHitEffect: "jegan_evade_plus_1"
-          }
+  type: "attack",
+  attackType: "shoot",
+  damage: 40,
+  count: 1,
+  special: "jegan_evade_plus_1"
+}
         },
         slot2: {
           label: "回避 +1",
