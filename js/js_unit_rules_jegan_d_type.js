@@ -527,21 +527,17 @@ export function onJeganTurnEnd(state, context = {}) {
   };
 }
 export function onJeganBeforeSlot(state, rolledSlotNumber, context = {}) {
-  if (isJeganRestLocked(state)) {
-  return {
-    redraw: true,
-    message: "リミッター反動：このターン休み",
-    cancelSlot: true
-  };
-  }
   ensureJeganState(state);
 
-  const messages = [];
-
-  if (state.jeganLimiterRestTurns > 0) {
-    state.actionCount = 0;
-    messages.push("リミッター反動：このターン休み");
+  if (isJeganRestLocked(state)) {
+    return {
+      redraw: true,
+      message: "リミッター反動：このターン休み",
+      cancelSlot: true
+    };
   }
+
+  const messages = [];
 
   if (state.formId === "stark" && state.jeganTurnCount % 2 === 0) {
     state.evade += 1;
