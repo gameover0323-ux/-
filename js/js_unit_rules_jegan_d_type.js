@@ -593,11 +593,12 @@ export function onJeganEnemyBeforeSlot(state, rolledSlotNumber, context = {}) {
 export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
   ensureJeganState(state);
 
+  const wasForcedAction = state.jeganForcedActionReady;
+  state.jeganForcedActionReady = false;
+
   const effectId = context.resolveResult?.customEffectId || null;
 
   if (effectId === "jegan_change_stark") {
-   
-    
     state.jeganStarkTurns = 5;
     changeForm(state, "stark");
 
@@ -605,13 +606,9 @@ export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
   }
 
   if (effectId === "jegan_change_escort") {
-    
-
     state.jeganEscortTurns = 5;
     changeForm(state, "escort");
-if (state.jeganForcedActionReady) {
-  state.jeganForcedActionReady = false;
-}
+
     return { redraw: true, message: "エスコートタイプに換装した" };
   }
 
@@ -620,9 +617,12 @@ if (state.jeganForcedActionReady) {
     return { redraw: true, message: "EWAC索敵：相手回避0" };
   }
 
+  if (wasForcedAction) {
+    return { redraw: true, message: "反動中の強制行動を終了" };
+  }
+
   return { redraw: false, message: null };
 }
-
 export function onJeganActionResolved(attacker, defender, context = {}) {
   ensureJeganState(attacker);
 
