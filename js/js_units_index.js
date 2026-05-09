@@ -3,7 +3,7 @@ import { z_gundam } from "./js_units_z_gundam.js";
 import { shining_gundam } from "./js_units_shining_gundam.js";
 import { wing_zero } from "./js_units_wing_zero.js";
 import { strike_gundam } from "./js_units_strike_gundam.js";
-
+import { jegan_d_type } from "./js_units_jegan_d_type.js";
 
 //ボス機体//
 import { devil_gundam } from "./js_units_devil_gundam.js";
@@ -26,7 +26,8 @@ export const unitList = [
   z_gundam,
   shining_gundam,
   wing_zero,
-  strike_gundam
+  strike_gundam,
+  jegan_d_type
 ];
 
 export const bossList = [
