@@ -368,28 +368,26 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
     }
 
     case "jegan_ewac_predict": {
-      if (state.actionCount < 1) {
-        return { handled: true, redraw: true, message: "行動権が足りない" };
-      }
+  if (state.actionCount < 1) {
+    return { handled: true, redraw: true, message: "行動権が足りない" };
+  }
 
-      state.actionCount = 0;
+  state.actionCount = 0;
 
-      return {
-        handled: true,
-        redraw: false,
-        message: null,
-        requestChoice: {
-          choiceType: "slot_predict",
-        requestChoice: {
-  choiceType: "slot_predict",
-  source: "jegan_ewac_predict",
-  ownerPlayer: context.ownerPlayer,
-  enemyPlayer: context.enemyPlayer,
-  title: `PLAYER ${context.ownerPlayer} 索敵予測`,
-  slotKeys: ["slot1", "slot2", "slot3", "slot4", "slot5", "slot6"]
-}
-      };
+  return {
+    handled: true,
+    redraw: false,
+    message: null,
+    requestChoice: {
+      choiceType: "slot_predict",
+      source: "jegan_ewac_predict",
+      ownerPlayer: context.ownerPlayer,
+      enemyPlayer: context.enemyPlayer,
+      title: `PLAYER ${context.ownerPlayer} 索敵予測`,
+      slotKeys: ["slot1", "slot2", "slot3", "slot4", "slot5", "slot6"]
     }
+  };
+}
 
     case "jegan_ewac_analysis": {
       state.jeganSlot6Mode = state.jeganSlot6Mode === "support" ? "search" : "support";
