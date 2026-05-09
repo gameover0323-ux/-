@@ -195,7 +195,9 @@ export function canUseJeganSpecial(state, specialKey, context = {}) {
 
   return { allowed: true, message: null };
 }
-
+function isJeganRestLocked(state) {
+  return state && state.jeganLimiterRestTurns > 0 && !state.jeganForcedActionReady;
+}
 export function executeJeganSpecial(state, specialKey, context = {}) {
   ensureJeganState(state);
 
