@@ -595,10 +595,7 @@ export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
   const effectId = context.resolveResult?.customEffectId || null;
 
   if (effectId === "jegan_change_stark") {
-    if (state.jeganStarkRightUsed) {
-      return { redraw: true, message: "スターク換装の使用権は放棄済み" };
-    }
-
+   
     
     state.jeganStarkTurns = 5;
     changeForm(state, "stark");
@@ -607,11 +604,8 @@ export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
   }
 
   if (effectId === "jegan_change_escort") {
-    if (state.jeganEscortRightUsed) {
-      return { redraw: true, message: "エスコート換装の使用権は放棄済み" };
-    }
+    
 
-  
     state.jeganEscortTurns = 5;
     changeForm(state, "escort");
 if (state.jeganForcedActionReady) {
