@@ -257,6 +257,15 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
     };
   }
 
+  state.jeganSlot6Mode = state.jeganSlot6Mode === "stark" ? "escort" : "stark";
+
+  return {
+    handled: true,
+    redraw: true,
+    message: null
+  };
+    }
+
     case "jegan_assault_predict": {
       if (!consumeAction(state, 1)) {
         return { handled: true, redraw: true, message: "行動権が足りない" };
@@ -540,6 +549,38 @@ export function onJeganEnemyBeforeSlot(state, rolledSlotNumber, context = {}) {
 
 export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
   ensureJeganState(state);
+
+  const effectId = context.resolveResult?.customEffectId || null;
+
+  if (effectId === "jegan_change_stark") {
+    if (state.jeganStarkRightUsed) {
+      return { redraw: true, message: "スターク換装の使用権は放棄済み" };
+    }
+
+    state.jeganStarkRightUsed = true;
+    state.jeganStarkTurns = 5;
+    changeForm(state, "stark");
+
+    return { redraw: true, message: "スタークジェガンに換装した" };
+  }
+
+  if (effectId === "jegan_change_escort") {
+    if (state.jeganEscortRightUsed) {
+      return { redraw: true, message: "エスコート換装の使用権は放棄済み" };
+    }
+
+    state.jeganEscortRightUsed = true;
+    state.jeganEscortTurns = 5;
+    changeForm(state, "escort");
+
+    return { redraw: true, message: "エスコートタイプに換装した" };
+  }
+
+  if (effectId === "jegan_ewac_search" && context.enemyState) {
+    context.enemyState.evade = 0;
+    return { redraw: true, message: "EWAC索敵：相手回避0" };
+  }
+
   return { redraw: false, message: null };
 }
 
