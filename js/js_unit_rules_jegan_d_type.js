@@ -5,7 +5,7 @@ import {
 
 function ensureJeganState(state) {
   if (!state) return;
-
+if (typeof state.jeganForcedActionReady !== "boolean") state.jeganForcedActionReady = false;
   if (typeof state.jeganTurnCount !== "number") state.jeganTurnCount = 0;
 
   if (typeof state.jeganStarkTurns !== "number") state.jeganStarkTurns = 0;
