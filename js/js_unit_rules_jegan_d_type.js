@@ -68,10 +68,12 @@ function changeForm(state, formId, options = {}) {
 }
 
 function hasSupportFirePending(state) {
-  return hasPendingAttackLock(state, "jegan_ewac_release") ||
-    hasPendingAttackLock(state, "jegan_ewac_escape");
-}
+  if (!state || !Array.isArray(state.pendingAttacks)) return false;
 
+  return state.pendingAttacks.some(item =>
+    item.id && String(item.id).startsWith("jegan_ewac_support_")
+  );
+}
 export function getJeganDerivedState(state) {
   ensureJeganState(state);
 
