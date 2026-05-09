@@ -380,12 +380,14 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
         message: null,
         requestChoice: {
           choiceType: "slot_predict",
-          source: "jegan_ewac_predict",
-          ownerPlayer: context.ownerPlayer,
-          enemyPlayer: context.enemyPlayer,
-          title: `PLAYER ${context.ownerPlayer} 索敵予測`,
-          slotKeys: context.enemyPredictableSlotKeys || []
-        }
+        requestChoice: {
+  choiceType: "slot_predict",
+  source: "jegan_ewac_predict",
+  ownerPlayer: context.ownerPlayer,
+  enemyPlayer: context.enemyPlayer,
+  title: `PLAYER ${context.ownerPlayer} 索敵予測`,
+  slotKeys: ["slot1", "slot2", "slot3", "slot4", "slot5", "slot6"]
+}
       };
     }
 
