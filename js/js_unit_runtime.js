@@ -616,7 +616,54 @@ export function executeUnitModifyTakenDamage(defender, attacker, attack, damage)
   if (rules && rules.modifyTakenDamage) {
     return rules.modifyTakenDamage(defender, attacker, attack, damage);
   }
+export function addPendingAttack(state, pendingAttack) {
+  if (!state) return;
+  if (!Array.isArray(state.pendingAttacks)) state.pendingAttacks = [];
 
+  state.pendingAttacks.push({
+    id: pendingAttack.id || `pending_${Date.now()}_${Math.random()}`,
+    turns: Number(pendingAttack.turns || 0),
+    slot: pendingAttack.slot,
+    message: pendingAttack.message || null,
+    lockSpecials: pendingAttack.lockSpecials || []
+  });
+}
+
+export function tickPendingAttacks(state) {
+  if (!state || !Array.isArray(state.pendingAttacks)) {
+    return { ready: [], messages: [] };
+  }
+
+  const ready = [];
+  const messages = [];
+  const remaining = [];
+
+  state.pendingAttacks.forEach(item => {
+    const next = {
+      ...item,
+      turns: Number(item.turns || 0) - 1
+    };
+
+    if (next.turns <= 0) {
+      ready.push(next);
+      if (next.message) messages.push(next.message);
+    } else {
+      remaining.push(next);
+    }
+  });
+
+  state.pendingAttacks = remaining;
+  return { ready, messages };
+}
+
+export function hasPendingAttackLock(state, specialEffectType) {
+  if (!state || !Array.isArray(state.pendingAttacks)) return false;
+
+  return state.pendingAttacks.some(item =>
+    Array.isArray(item.lockSpecials) &&
+    item.lockSpecials.includes(specialEffectType)
+  );
+}
   return {
     damage,
     message: null
