@@ -106,20 +106,28 @@ export function takeHit({
     finalDamage = Math.floor(defender.hp / 2);
   }
 
-  let damageMessage = null;
-  if (typeof modifyTakenDamage === "function") {
-    const modified = modifyTakenDamage(defender, attacker, attack, finalDamage) || {};
-    finalDamage = typeof modified.damage === "number" ? modified.damage : finalDamage;
-    damageMessage = modified.message || null;
-  }
-if (modified && modified.cancelled) {
-  defender.lastDamageTaken = 0;
+let damageMessage = null;
 
-  return {
-    damage: 0,
-    message: modified.message || "攻撃を無効化した",
-    defeated: false
-  };
+if (typeof modifyTakenDamage === "function") {
+  const modified = modifyTakenDamage(defender, attacker, attack, finalDamage) || {};
+
+  if (modified.cancelled) {
+    defender.lastDamageTaken = 0;
+    currentAttack.splice(attackIndex, 1);
+
+    return {
+      defender,
+      attacker,
+      currentAttack,
+      attack,
+      finalDamage: 0,
+      damageMessage: modified.message || "攻撃を無効化した",
+      cancelled: true
+    };
+  }
+
+  finalDamage = typeof modified.damage === "number" ? modified.damage : finalDamage;
+  damageMessage = modified.message || null;
 }
   defender.hp -= finalDamage;
 if (defender.hp < 0) defender.hp = 0;
