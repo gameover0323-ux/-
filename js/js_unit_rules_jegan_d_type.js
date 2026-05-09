@@ -590,39 +590,12 @@ export function onJeganActionResolved(attacker, defender, context = {}) {
   const slot = context.slot || attacker.slots?.[context.slotKey];
   const effect = slot?.effect || {};
 
-  if (effect.customType === "jegan_change_stark") {
-    if (attacker.jeganStarkRightUsed) {
-      return { redraw: true, message: "スターク換装の使用権は放棄済み" };
-    }
-
-    attacker.jeganStarkRightUsed = true;
-    attacker.jeganStarkTurns = 5;
-    changeForm(attacker, "stark");
-    return { redraw: true, message: "スタークジェガンに換装した" };
-  }
-
-  if (effect.customType === "jegan_change_escort") {
-    if (attacker.jeganEscortRightUsed) {
-      return { redraw: true, message: "エスコート換装の使用権は放棄済み" };
-    }
-
-    attacker.jeganEscortRightUsed = true;
-    attacker.jeganEscortTurns = 5;
-    changeForm(attacker, "escort");
-    return { redraw: true, message: "エスコートタイプに換装した" };
-  }
-
   if (effect.customType === "jegan_stark_raid") {
     const damage = Math.max(0, Number(attacker.evade || 0)) * 10;
     return {
       redraw: false,
       message: `急襲：所持回避数${attacker.evade}×10 = ${damage}ダメージ`
     };
-  }
-
-  if (effect.customType === "jegan_ewac_search") {
-    defender.evade = 0;
-    return { redraw: true, message: "EWAC索敵：相手回避0" };
   }
 
   if (effect.customType === "jegan_ewac_grenade") {
@@ -636,11 +609,6 @@ export function onJeganActionResolved(attacker, defender, context = {}) {
     }
 
     return { redraw: false, message: "EWAC捕捉・艦艇援護射撃発動" };
-  }
-
-  if (effect.onHitEffect === "jegan_evade_plus_1") {
-    attacker.evade += 1;
-    return { redraw: true, message: "ハンドグレネード命中：回避+1" };
   }
 
   if (effect.onFullHitEffect === "jegan_enemy_evade_zero") {
