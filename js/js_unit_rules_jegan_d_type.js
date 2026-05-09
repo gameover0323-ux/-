@@ -597,7 +597,9 @@ export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
     state.jeganEscortRightUsed = true;
     state.jeganEscortTurns = 5;
     changeForm(state, "escort");
-
+if (state.jeganForcedActionReady) {
+  state.jeganForcedActionReady = false;
+}
     return { redraw: true, message: "エスコートタイプに換装した" };
   }
 
