@@ -322,17 +322,32 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
     }
 
     case "jegan_limiter_stark": {
-      if (!canPayHp(state, 120)) {
-        return { handled: true, redraw: true, message: "HPが足りない" };
-      }
+  if (!canPayHp(state, 120)) {
+    return { handled: true, redraw: true, message: "HPが足りない" };
+  }
 
-      payHp(state, 120);
-      state.actionCount += 1;
-      state.evadeMax *= 2;
-      state.evade *= 2;
-      state.jeganStarkLimiterActive = true;
+  payHp(state, 120);
 
-      return { handled: true, redraw: true, message: "スタークリミッター解除：行動権+1、回避上限/所持数2倍" };
+  const nextEvadeMax = Math.max(1, Number(state.evadeMax || 0)) * 2;
+  const nextEvade = Math.max(0, Number(state.evade || 0)) * 2;
+
+  state.actionCount += 1;
+
+  state.evadeMax = nextEvadeMax;
+  state.evade = nextEvade;
+
+  state.overEvadeMode = true;
+  state.overEvadeCap = nextEvadeMax;
+  state.overEvadeBaseMax = nextEvadeMax;
+  state.overEvadeAbsoluteMax = null;
+
+  state.jeganStarkLimiterActive = true;
+
+  return {
+    handled: true,
+    redraw: true,
+    message: "スタークリミッター解除：行動権+1、回避上限/所持数2倍"
+  };
     }
 
     case "jegan_stark_disturb": {
