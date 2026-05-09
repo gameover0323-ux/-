@@ -112,7 +112,15 @@ export function takeHit({
     finalDamage = typeof modified.damage === "number" ? modified.damage : finalDamage;
     damageMessage = modified.message || null;
   }
+if (modified && modified.cancelled) {
+  defender.lastDamageTaken = 0;
 
+  return {
+    damage: 0,
+    message: modified.message || "攻撃を無効化した",
+    defeated: false
+  };
+}
   defender.hp -= finalDamage;
 if (defender.hp < 0) defender.hp = 0;
 
