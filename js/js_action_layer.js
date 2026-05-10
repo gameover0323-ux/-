@@ -199,20 +199,26 @@ export function createActionLayer(ctx) {
  }
   
   function runAfterSlotResolvedHook(actor, slotNumber, resolveResult, slotMeta = {}) {
-    const afterResult = executeUnitAfterSlotResolved(actor, slotNumber, {
-      ...slotMeta,
-      resolveResult
-    });
+  const enemyPlayer = slotMeta.enemyPlayer || ctx.getOpponentPlayer(slotMeta.ownerPlayer);
+  const enemyState = ctx.getPlayerState(enemyPlayer);
 
-    if (afterResult.redraw) {
-      ctx.redrawBattleBoards();
-    }
+  const afterResult = executeUnitAfterSlotResolved(actor, slotNumber, {
+    ...slotMeta,
+    enemyPlayer,
+    enemyState,
+    resolveResult
+  });
 
-    if (afterResult.message) {
-      ctx.appendBattleNotice(afterResult.message);
-    }
+  if (afterResult.redraw) {
+    ctx.redrawBattleBoards();
   }
 
+  if (afterResult.message) {
+    ctx.appendBattleNotice(afterResult.message);
+  }
+
+  return afterResult;
+  }
   function startSlotAction(ownerPlayer, slotKey, slotOverride = null) {
     const enemyPlayer = ctx.getOpponentPlayer(ownerPlayer);
 
