@@ -691,7 +691,32 @@ export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
 
     return { redraw: true, message: "エスコートタイプに換装した" };
   }
+if (effectId === "jegan_stark_raid") {
+  const damage = Math.max(0, Number(state.evade || 0)) * 10;
 
+  return {
+    redraw: true,
+    message: `急襲：所持回避数${state.evade}×10 = ${damage}ダメージ`,
+    appendAttacks: [
+      {
+        damage,
+        type: "shoot",
+        beam: false,
+        cannotEvade: false,
+        ignoreReduction: false,
+        ignoreDefense: false,
+        addedBeam: false,
+        addedCannotEvade: false,
+        addedIgnoreReduction: false,
+        special: null,
+        source: "急襲",
+        onHit: null,
+        moonlightButterfly: false,
+        minEvadeRequired: 0
+      }
+    ]
+  };
+}
   if (effectId === "jegan_ewac_search" && context.enemyState) {
     context.enemyState.evade = 0;
     return { redraw: true, message: "EWAC索敵：相手回避0" };
