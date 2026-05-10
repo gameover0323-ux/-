@@ -1,6 +1,5 @@
 import {
-  setForm,
-  addPendingAttack
+  setForm
 } from "./js_unit_runtime.js";
 
 function ensureJeganState(state) {
