@@ -183,10 +183,16 @@ export const jegan_d_type = {
 
       slots: {
         slot1: {
-          label: "支給急造ハンドグレネード 10ダメージ",
-          desc: "10ダメージ。射撃。使用する度に威力が5ずつ上昇する。",
-          effect: { type: "custom", customType: "jegan_ewac_grenade" }
-        },
+  label: "支給急造ハンドグレネード 10ダメージ",
+  desc: "10ダメージ。射撃。使用する度に威力が5ずつ上昇する。",
+  effect: {
+    type: "attack",
+    attackType: "shoot",
+    damage: 10,
+    count: 1,
+    special: "jegan_ewac_grenade_power_up"
+  }
+},
         slot2: {
           label: "ビームサーベル 30ダメージ",
           desc: "30ダメージ。格闘、ビーム属性",
