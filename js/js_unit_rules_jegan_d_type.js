@@ -185,9 +185,7 @@ if (state.formId === "ewac") {
   if (state.jeganBarrierTurns > 0) {
     result.status.push("全ダメージ無効バリア");
   }
-if (state.overEvadeMode && typeof state.overEvadeCap === "number") {
-  result.evadeMax = state.overEvadeCap;
-}
+
   if (state.jeganShieldActive) {
     result.status.push("シールド半減");
   }
