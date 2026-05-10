@@ -770,13 +770,7 @@ export function onJeganActionResolved(attacker, defender, context = {}) {
   const slot = context.slot || attacker.slots?.[context.slotKey];
   const effect = slot?.effect || {};
 
-  if (effect.customType === "jegan_stark_raid") {
-    const damage = Math.max(0, Number(attacker.evade || 0)) * 10;
-    return {
-      redraw: false,
-      message: `急襲：所持回避数${attacker.evade}×10 = ${damage}ダメージ`
-    };
-  }
+
 
   if (effect.onFullHitEffect === "jegan_enemy_evade_zero") {
     const totalCount = Number(context.totalCount || 0);
