@@ -645,10 +645,6 @@ export function onJeganActionResolved(attacker, defender, context = {}) {
     };
   }
 
-  if (effect.customType === "jegan_ewac_grenade") {
-    attacker.jeganEwacGrenadeBonus += 5;
-    return { redraw: true, message: `支給急造ハンドグレネード：次回威力+5` };
-  }
 
   if (effect.customType === "jegan_ewac_capture_fire") {
     if (defender.evade !== 0) {
