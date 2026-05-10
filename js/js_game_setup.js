@@ -93,32 +93,58 @@ export function createGameSetup(ctx) {
   }
 
   function loadUnitButtons() {
-    ctx.unitButtons.innerHTML = "";
+  ctx.unitButtons.innerHTML = "";
 
+  function appendUnitSection(titleText, units, className) {
+    if (!units || units.length <= 0) return;
+
+    const section = document.createElement("div");
+    section.className = className;
+
+    const title = document.createElement("div");
+    title.className = "selectSectionTitle";
+    title.textContent = titleText;
+
+    const buttonArea = document.createElement("div");
+    buttonArea.className = "selectSectionButtons";
+
+    units.forEach(unit => {
+      buttonArea.appendChild(makeUnitButton(unit));
+    });
+
+    section.appendChild(title);
+    section.appendChild(buttonArea);
+    ctx.unitButtons.appendChild(section);
+  }
+
+  if (isVsCpuMode() && ctx.getSelectingPlayer() === "B") {
+    appendUnitSection("CPU機体", ctx.cpus || [], "cpuNormalSection");
+    appendUnitSection("初心者向けCPU", ctx.cpuBeginnerList || [], "cpuBeginnerSection");
+  } else {
     getSelectList().forEach(unit => {
       ctx.unitButtons.appendChild(makeUnitButton(unit));
     });
-
-    if (isSelectableEnemy2v2() && ctx.getSelectingPlayer() === "B") {
-      const decideBtn = document.createElement("button");
-      decideBtn.textContent = "この編成で開始";
-
-      decideBtn.addEventListener("click", () => {
-        const teamB = ctx.getTeamB();
-        const enemyList = teamB?.units || [];
-
-        if (enemyList.length < 1) return;
-
-        startChallengePreview2v2(ctx.getTeamA().units, enemyList);
-      });
-
-      ctx.unitButtons.appendChild(decideBtn);
-    }
-
-    setupFixedButtons();
-    updateSelectUi();
   }
 
+  if (isSelectableEnemy2v2() && ctx.getSelectingPlayer() === "B") {
+    const decideBtn = document.createElement("button");
+    decideBtn.textContent = "この編成で開始";
+
+    decideBtn.addEventListener("click", () => {
+      const teamB = ctx.getTeamB();
+      const enemyList = teamB?.units || [];
+
+      if (enemyList.length < 1) return;
+
+      startChallengePreview2v2(ctx.getTeamA().units, enemyList);
+    });
+
+    ctx.unitButtons.appendChild(decideBtn);
+  }
+
+  setupFixedButtons();
+  updateSelectUi();
+  }
   function updateSelectUi() {
     const pending = getPendingUnit();
 
