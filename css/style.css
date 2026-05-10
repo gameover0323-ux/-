@@ -253,3 +253,28 @@ button{
   font-size: 13px;
   text-align: left;
 }
+.cpuNormalSection,
+.cpuBeginnerSection {
+  margin: 12px auto;
+  padding: 8px;
+  border: 1px solid #777;
+  border-radius: 8px;
+  max-width: 560px;
+}
+
+.cpuBeginnerSection {
+  border-color: #66ccff;
+}
+
+.selectSectionTitle {
+  font-weight: bold;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.selectSectionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
