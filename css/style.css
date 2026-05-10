@@ -278,3 +278,53 @@ button{
   justify-content: center;
   gap: 4px;
 }
+.howToBox {
+  width: 100%;
+  max-width: 420px;
+  margin: 8px auto 12px;
+  text-align: left;
+}
+
+.howToButton {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 5px 14px;
+  border: 1px solid #888;
+  border-radius: 14px;
+  background: #111;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  list-style: none;
+}
+
+.howToButton::-webkit-details-marker {
+  display: none;
+}
+
+.howToContent {
+  margin-top: 8px;
+  border: 1px solid #777;
+  background: #111;
+  padding: 10px;
+  line-height: 1.6;
+  font-size: 13px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.howToContent h2,
+.howToContent h3 {
+  text-align: center;
+}
+
+.howToContent p {
+  margin: 8px 0;
+}
+
+.howToContent a {
+  color: #7ec8ff;
+  font-weight: bold;
+}
