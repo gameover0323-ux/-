@@ -379,17 +379,20 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
 
   payHp(state, 120);
 
-  const nextEvadeMax = Math.max(1, Number(state.evadeMax || 0)) * 2;
+  const currentRedCap =
+    state.overEvadeMode && typeof state.overEvadeCap === "number"
+      ? state.overEvadeCap
+      : Number(state.evadeMax || 0);
+
+  const nextEvadeMax = Math.max(1, currentRedCap) * 2;
   const nextEvade = Math.max(0, Number(state.evade || 0)) * 2;
 
   state.actionCount += 1;
 
-  state.evadeMax = nextEvadeMax;
   state.evade = nextEvade;
-
   state.overEvadeMode = true;
   state.overEvadeCap = nextEvadeMax;
-  state.overEvadeBaseMax = nextEvadeMax;
+  state.overEvadeBaseMax = state.evadeMax;
   state.overEvadeAbsoluteMax = null;
 
   state.jeganStarkLimiterActive = true;
@@ -397,7 +400,7 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
   return {
     handled: true,
     redraw: true,
-    message: "スタークリミッター解除：行動権+1、回避上限/所持数2倍"
+    message: `スタークリミッター解除：行動権+1、赤上限${nextEvadeMax}、所持回避${nextEvade}`
   };
     }
 
@@ -749,7 +752,20 @@ export function onJeganActionResolved(attacker, defender, context = {}) {
       message: `急襲：所持回避数${attacker.evade}×10 = ${damage}ダメージ`
     };
   }
+if (effect.onFullHitEffect === "jegan_enemy_evade_zero") {
+  const totalCount = Number(context.totalCount || 0);
+  const hitCount = Number(context.hitCount || 0);
 
+  if (totalCount > 0 && hitCount >= totalCount) {
+    defender.evade = 0;
+    return { redraw: true, message: "ショートマシンガン フルヒット：相手回避0" };
+  }
+
+  return { redraw: false, message: null };
+}kind: "attack",
+  attacks,
+  message: ""
+  scalingOnUse: effect.scalingOnUse
   return { redraw: false, message: null };
 }
 
