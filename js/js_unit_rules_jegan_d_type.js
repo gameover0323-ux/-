@@ -64,10 +64,10 @@ function changeForm(state, formId, options = {}) {
 }
 
 function hasSupportFirePending(state) {
-  if (!state || !Array.isArray(state.pendingAttacks)) return false;
+  if (!state || !Array.isArray(state.pendingReservedActions)) return false;
 
-  return state.pendingAttacks.some(item =>
-    item.id && String(item.id).startsWith("jegan_ewac_support_")
+  return state.pendingReservedActions.some(action =>
+    action.id && String(action.id).startsWith("jegan_ewac_support_")
   );
 }
 export function getJeganDerivedState(state) {
