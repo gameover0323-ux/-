@@ -495,7 +495,19 @@ const extra = mergeExtraResult(result);
         ctx.handleChoiceRequest(unitResult.requestChoice);
         return;
       }
+if (unitResult.reserveAction) {
+  reserveAction(actor, unitResult.reserveAction);
 
+  if (unitResult.redraw) {
+    ctx.redrawBattleBoards();
+  }
+
+  if (unitResult.message) {
+    ctx.showPopup(unitResult.message);
+  }
+
+  return;
+}
 if (unitResult.startSlotAction) {
   startSlotAction(
     ownerPlayer,
