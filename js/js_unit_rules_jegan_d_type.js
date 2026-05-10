@@ -663,7 +663,19 @@ export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
   const wasForcedAction = state.jeganForcedActionReady;
   state.jeganForcedActionReady = false;
 
-  const effectId = context.resolveResult?.customEffectId || null;
+  const result = context.resolveResult || {};
+  const effectId = result.customEffectId || null;
+
+  if (result.scalingOnUse?.key) {
+    const key = result.scalingOnUse.key;
+    const add = Number(result.scalingOnUse.add || 0);
+    state[key] = Number(state[key] || 0) + add;
+
+    return {
+      redraw: true,
+      message: result.scalingOnUse.message || null
+    };
+  }
 
   if (effectId === "jegan_change_stark") {
     state.jeganStarkTurns = 5;
@@ -682,6 +694,42 @@ export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
   if (effectId === "jegan_ewac_search" && context.enemyState) {
     context.enemyState.evade = 0;
     return { redraw: true, message: "EWAC索敵：相手回避0" };
+  }
+
+  if (effectId === "jegan_ewac_capture_fire") {
+    if (!context.enemyState) {
+      return { redraw: true, message: "EWAC捕捉：対象取得失敗" };
+    }
+
+    if (Number(context.enemyState.evade || 0) !== 0) {
+      return {
+        redraw: true,
+        message: "EWAC捕捉・艦艇援護射撃：相手回避が0ではないため不発"
+      };
+    }
+
+    return {
+      redraw: true,
+      message: "EWAC捕捉・艦艇援護射撃：攻撃開始",
+      appendAttacks: [
+        {
+          damage: 150,
+          type: "shoot",
+          beam: false,
+          cannotEvade: false,
+          ignoreReduction: false,
+          ignoreDefense: false,
+          addedBeam: false,
+          addedCannotEvade: false,
+          addedIgnoreReduction: false,
+          special: null,
+          source: "EWAC捕捉・艦艇援護射撃",
+          onHit: null,
+          moonlightButterfly: false,
+          minEvadeRequired: 0
+        }
+      ]
+    };
   }
 
   if (wasForcedAction) {
