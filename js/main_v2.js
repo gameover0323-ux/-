@@ -483,7 +483,23 @@ function canExecuteSpecialForPlayer(playerKey, special) {
   }
 
   const timing = special.timing || "self";
+if (
+  special.effectType === "jegan_request_arms" &&
+  currentAttack.length > 0 &&
+  playerKey !== currentPlayer
+) {
+  const actor = getPlayerState(playerKey);
+  if (!actor) return false;
 
+  const availability = executeUnitCanUseSpecial(actor, special.key, {
+    ownerPlayer: playerKey,
+    enemyPlayer: getOpponentPlayer(playerKey),
+    currentAttackContext,
+    currentAttack
+  });
+
+  return availability.allowed !== false;
+}
   let timingAllowed = false;
 
   if (timing === "self") {
