@@ -115,6 +115,13 @@ export function getJeganDerivedState(state) {
     }
 
     if (state.jeganStarkRightUsed && state.jeganEscortRightUsed) {
+    result.specials.special4 = {
+  name: "兵装要請（放棄済み）",
+  effectType: "jegan_request_arms_used",
+  timing: "auto",
+  desc: "6/6EXの使用権を放棄済み。6SP使用可能。",
+  actionType: "auto"
+};
       result.slots.slot6 = {
         label: "6SP ミサイルポッド 20ダメージ×4回",
         desc: "20ダメージ×4回。射撃",
