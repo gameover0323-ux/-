@@ -400,20 +400,26 @@ const extra = mergeExtraResult(result);
   }
 
   if (result.kind === "attack") {
-    const extra = mergeExtraResult(result);
+  const afterResult = runAfterSlotResolvedHook(actor, slotMeta.slotNumber, result, slotMeta);
 
-    const attacks = [...result.attacks, ...extra.attacks];
+  const extra = mergeExtraResult(result);
 
-    extra.messages.forEach((message) => {
-      ctx.appendBattleNotice(message);
-    });
+  const attacks = [
+    ...result.attacks,
+    ...(afterResult?.appendAttacks || []),
+    ...extra.attacks
+  ];
 
-    if (extra.redraw) {
-      ctx.redrawBattleBoards();
-    }
+  extra.messages.forEach((message) => {
+    ctx.appendBattleNotice(message);
+  });
 
-    startAttackQte(attacks);
-    return;
+  if (extra.redraw || afterResult?.redraw) {
+    ctx.redrawBattleBoards();
+  }
+
+  startAttackQte(attacks);
+  return;
   }
 
   ctx.renderAttackLogText("この行動はまだ未対応");
