@@ -82,12 +82,13 @@ const attacks = createAttack(damage, count, {
     };
   }
 
-  if (effect.type === "custom") {
+if (effect.type === "custom") {
   return {
     kind: "custom",
     attacks: [],
     message: "",
-    customEffectId: effect.effectId || effect.customType || null
+    customEffectId: effect.effectId || effect.customType || null,
+    scalingOnUse: effect.scalingOnUse || null
   };
 }
 
