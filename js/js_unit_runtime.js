@@ -180,11 +180,23 @@ function setFormCore(state, nextFormId, options = {}) {
   }
 
   if (preserveEvade) {
-    state.evade = Math.max(0, prevEvade);
-  } else {
-    state.evade = state.evadeMax;
-  }
+  state.evade = Math.max(0, prevEvade);
 
+  if (state.evade > state.evadeMax) {
+    state.overEvadeMode = true;
+    state.overEvadeCap = state.evade;
+    state.overEvadeBaseMax = state.evadeMax;
+  } else {
+    state.overEvadeMode = false;
+    state.overEvadeCap = state.evadeMax;
+    state.overEvadeBaseMax = state.evadeMax;
+  }
+} else {
+  state.evade = state.evadeMax;
+  state.overEvadeMode = false;
+  state.overEvadeCap = state.evadeMax;
+  state.overEvadeBaseMax = state.evadeMax;
+}
   return true;
 }
 
