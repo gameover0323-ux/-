@@ -78,7 +78,7 @@ const attacks = createAttack(damage, count, {
     return {
       kind: "attack",
       attacks,
-      message: ""
+      message: "",
       scalingOnUse: effect.scalingOnUse || null
     };
   }
