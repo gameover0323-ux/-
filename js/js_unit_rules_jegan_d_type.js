@@ -752,20 +752,22 @@ export function onJeganActionResolved(attacker, defender, context = {}) {
       message: `急襲：所持回避数${attacker.evade}×10 = ${damage}ダメージ`
     };
   }
-if (effect.onFullHitEffect === "jegan_enemy_evade_zero") {
-  const totalCount = Number(context.totalCount || 0);
-  const hitCount = Number(context.hitCount || 0);
 
-  if (totalCount > 0 && hitCount >= totalCount) {
-    defender.evade = 0;
-    return { redraw: true, message: "ショートマシンガン フルヒット：相手回避0" };
+  if (effect.onFullHitEffect === "jegan_enemy_evade_zero") {
+    const totalCount = Number(context.totalCount || 0);
+    const hitCount = Number(context.hitCount || 0);
+
+    if (totalCount > 0 && hitCount >= totalCount) {
+      defender.evade = 0;
+      return {
+        redraw: true,
+        message: "ショートマシンガン フルヒット：相手回避0"
+      };
+    }
+
+    return { redraw: false, message: null };
   }
 
-  return { redraw: false, message: null };
-}kind: "attack",
-  attacks,
-  message: ""
-  scalingOnUse: effect.scalingOnUse
   return { redraw: false, message: null };
 }
 
