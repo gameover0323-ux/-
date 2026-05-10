@@ -357,10 +357,17 @@ ctx.setCurrentAction(
     result.kind === "none" ||
     result.kind === "custom"
   ) {
-    runAfterSlotResolvedHook(actor, slotMeta.slotNumber, result, slotMeta);
+    const afterResult = runAfterSlotResolvedHook(actor, slotMeta.slotNumber, result, slotMeta);
 
-    const extra = mergeExtraResult(result);
+if (afterResult?.appendAttacks && afterResult.appendAttacks.length > 0) {
+  startAttackQte(afterResult.appendAttacks, {
+    appendedOnly: true,
+    sourceLabel: afterResult.appendAttacks[0]?.source || "追加攻撃"
+  });
+  return;
+}
 
+const extra = mergeExtraResult(result);
     extra.messages.forEach((message) => {
       ctx.appendBattleNotice(message);
     });
