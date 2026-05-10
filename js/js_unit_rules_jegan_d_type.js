@@ -293,6 +293,32 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
     };
   }
 
+  const isQte = Array.isArray(context.currentAttack) && context.currentAttack.length > 0;
+
+  if (isQte) {
+    if (state.jeganSlot6Mode === "stark") {
+      state.jeganStarkRightUsed = true;
+      state.jeganSlot6Mode = "escort";
+      state.jeganBarrierTurns = Math.max(state.jeganBarrierTurns, 1);
+
+      return {
+        handled: true,
+        redraw: true,
+        message: "兵装要請：6使用権を放棄。1ターン全ダメージ無効。6EXへ強制切替"
+      };
+    }
+
+    state.jeganEscortRightUsed = true;
+    state.jeganSlot6Mode = "stark";
+    state.jeganBarrierTurns = Math.max(state.jeganBarrierTurns, 1);
+
+    return {
+      handled: true,
+      redraw: true,
+      message: "兵装要請：6EX使用権を放棄。1ターン全ダメージ無効。6へ強制切替"
+    };
+  }
+
   state.jeganSlot6Mode = state.jeganSlot6Mode === "stark" ? "escort" : "stark";
 
   return {
@@ -300,7 +326,7 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
     redraw: true,
     message: null
   };
-    }
+}
 
     case "jegan_assault_predict": {
       if (!consumeAction(state, 1)) {
