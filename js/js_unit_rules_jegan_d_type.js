@@ -753,13 +753,6 @@ export function onJeganActionResolved(attacker, defender, context = {}) {
   }
 
 
-  if (effect.customType === "jegan_ewac_capture_fire") {
-    if (defender.evade !== 0) {
-      return { redraw: true, message: "EWAC捕捉・艦艇援護射撃：相手回避が0ではないため不発" };
-    }
-
-    return { redraw: false, message: "EWAC捕捉・艦艇援護射撃発動" };
-  }
 
   if (effect.onFullHitEffect === "jegan_enemy_evade_zero") {
     defender.evade = 0;
