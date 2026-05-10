@@ -43,7 +43,14 @@ function applyAttackOnHitSpecial({ attacker, defender, attack }) {
   if (!attacker || !defender || !attack) {
     return null;
   }
+if (attack.special === "jegan_ewac_grenade_power_up") {
+  attacker.jeganEwacGrenadeBonus =
+    typeof attacker.jeganEwacGrenadeBonus === "number"
+      ? attacker.jeganEwacGrenadeBonus + 5
+      : 5;
 
+  return `${attacker.name} 支給急造ハンドグレネード：次回威力+5`;
+}
   if (attack.special === "devil_head_each_hit") {
     defender.evade = Math.max(0, defender.evade - 1);
     return `${defender.name} の回避-1`;
