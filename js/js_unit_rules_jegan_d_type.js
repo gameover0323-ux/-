@@ -467,36 +467,50 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
 }
 
     case "jegan_ewac_support_fire": {
-      if (state.jeganEwacSupportFireCount >= 3) {
-        return { handled: true, redraw: true, message: "捕捉・援護射撃は3回使用済み" };
-      }
+  if (state.jeganEwacSupportFireCount >= 3) {
+    return { handled: true, redraw: true, message: "捕捉・援護射撃は3回使用済み" };
+  }
 
-      if (state.jeganEwacSupportFireUsedThisTurn) {
-        return { handled: true, redraw: true, message: "捕捉・援護射撃は1ターン1度まで" };
-      }
+  if (state.jeganEwacSupportFireUsedThisTurn) {
+    return { handled: true, redraw: true, message: "捕捉・援護射撃は1ターン1度まで" };
+  }
 
-      state.jeganEwacSupportFireCount += 1;
-      state.jeganEwacSupportFireUsedThisTurn = true;
+  state.jeganEwacSupportFireCount += 1;
+  state.jeganEwacSupportFireUsedThisTurn = true;
 
-      addPendingAttack(state, {
-        id: `jegan_ewac_support_${state.jeganEwacSupportFireCount}`,
-        turns: 3,
-        lockSpecials: ["jegan_ewac_release", "jegan_ewac_escape"],
-        message: "EWAC捕捉・援護射撃：80ダメージ射撃",
-        slot: {
-          label: "EWAC捕捉・援護射撃 80ダメージ",
-          desc: "予約攻撃。80ダメージ。射撃",
-          effect: {
-            type: "attack",
-            attackType: "shoot",
-            damage: 80,
-            count: 1
-          }
+  return {
+    handled: true,
+    redraw: true,
+    message: "捕捉・援護射撃を予約した。3ターン後に発動",
+    reserveAction: {
+      id: `jegan_ewac_support_${state.jeganEwacSupportFireCount}`,
+      delay: 3,
+      trigger: "turn_start",
+      ownerPlayer: context.ownerPlayer,
+      enemyPlayer: context.enemyPlayer,
+      type: "attack",
+      label: "EWAC捕捉・援護射撃 80ダメージ",
+      attacks: [
+        {
+          damage: 80,
+          type: "shoot",
+          beam: false,
+          cannotEvade: false,
+          ignoreReduction: false,
+          ignoreDefense: false,
+          addedBeam: false,
+          addedCannotEvade: false,
+          addedIgnoreReduction: false,
+          special: null,
+          source: "EWAC捕捉・援護射撃",
+          onHit: null,
+          moonlightButterfly: false,
+          minEvadeRequired: 0
         }
-      });
-
-      return { handled: true, redraw: true, message: "捕捉・援護射撃を予約した。3ターン後に発動" };
+      ]
     }
+  };
+}
 
     case "jegan_escort_release": {
       return {
