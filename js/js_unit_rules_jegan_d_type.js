@@ -159,7 +159,13 @@ if (state.formId === "ewac") {
       }
     };
   }
-
+result.specials.special4 = {
+  name: "兵装要請（放棄済み）",
+  effectType: "jegan_request_arms_used",
+  timing: "auto",
+  desc: "6/6EXの使用権を放棄済み。6SP使用可能。",
+  actionType: "auto"
+};
   if (state.jeganLimiterTurns > 0) {
     result.status.push(`リミッター解除 残り${state.jeganLimiterTurns}ターン`);
   }
