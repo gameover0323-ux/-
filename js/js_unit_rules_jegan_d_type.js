@@ -449,15 +449,22 @@ export function executeJeganSpecial(state, specialKey, context = {}) {
     }
 
     case "jegan_ewac_escape": {
-      if (state.jeganEwacEscapeUsed) {
-        return { handled: true, redraw: true, message: "離脱解除は使用済み" };
-      }
+  if (state.jeganEwacEscapeUsed) {
+    return { handled: true, redraw: true, message: "離脱解除は使用済み" };
+  }
 
-      state.jeganEwacEscapeUsed = true;
-      state.jeganEwacBroken = true;
-      state.jeganBarrierTurns = Math.max(state.jeganBarrierTurns, 1);
-      return { handled: true, redraw: true, message: "離脱解除：このターン全ダメージ無効。EWAC選択権破棄" };
-    }
+  state.jeganEwacEscapeUsed = true;
+  state.jeganEwacBroken = true;
+  state.jeganBarrierTurns = Math.max(state.jeganBarrierTurns, 1);
+
+  changeForm(state, "base");
+
+  return {
+    handled: true,
+    redraw: true,
+    message: "離脱解除：このターン全ダメージ無効。EWACを永久解除"
+  };
+}
 
     case "jegan_ewac_support_fire": {
       if (state.jeganEwacSupportFireCount >= 3) {
