@@ -249,12 +249,18 @@ function applyDerivedStateResult(state, derived) {
     state.statusList = [...derived.status];
   }
 
-  if (typeof derived.evadeMax === "number") {
-    state.evadeMax = derived.evadeMax;
-    if (state.evade > state.evadeMax) {
-      state.evade = state.evadeMax;
-    }
+ if (typeof derived.evadeMax === "number") {
+  state.evadeMax = derived.evadeMax;
+
+  if (state.evade > state.evadeMax) {
+    state.overEvadeMode = true;
+    state.overEvadeCap = Math.max(
+      state.evade,
+      typeof state.overEvadeCap === "number" ? state.overEvadeCap : state.evade
+    );
+    state.overEvadeBaseMax = state.evadeMax;
   }
+}
 
   if (Array.isArray(derived.ownedSlotOrder)) {
     state.ownedSlotOrder = [...derived.ownedSlotOrder];
