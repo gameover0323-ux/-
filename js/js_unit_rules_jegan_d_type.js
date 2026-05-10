@@ -130,15 +130,21 @@ export function getJeganDerivedState(state) {
     }
   }
 if (state.formId === "ewac") {
+  const grenadeDamage = 10 + Number(state.jeganEwacGrenadeBonus || 0);
+
   result.slots.slot1 = {
-    label: `支給急造ハンドグレネード ${10 + state.jeganEwacGrenadeBonus}ダメージ`,
-    desc: `${10 + state.jeganEwacGrenadeBonus}ダメージ。射撃。使用する度に威力が5ずつ上昇する。`,
+    label: `支給急造ハンドグレネード ${grenadeDamage}ダメージ`,
+    desc: `${grenadeDamage}ダメージ。射撃。使用する度に威力が5ずつ上昇する。`,
     effect: {
       type: "attack",
       attackType: "shoot",
-      damage: 10 + state.jeganEwacGrenadeBonus,
+      damage: grenadeDamage,
       count: 1,
-      special: "jegan_ewac_grenade_power_up"
+      scalingOnUse: {
+        key: "jeganEwacGrenadeBonus",
+        add: 5,
+        message: "支給急造ハンドグレネード：次回威力+5"
+      }
     }
   };
 }
