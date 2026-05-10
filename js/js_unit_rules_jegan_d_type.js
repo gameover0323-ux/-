@@ -750,13 +750,6 @@ export function onJeganActionResolved(attacker, defender, context = {}) {
     };
   }
 
-
-
-  if (effect.onFullHitEffect === "jegan_enemy_evade_zero") {
-    defender.evade = 0;
-    return { redraw: true, message: "ショートマシンガン フルヒット：相手回避0" };
-  }
-
   return { redraw: false, message: null };
 }
 
