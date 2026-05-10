@@ -129,7 +129,19 @@ export function getJeganDerivedState(state) {
       result.status.push("6SP解禁");
     }
   }
-
+if (state.formId === "ewac") {
+  result.slots.slot1 = {
+    label: `支給急造ハンドグレネード ${10 + state.jeganEwacGrenadeBonus}ダメージ`,
+    desc: `${10 + state.jeganEwacGrenadeBonus}ダメージ。射撃。使用する度に威力が5ずつ上昇する。`,
+    effect: {
+      type: "attack",
+      attackType: "shoot",
+      damage: 10 + state.jeganEwacGrenadeBonus,
+      count: 1,
+      special: "jegan_ewac_grenade_power_up"
+    }
+  };
+}
   if (state.formId === "ewac" && state.jeganSlot6Mode === "support") {
     result.slots.slot6 = {
       label: "6EX EWAC捕捉・艦艇援護射撃",
