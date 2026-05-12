@@ -5,7 +5,8 @@ import {
   logoutPlayer,
   canUseTestMode,
   recordBattleResult,
-  record2v2BattleResult
+  record2v2BattleResult,
+  restorePlayerSession
 } from "./js_player_profile.js";
 import {
   createRoomId,
