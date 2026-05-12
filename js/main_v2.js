@@ -492,7 +492,43 @@ function updateDebugButtonVisibility() {
 
   btn.style.display = canUseTestMode() ? "" : "none";
 }
+function updatePlayerCardUi() {
+  const summary = document.getElementById("playerCardSummary");
+  const loginBtn = document.getElementById("playerLoginBtn");
+  const registerBtn = document.getElementById("playerRegisterBtn");
+  const logoutBtn = document.getElementById("playerLogoutBtn");
+  const statsBtn = document.getElementById("playerStatsBtn");
 
+  if (!summary || !loginBtn || !registerBtn || !logoutBtn || !statsBtn) return;
+
+  const profile = playerSession.profile;
+
+  if (!profile) {
+    summary.innerHTML = "ゲスト参戦中<br>戦績は保存されません";
+    loginBtn.style.display = "";
+    registerBtn.style.display = "";
+    logoutBtn.style.display = "none";
+    statsBtn.style.display = "none";
+    return;
+  }
+
+  const titleText = Array.isArray(profile.equippedTitles) && profile.equippedTitles.length > 0
+    ? profile.equippedTitles.map(id => `[${id}]`).join("")
+    : "称号なし";
+
+  summary.innerHTML = `
+    ID：${profile.id}<br>
+    名前：${profile.name}<br>
+    登録日：${profile.registeredAt}<br>
+    権限：${profile.role}<br>
+    称号：${titleText}
+  `;
+
+  loginBtn.style.display = "none";
+  registerBtn.style.display = "none";
+  logoutBtn.style.display = "";
+  statsBtn.style.display = "";
+}
 
 function canExecuteSpecialForPlayer(playerKey, special) {
   if (!special || special.actionType === "auto") {
