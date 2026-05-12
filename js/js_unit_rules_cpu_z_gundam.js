@@ -21,7 +21,18 @@ function cpuZSetForm(state, formId) {
     preserveEvade: true
   });
 }
+function cpuZSetBoostEffect(state) {
+  setStateEffect(state, "cpu_z_biosensor", {
+    turns: state.cpuZBioTurns,
+    boost: true,
+    boostType: "biosensor",
+    boostName: "バイオセンサー"
+  });
+}
 
+function cpuZClearBoostEffect(state) {
+  clearStateEffect(state, "cpu_z_biosensor");
+}
 function cpuZActivateBiosensor(state) {
   ensureCpuZState(state);
   const changed = cpuZSetForm(state, "bio");
@@ -30,6 +41,8 @@ function cpuZActivateBiosensor(state) {
   state.cpuZBioTurns = 3;
   state.cpuZBioSlot3Ex = false;
   state.cpuZUsedBio3ExThisAction = false;
+  cpuZSetBoostEffect(state);
+
   return true;
 }
 
