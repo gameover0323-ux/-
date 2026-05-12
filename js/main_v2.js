@@ -797,6 +797,48 @@ function getBattleRecordMode() {
 }
 
 async function saveBattleResultForCurrentPlayer(winnerPlayer) {
+  if (isTeamBattleMode()) {
+    if (battleMode === "challenge2v2") {
+      return;
+    }
+
+    const playerSide =
+      onlineState.enabled ? onlineState.myPlayer : "A";
+
+    const opponentSide =
+      playerSide === "A" ? "B" : "A";
+
+    const playerTeam = getTeam(playerSide);
+    const opponentTeam = getTeam(opponentSide);
+
+    if (!playerTeam || !opponentTeam) {
+      return;
+    }
+
+    const playerUnitIds = [
+      playerTeam.unit1?.unitId,
+      playerTeam.unit2?.unitId
+    ].filter(Boolean);
+
+    const defeatedUnitIds = [
+      opponentTeam.unit1?.unitId,
+      opponentTeam.unit2?.unitId
+    ].filter(Boolean);
+
+    const result =
+      winnerPlayer === playerSide
+        ? "win"
+        : "lose";
+
+    await record2v2BattleResult({
+      modeKey: get2v2StatsModeKey(),
+      playerUnitIds,
+      defeatedUnitIds,
+      result
+    });
+
+    return;
+  }
   if (!playerSession.profile) return;
   if (canUseTestMode()) return;
 
