@@ -575,7 +575,7 @@ export function onJeganTurnEnd(state, context = {}) {
     if (state.jeganStarkTurns <= 0 && state.formId === "stark") {
       changeForm(state, "base");
       messages.push("スターク換装終了：ジェガンD型に戻った");
-
+delete state.stateEffects.jegan_stark_change;
       if (state.jeganStarkLimiterActive) {
         state.jeganStarkLimiterActive = false;
         state.jeganLimiterRestTurns = 1;
@@ -589,6 +589,7 @@ export function onJeganTurnEnd(state, context = {}) {
 
     if (state.jeganEscortTurns <= 0 && state.formId === "escort") {
       changeForm(state, "base");
+      delete state.stateEffects.jegan_escort_change;
       messages.push("エスコート換装終了：ジェガンD型に戻った");
     }
   }
@@ -864,6 +865,7 @@ export function onJeganResolveChoice(state, pendingChoice, selectedValue, contex
     }
 
     changeForm(state, "base");
+    delete state.stateEffects.jegan_stark_change;
     return { handled: true, redraw: true, message: "スターク装備解除：ジェガンD型へ換装" };
   }
 
@@ -874,6 +876,7 @@ export function onJeganResolveChoice(state, pendingChoice, selectedValue, contex
     }
 
     changeForm(state, "base");
+    delete state.stateEffects.jegan_escort_change;
     return { handled: true, redraw: true, message: "エスコート装備解除：ジェガンD型へ換装" };
   }
 
