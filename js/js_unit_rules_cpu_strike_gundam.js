@@ -239,8 +239,13 @@ export function onCpuStrikeAfterSlotResolved(state, slotNumber, context = {}) {
   if (result.customEffectId === "cpu_strike_seed_awaken") {
     const current = getSeedEffect(state);
     const currentTurns = current && typeof current.turns === "number" ? current.turns : 0;
-    setStateEffect(state, "cpu_strike_seed", { turns: currentTurns + 5, skipNextTick: true });
-    state.evade *= 2;
+    setStateEffect(state, "cpu_strike_seed", {
+  turns: currentTurns + 5,
+  skipNextTick: true,
+  boost: true,
+  boostType: "seed",
+  boostName: "S.E.E.D.覚醒"
+});   state.evade *= 2;
     if (state.evade > state.evadeMax) {
       state.overEvadeMode = true;
       state.overEvadeCap = state.evade;
