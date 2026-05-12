@@ -242,3 +242,64 @@ export async function recordBattleResult(record) {
 
   return { ok: true };
 }
+function ensureTwoVtwoStats(unitStats) {
+  if (!unitStats.twoVtwo) {
+    unitStats.twoVtwo = {
+      offline: {
+        total: { win: 0, lose: 0 },
+        defeated: {}
+      },
+      cpu: {
+        total: { win: 0, lose: 0 },
+        defeated: {}
+      },
+      online: {
+        total: { win: 0, lose: 0 },
+        defeated: {}
+      }
+    };
+  }
+
+  return unitStats.twoVtwo;
+}
+
+function addTwoVtwoWin(bucket, defeatedUnitIds) {
+  bucket.total.win += 1;
+
+  defeatedUnitIds.forEach(unitId => {
+    bucket.defeated[unitId] =
+      (bucket.defeated[unitId] || 0) + 1;
+  });
+}
+
+function addTwoVtwoLose(bucket) {
+  bucket.total.lose += 1;
+}
+
+export async function record2v2BattleResult({
+  modeKey,
+  playerUnitIds,
+  defeatedUnitIds,
+  result
+}) {
+  const profile = playerSession.profile;
+
+  if (!profile) return;
+  if (profile.role === "debug") return;
+
+  playerUnitIds.forEach(unitId => {
+    const unitStats = ensureUnitStats(profile, unitId);
+
+    const twoVtwo = ensureTwoVtwoStats(unitStats);
+
+    const bucket = twoVtwo[modeKey];
+
+    if (result === "win") {
+      addTwoVtwoWin(bucket, defeatedUnitIds);
+    } else {
+      addTwoVtwoLose(bucket);
+    }
+  });
+
+  await writePlayerProfile(profile.id, profile);
+}
