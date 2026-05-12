@@ -442,6 +442,7 @@ export function onCpuZGundamTurnEnd(state, context = {}) {
   if (state.formId === "bio") {
     if (state.cpuZBioTurns > 0) {
       state.cpuZBioTurns -= 1;
+      cpuZSetBoostEffect(state);
       redraw = true;
 
       if (state.cpuZBioTurns <= 0) {
