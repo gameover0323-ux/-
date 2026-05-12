@@ -475,9 +475,20 @@ function clearPendingChoice() {
 
 
 function toggleTestMode() {
+  if (!canUseTestMode()) {
+    showPopup("テストモードはデバッグアカウント専用です");
+    return;
+  }
+
   isTestMode = !isTestMode;
   redrawBattleBoards();
   showPopup(isTestMode ? "テストモードON" : "テストモードOFF");
+}
+function updateDebugButtonVisibility() {
+  const btn = document.getElementById("toggleTestModeBtn");
+  if (!btn) return;
+
+  btn.style.display = canUseTestMode() ? "" : "none";
 }
 
 
