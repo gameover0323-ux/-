@@ -476,9 +476,12 @@ export function onStrikeAfterSlotResolved(state, slotNumber, context = {}) {
     const currentTurns = current && typeof current.turns === "number" ? current.turns : 0;
 
     setStateEffect(state, "strike_seed", {
-      turns: currentTurns + 5,
-      skipNextTick: true
-    });
+  turns: currentTurns + 5,
+  skipNextTick: true,
+  boost: true,
+  boostType: "seed",
+  boostName: "S.E.E.D.覚醒"
+});
 
  state.evade *= 2;
 
