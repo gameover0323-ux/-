@@ -1868,4 +1868,5 @@ document.getElementById("toggleTestModeBtn").addEventListener("click", toggleTes
 
 
 loadUnitButtons();
+updateDebugButtonVisibility();
 bootOnlineFromUrl();
