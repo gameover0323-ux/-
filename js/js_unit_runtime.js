@@ -362,7 +362,19 @@ export function setStateEffect(state, effectId, effectData = {}) {
 export function clearStateEffect(state, effectId) {
   delete state.stateEffects[effectId];
 }
+export function isBoostStateEffect(effect) {
+  return !!effect && effect.boost === true;
+}
 
+export function hasBoostStateEffect(state) {
+  if (!state || !state.stateEffects) return false;
+  return Object.values(state.stateEffects).some(isBoostStateEffect);
+}
+
+export function getBoostStateEffects(state) {
+  if (!state || !state.stateEffects) return [];
+  return Object.values(state.stateEffects).filter(isBoostStateEffect);
+}
 export function decrementStateEffectTurns(state) {
   Object.keys(state.stateEffects).forEach((effectId) => {
     const effect = state.stateEffects[effectId];
