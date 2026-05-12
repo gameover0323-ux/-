@@ -286,18 +286,32 @@ export function modifyCpuWingZeroEvadeAttempt(defender, attacker, attack, contex
   ensureCpuWingZeroState(defender);
 
   if (defender.cpuWingZeroFullEvadeTurns > 0 && !attack.cannotEvade) {
-    return { handled: true, evaded: true, message: "ウイングゼロ：全攻撃回避" };
+    return {
+      handled: true,
+      ok: true,
+      consumeEvade: 0,
+      message: "ウイングゼロ：全攻撃回避"
+    };
   }
 
   if (getEvadeSystem(defender)) {
-    if (!attack.cannotEvade) {
-      return { handled: true, evaded: true, message: "ウイングゼロ：ゼロシステム回避" };
+    if (defender.evade <= 0) {
+      return {
+        handled: true,
+        ok: false,
+        reason: "noEvade",
+        message: "回避が足りない"
+      };
     }
 
-    if (defender.evade > 0) {
-      defender.evade = Math.max(0, defender.evade - 1);
-      return { handled: true, evaded: true, message: "ウイングゼロ：回避1消費、必中攻撃を回避" };
-    }
+    return {
+      handled: true,
+      ok: true,
+      consumeEvade: 1,
+      message: attack.cannotEvade
+        ? "ウイングゼロ：回避1消費、必中攻撃を回避"
+        : "ウイングゼロ：ゼロシステム回避、回避1消費"
+    };
   }
 
   return { handled: false };
