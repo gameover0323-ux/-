@@ -1367,6 +1367,7 @@ onlineBattleFinished = false;
 
   redrawBattleBoards();
   document.getElementById("attackLog").textContent = "オンラインバトル開始";
+  updateDebugButtonVisibility();
   showScreen("battle");
 }
 
@@ -1619,7 +1620,7 @@ showTitle: () => {
 
   getTeamB: () => teamB,
   setTeamB: (v) => teamB = v,
-
+updateDebugButtonVisibility();
   init1v1: (unitA, unitB) => {
     playerAState = createBattleState(unitA);
     playerBState = createBattleState(unitB);
@@ -1646,7 +1647,7 @@ currentActionLabel = "";
     document.getElementById("attackLog").textContent = "バトル開始待機中";
     showScreen("battle");
   },
-
+updateDebugButtonVisibility();
   init2v2: (unitsA, unitsB) => {
     teamA = createTeam(unitsA[0], unitsA[1]);
     teamB = createTeam(unitsB[0], unitsB[1]);
@@ -1683,6 +1684,7 @@ currentActionLabel = "";
     document.getElementById("attackLog").textContent = "バトル開始待機中";
     showScreen("battle");
   },
+    updateDebugButtonVisibility();
   initChallenge1v1: (unitA, bossUnit) => {
     playerAState = createBattleState(unitA);
     playerBState = createBattleState(bossUnit);
@@ -1709,7 +1711,7 @@ currentActionLabel = "";
     document.getElementById("attackLog").textContent = "チャレンジバトル開始";
     showScreen("battle");
   },
-
+updateDebugButtonVisibility();
   initChallenge2v2: (unitsA, bossUnits) => {
     teamA = createTeam(unitsA[0], unitsA[1]);
 
