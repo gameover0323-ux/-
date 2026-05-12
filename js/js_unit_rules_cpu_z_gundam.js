@@ -51,6 +51,8 @@ function cpuZEndBiosensor(state) {
   state.cpuZBioTurns = 0;
   state.cpuZBioSlot3Ex = false;
   state.cpuZUsedBio3ExThisAction = false;
+  cpuZClearBoostEffect(state);
+
   return cpuZSetForm(state, "ms");
 }
 
