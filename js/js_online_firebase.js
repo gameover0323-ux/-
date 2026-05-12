@@ -81,3 +81,19 @@ export function buildInitialRoomData({ mode = "online1v1" } = {}) {
     }
   };
 }
+export function getPlayerProfileRef(playerId) {
+  return ref(db, `players/${playerId}`);
+}
+
+export async function readPlayerProfile(playerId) {
+  const snapshot = await get(getPlayerProfileRef(playerId));
+  return snapshot.exists() ? snapshot.val() : null;
+}
+
+export function writePlayerProfile(playerId, data) {
+  return set(getPlayerProfileRef(playerId), data);
+}
+
+export function updatePlayerProfile(playerId, patch) {
+  return update(getPlayerProfileRef(playerId), patch);
+}
