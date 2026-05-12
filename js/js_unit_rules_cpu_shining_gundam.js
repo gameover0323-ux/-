@@ -61,9 +61,14 @@ function enterMode(state, formId, effectId, turns) {
   if (state.evade < 0) state.evade = 0;
 
   setStateEffect(state, effectId, {
-    turns,
-    skipNextTick: true
-  });
+  turns,
+  skipNextTick: true,
+  boost: true,
+  boostType: effectId === "cpu_shining_meikyo" ? "meikyo" : "super_mode",
+  boostName: effectId === "cpu_shining_meikyo"
+    ? "明鏡止水の心"
+    : "スーパーモード"
+});
 
   return true;
 }
