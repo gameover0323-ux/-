@@ -1,10 +1,12 @@
 import {
+import {
   playerSession,
   loginPlayer,
   registerPlayer,
   logoutPlayer,
   canUseTestMode,
-  recordBattleResult
+  recordBattleResult,
+  record2v2BattleResult
 } from "./js_player_profile.js";
 import {
   createRoomId,
