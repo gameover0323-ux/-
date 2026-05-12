@@ -99,9 +99,12 @@ function enterMode(state, formId, effectId, turns) {
   clampShiningEvade(state);
 
   setStateEffect(state, effectId, {
-    turns,
-    skipNextTick: true
-  });
+  turns,
+  skipNextTick: true,
+  boost: true,
+  boostType: effectId === "shining_meikyo" ? "meikyo" : "super_mode",
+  boostName: effectId === "shining_meikyo" ? "明鏡止水の心" : "スーパーモード"
+});
 
   return true;
 }
