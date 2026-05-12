@@ -78,7 +78,7 @@ export function getJeganDerivedState(state) {
     specials: {},
     status: []
   };
-
+if (!state.stateEffects) state.stateEffects = {};
   if (state.formId === "base") {
     if (state.jeganEwacBroken) {
       result.slots.slot1 = {
