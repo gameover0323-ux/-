@@ -2013,5 +2013,9 @@ document.getElementById("playerStatsBtn")?.addEventListener("click", () => {
 
 
 loadUnitButtons();
-updateDebugButtonVisibility();
-bootOnlineFromUrl();
+
+restorePlayerSession().then(() => {
+  updatePlayerCardUi();
+  updateDebugButtonVisibility();
+  bootOnlineFromUrl();
+});
