@@ -373,9 +373,10 @@ export function onCpuZGundamActionResolved(attacker, defender, context = {}) {
       attacker.cpuZUsedBio3ExThisAction &&
       context.hitCount > 0
     ) {
-      attacker.cpuZBioTurns += 3;
+      attacker.cpuZBioTurns += 5;
+cpuZSetBoostEffect(attacker);
       redraw = true;
-      messages.push("CPU Z：バイオセンサー状態+3ターン");
+      messages.push("CPU Z：バイオセンサー状態+5ターン");
     }
 
     if (context.slotNumber === 4 && context.hitCount > 0) {
