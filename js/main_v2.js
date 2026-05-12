@@ -818,6 +818,17 @@ async function saveBattleResultForCurrentPlayer(winnerPlayer) {
     result: winnerPlayer === playerSide ? "win" : "lose"
   });
 }
+function get2v2StatsModeKey() {
+  if (battleMode === "vscpu2v2") {
+    return "cpu";
+  }
+
+  if (battleMode === "online2v2") {
+    return "online";
+  }
+
+  return "offline";
+}
 function finishBattle(winnerPlayer) {
   if (onlineBattleFinished) return;
   onlineBattleFinished = true;
