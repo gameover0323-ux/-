@@ -354,15 +354,20 @@ export function executeWingZeroSpecial(state, specialKey, context = {}) {
 
   if (special.effectType === "zero_berserk") {
     setStateEffect(state, "wing_zero_evade", {
-      turns: 3,
-      skipNextTick: true
-    });
+  turns: currentTurns + 3,
+  skipNextTick: true,
+  boost: true,
+  boostType: "zero_system_evade",
+  boostName: "ゼロシステム(回避)"
+});
 
     setStateEffect(state, "wing_zero_hit", {
-      turns: 3,
-      skipNextTick: true
-    });
-
+  turns: currentTurns + 3,
+  skipNextTick: true,
+  boost: true,
+  boostType: "zero_system_hit",
+  boostName: "ゼロシステム(命中)"
+});
     state.evade = 3;
     state.zeroBerserkUsed = true;
 
