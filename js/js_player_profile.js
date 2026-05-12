@@ -302,3 +302,13 @@ export async function record2v2BattleResult({
 
   await writePlayerProfile(profile.id, profile);
 }
+export async function restorePlayerSession() {
+  const id = sessionStorage.getItem(SESSION_KEY);
+  if (!id) return null;
+
+  const profile = await readPlayerProfile(id);
+  if (!profile) return null;
+
+  playerSession.profile = profile;
+  return profile;
+}
