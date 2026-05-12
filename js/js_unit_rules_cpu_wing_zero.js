@@ -23,14 +23,26 @@ function hasBothSystems(state) {
 
 function activateEvadeSystem(state) {
   state.cpuWingZeroSystemActivatedOnce = true;
-  setStateEffect(state, "cpu_wing_zero_evade_system", { turns: 3, skipNextTick: true });
+  setStateEffect(state, "cpu_wing_zero_evade_system", {
+    turns: 3,
+    skipNextTick: true,
+    boost: true,
+    boostType: "zero_system_evade",
+    boostName: "ゼロシステム(回避)"
+  });
   return "ウイングゼロ：ゼロシステム発動(回避補正)";
 }
 
 function activateHitSystem(state) {
   state.cpuWingZeroSystemActivatedOnce = true;
   state.cpuWingZeroHitClearPending = true;
-  setStateEffect(state, "cpu_wing_zero_hit_system", { turns: 3, skipNextTick: true });
+  setStateEffect(state, "cpu_wing_zero_hit_system", {
+    turns: 3,
+    skipNextTick: true,
+    boost: true,
+    boostType: "zero_system_hit",
+    boostName: "ゼロシステム(命中)"
+  });
   return "ウイングゼロ：ゼロシステム発動(命中補正)";
 }
 
@@ -38,11 +50,25 @@ function activateBerserk(state) {
   state.cpuWingZeroBerserkUsed = true;
   state.cpuWingZeroSystemActivatedOnce = true;
   state.evade = Math.max(state.evade, 3);
-  setStateEffect(state, "cpu_wing_zero_evade_system", { turns: 3, skipNextTick: true });
-  setStateEffect(state, "cpu_wing_zero_hit_system", { turns: 3, skipNextTick: true });
+
+  setStateEffect(state, "cpu_wing_zero_evade_system", {
+    turns: 3,
+    skipNextTick: true,
+    boost: true,
+    boostType: "zero_system_evade",
+    boostName: "ゼロシステム(回避)"
+  });
+
+  setStateEffect(state, "cpu_wing_zero_hit_system", {
+    turns: 3,
+    skipNextTick: true,
+    boost: true,
+    boostType: "zero_system_hit",
+    boostName: "ゼロシステム(命中)"
+  });
+
   return "ウイングゼロ特性：HP100以下、ゼロシステム暴走。6/6EX同時発動、回避3";
 }
-
 function tickEffect(state, effectId) {
   const effect = getStateEffect(state, effectId);
   if (!effect) return false;
