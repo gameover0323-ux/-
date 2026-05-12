@@ -680,6 +680,13 @@ export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
 
   if (effectId === "jegan_change_stark") {
     state.jeganStarkTurns = 5;
+    state.stateEffects.jegan_stark_change = {
+  id: "jegan_stark_change",
+  turns: 5,
+  boost: true,
+  boostType: "form_change",
+  boostName: "スタークジェガン換装"
+};
     changeForm(state, "stark");
 
     return { redraw: true, message: "スタークジェガンに換装した" };
@@ -687,6 +694,13 @@ export function onJeganAfterSlotResolved(state, slotNumber, context = {}) {
 
   if (effectId === "jegan_change_escort") {
     state.jeganEscortTurns = 5;
+    state.stateEffects.jegan_escort_change = {
+  id: "jegan_escort_change",
+  turns: 5,
+  boost: true,
+  boostType: "form_change",
+  boostName: "エスコートタイプ換装"
+};
     changeForm(state, "escort");
 
     return { redraw: true, message: "エスコートタイプに換装した" };
