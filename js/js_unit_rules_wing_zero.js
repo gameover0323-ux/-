@@ -74,17 +74,23 @@ function activateWingZeroSystem(state) {
     const currentTurns = current && typeof current.turns === "number" ? current.turns : 0;
 
     setStateEffect(state, "wing_zero_hit", {
-      turns: currentTurns + 3,
-      skipNextTick: true
-    });
+  turns: currentTurns + 3,
+  skipNextTick: true,
+  boost: true,
+  boostType: "zero_system_hit",
+  boostName: "ゼロシステム(命中)"
+});
   } else {
     const current = getStateEffect(state, "wing_zero_evade");
     const currentTurns = current && typeof current.turns === "number" ? current.turns : 0;
 
     setStateEffect(state, "wing_zero_evade", {
-      turns: currentTurns + 3,
-      skipNextTick: true
-    });
+  turns: currentTurns + 3,
+  skipNextTick: true,
+  boost: true,
+  boostType: "zero_system_evade",
+  boostName: "ゼロシステム(回避)"
+});
   }
 
   state.zeroSystemActivated = true;
