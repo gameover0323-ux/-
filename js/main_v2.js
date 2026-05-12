@@ -1953,7 +1953,61 @@ document.getElementById("executeUnit2SlotBtn").addEventListener("click", () => {
 document.getElementById("simulateSlotBtn").addEventListener("click", simulateSlot);
 document.getElementById("endTurnBtn").addEventListener("click", endTurn);
 document.getElementById("toggleTestModeBtn").addEventListener("click", toggleTestMode);
+document.getElementById("playerLoginBtn")?.addEventListener("click", async () => {
+  const id = prompt("プレイヤーIDを入力してください");
+  if (!id) return;
 
+  const password = prompt("パスワードを入力してください");
+  if (!password) return;
+
+  const result = await loginPlayer(id.trim(), password.trim());
+
+  if (!result.ok) {
+    showPopup(result.message || "ログインに失敗しました");
+    return;
+  }
+
+  updatePlayerCardUi();
+  updateDebugButtonVisibility();
+  showPopup("ログインしました");
+});
+
+document.getElementById("playerRegisterBtn")?.addEventListener("click", async () => {
+  const id = prompt("登録するプレイヤーIDを半角英数字で入力してください");
+  if (!id) return;
+
+  const password = prompt("設定するパスワードを半角英数字で入力してください");
+  if (!password) return;
+
+  const name = prompt("プレイヤー名を入力してください") || id;
+
+  const result = await registerPlayer({
+    id: id.trim(),
+    password: password.trim(),
+    name: name.trim()
+  });
+
+  if (!result.ok) {
+    showPopup(result.message || "登録に失敗しました");
+    return;
+  }
+
+  updatePlayerCardUi();
+  updateDebugButtonVisibility();
+  showPopup("プレイヤー登録しました");
+});
+
+document.getElementById("playerLogoutBtn")?.addEventListener("click", () => {
+  logoutPlayer();
+  isTestMode = false;
+  updatePlayerCardUi();
+  updateDebugButtonVisibility();
+  showPopup("ログアウトしました");
+});
+
+document.getElementById("playerStatsBtn")?.addEventListener("click", () => {
+  showPopup("戦績確認UIは次段階で実装します");
+});
 
 
 
