@@ -783,13 +783,45 @@ function isSideDefeated(playerKey) {
 
   return isUnitDefeated(getPlayerStateRaw(playerKey));
 }
+function getOpponentCategoryByMode() {
+  if (battleMode === "vscpu1v1" || battleMode === "vscpu2v2") return "cpu";
+  if (battleMode === "challenge1v1" || battleMode === "challenge2v2") return "boss";
+  return "playable";
+}
 
+function getBattleRecordMode() {
+  if (onlineState.enabled) return "online";
+  return "offline";
+}
+
+async function saveBattleResultForCurrentPlayer(winnerPlayer) {
+  if (!playerSession.profile) return;
+  if (canUseTestMode()) return;
+
+  const playerSide = onlineState.enabled ? onlineState.myPlayer : "A";
+  if (playerSide !== "A" && playerSide !== "B") return;
+
+  const opponentSide = playerSide === "A" ? "B" : "A";
+  const playerState = getPlayerStateRaw(playerSide);
+  const opponentState = getPlayerStateRaw(opponentSide);
+
+  if (!playerState || !opponentState) return;
+
+  await recordBattleResult({
+    mode: getBattleRecordMode(),
+    playerUnitId: playerState.unitId,
+    opponentUnitId: opponentState.unitId,
+    opponentPlayerId: "",
+    opponentCategory: getOpponentCategoryByMode(),
+    result: winnerPlayer === playerSide ? "win" : "lose"
+  });
+}
 function finishBattle(winnerPlayer) {
   if (onlineBattleFinished) return;
   onlineBattleFinished = true;
 
   publishOnlineBattleEnd(winnerPlayer);
-
+saveBattleResultForCurrentPlayer(winnerPlayer);
   const popup = document.getElementById("popup");
   if (!popup) return;
 
