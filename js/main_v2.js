@@ -1652,7 +1652,7 @@ showTitle: () => {
 
   getTeamB: () => teamB,
   setTeamB: (v) => teamB = v,
-updateDebugButtonVisibility();
+
   init1v1: (unitA, unitB) => {
     playerAState = createBattleState(unitA);
     playerBState = createBattleState(unitB);
@@ -1677,9 +1677,10 @@ currentActionLabel = "";
 
     redrawBattleBoards();
     document.getElementById("attackLog").textContent = "バトル開始待機中";
+  updateDebugButtonVisibility();
     showScreen("battle");
   },
-updateDebugButtonVisibility();
+
   init2v2: (unitsA, unitsB) => {
     teamA = createTeam(unitsA[0], unitsA[1]);
     teamB = createTeam(unitsB[0], unitsB[1]);
@@ -1714,9 +1715,10 @@ updateDebugButtonVisibility();
 
     redrawBattleBoards();
     document.getElementById("attackLog").textContent = "バトル開始待機中";
+  updateDebugButtonVisibility();
     showScreen("battle");
   },
-    updateDebugButtonVisibility();
+    
   initChallenge1v1: (unitA, bossUnit) => {
     playerAState = createBattleState(unitA);
     playerBState = createBattleState(bossUnit);
@@ -1741,9 +1743,10 @@ updateDebugButtonVisibility();
 
     redrawBattleBoards();
     document.getElementById("attackLog").textContent = "チャレンジバトル開始";
+   updateDebugButtonVisibility();
     showScreen("battle");
   },
-updateDebugButtonVisibility();
+
   initChallenge2v2: (unitsA, bossUnits) => {
     teamA = createTeam(unitsA[0], unitsA[1]);
 
@@ -1789,6 +1792,7 @@ updateDebugButtonVisibility();
 
     redrawBattleBoards();
     document.getElementById("attackLog").textContent = "2機チャレンジバトル開始";
+   updateDebugButtonVisibility();
     showScreen("battle");
   }
 });
