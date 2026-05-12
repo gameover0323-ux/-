@@ -77,9 +77,12 @@ function activateBiosensor(state) {
   }
 
   setStateEffect(state, "z_biosensor", {
-    turns: 5,
-    skipNextTick: true
-  });
+  turns: 5,
+  skipNextTick: true,
+  boost: true,
+  boostType: "biosensor",
+  boostName: "バイオセンサー"
+});
 
   state.z_bioSlot3Ex = false;
   state.z_usedBio3ExThisAction = false;
