@@ -1632,11 +1632,12 @@ let onlineActionSeq = 0;
 let onlineSelectEntered = false;
 function getUnitById(unitId) {
   const allUnits = [
-    ...unitList,
-    ...bossList,
-    ...cpuList,
-    ...cpuBeginnerList
-  ];
+  ...unitList,
+  ...bossList,
+  ...cpuList,
+  ...cpuBeginnerList,
+  ...debugUnitList
+];
 
   return allUnits.find(unit => unit.id === unitId) || null;
 }
