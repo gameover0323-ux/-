@@ -14,7 +14,8 @@ import {
   canUseTestMode,
   recordBattleResult,
   record2v2BattleResult,
-  restorePlayerSession
+  restorePlayerSession,
+  saveCurrentPlayerProfile
 } from "./js_player_profile.js";
 import {
   createRoomId,
