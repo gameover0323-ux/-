@@ -694,6 +694,8 @@ function renderPlayerStatsPanel() {
       <summary>総合オンライン撃破数</summary>
       ${renderDefeatedList(defeated.onlinePlayer)}
     </details>
+
+    <button id="openTitleCustomizeBtn">称号・トロフィーカスタム</button>
   `;
 
   panel.style.display = "";
