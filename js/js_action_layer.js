@@ -53,9 +53,22 @@ export function createActionLayer(ctx) {
       }
     });
 
-    const index = list.findIndex((action) => {
-      return action.trigger === trigger && action.delay <= 0;
-    });
+    const readyActions = list.filter(action =>
+  action.trigger === trigger && action.delay <= 0
+);
+
+if (readyActions.length === 0) return false;
+
+readyActions.forEach(action => {
+  const index = list.indexOf(action);
+  if (index >= 0) {
+    list.splice(index, 1);
+  }
+
+  startReservedAction(action);
+});
+
+return true;
 
     if (index < 0) return false;
 
@@ -524,6 +537,21 @@ if (unitResult.reserveAction) {
 
   return;
 }
+      if (Array.isArray(unitResult.reserveActions)) {
+  unitResult.reserveActions.forEach(action => {
+    reserveAction(actor, action);
+  });
+
+  if (unitResult.redraw) {
+    ctx.redrawBattleBoards();
+  }
+
+  if (unitResult.message) {
+    ctx.showPopup(unitResult.message);
+  }
+
+  return;
+      }
 if (unitResult.startSlotAction) {
   startSlotAction(
     ownerPlayer,
