@@ -1660,14 +1660,6 @@ function syncExtraUnlockedUnitsFromProfile() {
     }
   }
 }
-
-  extraUnlockedUnits = Object.entries(playerSession.profile.unlocks)
-    .filter(([, unlocked]) => unlocked)
-    .map(([unlockKey]) => UNLOCKABLE_UNIT_MAP[unlockKey])
-    .filter(Boolean)
-    .map(unitId => getUnitById(unitId))
-    .filter(Boolean);
-}
 function applyOnlineRoomData(roomData) {
   if (!onlineState.enabled || !roomData) return;
 
