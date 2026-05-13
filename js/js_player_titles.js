@@ -425,3 +425,16 @@ export function getTitleLabel(titleId) {
 export function getAllTitleDefs() {
   return TITLE_DEFS;
 }
+export const TITLE_DEFINITIONS = TITLE_DEFS;
+
+export const TITLE_NAME_MAP = Object.fromEntries(
+  TITLE_DEFS.map(title => [title.id, title.label])
+);
+
+export const UNLOCKABLE_UNIT_MAP = {
+  playable_zaku_ii_soldier: "cpu_zaku_ii_soldier",
+  playable_gouf: "cpu_gouf",
+  playable_mobile_ginn: "cpu_mobile_ginn",
+  playable_devil_gundam: "devil_gundam",
+  playable_extreme_gundam: "extreme_gundam"
+};
