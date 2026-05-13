@@ -214,11 +214,14 @@ export function createActionLayer(ctx) {
   }
 
   if (afterResult.message) {
-    ctx.appendBattleNotice(afterResult.message);
-  }
+  ctx.appendBattleNotice(afterResult.message);
+}
 
-  return afterResult;
-  }
+if (afterResult.reserveAction) {
+  reserveAction(actor, afterResult.reserveAction);
+}
+
+return afterResult;
   function startSlotAction(ownerPlayer, slotKey, slotOverride = null) {
     const enemyPlayer = ctx.getOpponentPlayer(ownerPlayer);
 
