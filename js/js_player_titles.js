@@ -438,3 +438,75 @@ export const UNLOCKABLE_UNIT_MAP = {
   playable_devil_gundam: "devil_gundam",
   playable_extreme_gundam: "extreme_gundam"
 };
+export function getTitleConditionText(titleId) {
+  const rule = DEFEAT_TITLE_RULES.find(rule => rule.id === titleId);
+  if (!rule) return "最初から所持、または期間限定称号";
+
+  const nameMap = {
+    gundam_mc: "ガンダム(ﾏｸﾞﾈｯﾄｺｰﾃｨﾝｸﾞ)",
+    cpu_gundam_mc: "ガンダム(ﾏｸﾞﾈｯﾄｺｰﾃｨﾝｸﾞ)のCPU",
+    z_gundam: "Zガンダム",
+    cpu_z_gundam: "ZガンダムのCPU",
+    shining_gundam: "シャイニングガンダム",
+    cpu_shining_gundam: "シャイニングガンダムのCPU",
+    wing_gundam_zero: "ウイングガンダムゼロ",
+    cpu_wing_gundam_zero: "ウイングガンダムゼロのCPU",
+    strike_gundam: "ストライクガンダム",
+    cpu_strike_gundam: "ストライクガンダムのCPU",
+    jegan_d_type: "ジェガンD型",
+    cpu_zaku_ii_soldier: "ザクⅡ(一般兵)",
+    cpu_gouf: "グフ",
+    cpu_mobile_ginn: "モビルジン",
+    devil_gundam: "デビルガンダム",
+    extreme_gundam: "エクストリームガンダム"
+  };
+
+  const targetName = nameMap[rule.targetId] || rule.targetId;
+
+  if (rule.category === "cpu") {
+    return `${targetName}を${rule.count}機撃破`;
+  }
+
+  if (rule.category === "boss") {
+    return `${targetName}を${rule.count}回撃破`;
+  }
+
+  return `${targetName}を${rule.count}機撃破`;
+}
+
+export const TITLE_GROUPS = [
+  {
+    groupId: "initial",
+    label: "最初から所持",
+    titleIds: INITIAL_TITLE_IDS
+  },
+  {
+    groupId: "beta",
+    label: "ベータテストに参加",
+    titleIds: BETA_TITLE_IDS
+  },
+  ...[
+    ["gundam_mc", "ガンダム(ﾏｸﾞﾈｯﾄｺｰﾃｨﾝｸﾞ)撃破"],
+    ["cpu_gundam_mc", "CPUガンダム(ﾏｸﾞﾈｯﾄｺｰﾃｨﾝｸﾞ)撃破"],
+    ["z_gundam", "Zガンダム撃破"],
+    ["cpu_z_gundam", "CPU Zガンダム撃破"],
+    ["shining_gundam", "シャイニングガンダム撃破"],
+    ["cpu_shining_gundam", "CPUシャイニングガンダム撃破"],
+    ["wing_gundam_zero", "ウイングガンダムゼロ撃破"],
+    ["cpu_wing_gundam_zero", "CPUウイングガンダムゼロ撃破"],
+    ["strike_gundam", "ストライクガンダム撃破"],
+    ["cpu_strike_gundam", "CPUストライクガンダム撃破"],
+    ["jegan_d_type", "ジェガンD型撃破"],
+    ["cpu_zaku_ii_soldier", "ザクⅡ(一般兵)撃破"],
+    ["cpu_gouf", "グフ撃破"],
+    ["cpu_mobile_ginn", "モビルジン撃破"],
+    ["devil_gundam", "デビルガンダム撃破"],
+    ["extreme_gundam", "エクストリームガンダム撃破"]
+  ].map(([prefix, label]) => ({
+    groupId: prefix,
+    label,
+    titleIds: DEFEAT_TITLE_RULES
+      .filter(rule => rule.id.startsWith(`${prefix}_`))
+      .map(rule => rule.id)
+  }))
+];
