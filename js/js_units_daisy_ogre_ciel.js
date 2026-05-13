@@ -51,7 +51,7 @@ export const daisy_ogre_ciel = {
     },
 
     {
-      label: "回復",
+      label: "リペアキット",
       desc: "HP60回復",
       effect: {
         kind: "heal",
