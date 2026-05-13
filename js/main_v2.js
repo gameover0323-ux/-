@@ -529,7 +529,143 @@ function updatePlayerCardUi() {
   logoutBtn.style.display = "";
   statsBtn.style.display = "";
 }
+function getUnitNameById(unitId) {
+  const allUnits = [
+    ...unitList,
+    ...bossList,
+    ...cpuList,
+    ...cpuBeginnerList
+  ];
 
+  const unit = allUnits.find(u => u.id === unitId);
+  return unit ? unit.name : unitId;
+}
+
+function formatWinLose(record) {
+  const win = record?.win || 0;
+  const lose = record?.lose || 0;
+  const total = win + lose;
+  const rate = total > 0 ? Math.round((win / total) * 100) : 0;
+  return `Win ${win} Lose ${lose} 勝率${rate}%`;
+}
+
+function renderDefeatedList(defeated = {}) {
+  const entries = Object.entries(defeated);
+
+  if (entries.length === 0) {
+    return `<div class="player-stats-line">記録なし</div>`;
+  }
+
+  return entries
+    .map(([unitId, count]) => {
+      return `<div class="player-stats-line">${getUnitNameById(unitId)}：${count}撃破</div>`;
+    })
+    .join("");
+}
+
+function renderVsList(vs = {}) {
+  const entries = Object.entries(vs);
+
+  if (entries.length === 0) {
+    return `<div class="player-stats-line">記録なし</div>`;
+  }
+
+  return entries
+    .map(([unitId, record]) => {
+      return `<div class="player-stats-line">vs ${getUnitNameById(unitId)}：${formatWinLose(record)}</div>`;
+    })
+    .join("");
+}
+
+function renderPlayerStatsPanel() {
+  const panel = document.getElementById("playerStatsPanel");
+  const content = document.getElementById("playerStatsContent");
+
+  if (!panel || !content) return;
+
+  const profile = playerSession.profile;
+  if (!profile) {
+    showPopup("ログインしていません");
+    return;
+  }
+
+  const stats = profile.stats || {};
+  const unitsStats = stats.units || {};
+  const defeated = stats.defeated || {};
+
+  const unitSections = Object.entries(unitsStats).map(([unitId, unitStats]) => {
+    return `
+      <details>
+        <summary>${getUnitNameById(unitId)} 使用回数 ${unitStats.used || 0}</summary>
+
+        <div class="player-stats-line">総合：${formatWinLose(unitStats.total)}</div>
+        <div class="player-stats-line">オフライン：${formatWinLose(unitStats.offline)}</div>
+        <div class="player-stats-line">オンライン：${formatWinLose(unitStats.online)}</div>
+        <div class="player-stats-line">CPU：${formatWinLose(unitStats.cpu?.total)}</div>
+
+        <details>
+          <summary>CPU個別戦績</summary>
+          ${renderVsList(unitStats.cpu?.vs)}
+        </details>
+
+        <details>
+          <summary>オフライン対プレイアブル戦績</summary>
+          ${renderVsList(unitStats.vsPlayable)}
+        </details>
+
+        <details>
+          <summary>オンライン対プレイヤーID戦績</summary>
+          ${renderVsList(unitStats.vsOnlinePlayer)}
+        </details>
+
+        <details>
+          <summary>2v2戦績</summary>
+          <div class="player-stats-line">通常2v2：${formatWinLose(unitStats.twoVtwo?.offline?.total)}</div>
+          ${renderDefeatedList(unitStats.twoVtwo?.offline?.defeated)}
+
+          <div class="player-stats-line">CPU2v2：${formatWinLose(unitStats.twoVtwo?.cpu?.total)}</div>
+          ${renderDefeatedList(unitStats.twoVtwo?.cpu?.defeated)}
+
+          <div class="player-stats-line">オンライン2v2：${formatWinLose(unitStats.twoVtwo?.online?.total)}</div>
+          ${renderDefeatedList(unitStats.twoVtwo?.online?.defeated)}
+        </details>
+      </details>
+    `;
+  }).join("");
+
+  content.innerHTML = `
+    <div class="player-stats-line">ID：${profile.id}</div>
+    <div class="player-stats-line">名前：${profile.name}</div>
+    <div class="player-stats-line">登録日：${profile.registeredAt}</div>
+
+    <details open>
+      <summary>機体別使用戦績</summary>
+      ${unitSections || `<div class="player-stats-line">まだ戦績がありません</div>`}
+    </details>
+
+    <details>
+      <summary>総合CPU撃破数</summary>
+      ${renderDefeatedList(defeated.cpu)}
+    </details>
+
+    <details>
+      <summary>総合プレイアブル撃破数</summary>
+      ${renderDefeatedList(defeated.playable)}
+    </details>
+
+    <details>
+      <summary>総合ボス撃破数</summary>
+      ${renderDefeatedList(defeated.boss)}
+    </details>
+
+    <details>
+      <summary>総合オンライン撃破数</summary>
+      ${renderDefeatedList(defeated.onlinePlayer)}
+    </details>
+  `;
+
+  panel.style.display = "";
+}
 function canExecuteSpecialForPlayer(playerKey, special) {
   if (!special || special.actionType === "auto") {
     return false;
