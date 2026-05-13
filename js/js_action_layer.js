@@ -221,6 +221,12 @@ if (afterResult.reserveAction) {
   reserveAction(actor, afterResult.reserveAction);
 }
 
+if (Array.isArray(afterResult.reserveActions)) {
+  afterResult.reserveActions.forEach(action => {
+    reserveAction(actor, action);
+  });
+}
+
 return afterResult;
   function startSlotAction(ownerPlayer, slotKey, slotOverride = null) {
     const enemyPlayer = ctx.getOpponentPlayer(ownerPlayer);
