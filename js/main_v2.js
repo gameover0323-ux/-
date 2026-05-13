@@ -2151,7 +2151,7 @@ document.getElementById("playerLoginBtn")?.addEventListener("click", async () =>
     showPopup(result.message || "ログインに失敗しました");
     return;
   }
-
+syncExtraUnlockedUnitsFromProfile();
   updatePlayerCardUi();
 
 if (playerSession.profile?.unlocks) {
@@ -2184,7 +2184,7 @@ document.getElementById("playerRegisterBtn")?.addEventListener("click", async ()
     showPopup(result.message || "登録に失敗しました");
     return;
   }
-
+syncExtraUnlockedUnitsFromProfile();
   updatePlayerCardUi();
   updateDebugButtonVisibility();
   showPopup("プレイヤー登録しました");
