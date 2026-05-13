@@ -579,8 +579,13 @@ function renderDefeatedList(defeated = {}) {
   }
 
   return entries
+    .sort((a, b) => b[1] - a[1])
     .map(([unitId, count]) => {
-      return `<div class="player-stats-line">${getUnitNameById(unitId)}：${count}撃破</div>`;
+      return `
+        <div class="player-stats-line">
+          ${getUnitNameById(unitId)}：${count}撃破
+        </div>
+      `;
     })
     .join("");
 }
