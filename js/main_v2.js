@@ -723,7 +723,17 @@ function renderTitleButtons(titleIds, profile, { hideLocked = false, clickable =
     `;
   }).join("");
 }
+async function savePlayerCustomizeState() {
+  if (!playerSession.profile) return;
 
+  try {
+    await saveCurrentPlayerProfile();
+    updatePlayerCardUi();
+  } catch (error) {
+    console.error(error);
+    showPopup("保存に失敗しました");
+  }
+}
 function renderTitleCustomizePanel() {
   const profile = playerSession.profile;
   if (!profile) {
@@ -770,25 +780,27 @@ function renderTitleCustomizePanel() {
   `;
 
   content.querySelectorAll(".owned-title").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const titleId = btn.dataset.titleId;
-      if (!titleId) return;
+  btn.addEventListener("click", async () => {
+    const titleId = btn.dataset.titleId;
+    if (!titleId) return;
 
-      if (!profile.equippedTitles) profile.equippedTitles = [];
+    if (!profile.equippedTitles) profile.equippedTitles = [];
 
-      if (profile.equippedTitles.includes(titleId)) {
-        return;
-      }
+    if (profile.equippedTitles.includes(titleId)) {
+      return;
+    }
 
-      if (profile.equippedTitles.length >= 10) {
-        showPopup("装備できる称号は10個までです");
-        return;
-      }
+    if (profile.equippedTitles.length >= 10) {
+      showPopup("装備できる称号は10個までです");
+      return;
+    }
 
-      profile.equippedTitles.push(titleId);
-      renderTitleCustomizePanel();
-    });
+    profile.equippedTitles.push(titleId);
+
+    await savePlayerCustomizeState();
+    renderTitleCustomizePanel();
   });
+});
 
   content.querySelectorAll(".equipped-title").forEach(btn => {
     btn.addEventListener("click", () => {
