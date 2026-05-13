@@ -243,7 +243,7 @@ export async function recordBattleResult(record) {
   });
 
   profile.stats.battleHistory = profile.stats.battleHistory.slice(0, 100);
-
+updatePlayerAchievements(profile);
   await writePlayerProfile(profile.id, profile);
 
   return { ok: true };
