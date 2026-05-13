@@ -560,11 +560,12 @@ function updatePlayerCardUi() {
 }
 function getUnitNameById(unitId) {
   const allUnits = [
-    ...unitList,
-    ...bossList,
-    ...cpuList,
-    ...cpuBeginnerList
-  ];
+  ...unitList,
+  ...bossList,
+  ...cpuList,
+  ...cpuBeginnerList,
+  ...debugUnitList
+];
 
   const unit = allUnits.find(u => u.id === unitId);
   return unit ? unit.name : unitId;
