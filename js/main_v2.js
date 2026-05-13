@@ -2187,18 +2187,13 @@ loadUnitButtons();
 
 restorePlayerSession().then(() => {
   if (playerSession.profile?.unlocks) {
-  extraUnlockedUnits = Object.entries(playerSession.profile.unlocks)
-    .filter(([, unlocked]) => unlocked)
-    .map(([unlockKey]) => UNLOCKABLE_UNIT_MAP[unlockKey])
-    .filter(Boolean);
+    extraUnlockedUnits = Object.entries(playerSession.profile.unlocks)
+      .filter(([, unlocked]) => unlocked)
+      .map(([unlockKey]) => UNLOCKABLE_UNIT_MAP[unlockKey])
+      .filter(Boolean);
   }
+
   updatePlayerCardUi();
-  if (playerSession.profile?.unlocks) {
-  extraUnlockedUnits = Object.entries(playerSession.profile.unlocks)
-    .filter(([, unlocked]) => unlocked)
-    .map(([unlockKey]) => UNLOCKABLE_UNIT_MAP[unlockKey])
-    .filter(Boolean);
-  }
   updateDebugButtonVisibility();
   bootOnlineFromUrl();
 });
