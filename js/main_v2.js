@@ -27,8 +27,7 @@ import {
 } from "./js_online_firebase.js";
 
 import { onlineState } from "./js_online_state.js";
-import { unitList, bossList, cpuList, cpuBeginnerList } from "./js_units_index.js";
-
+import { unitList, bossList, cpuList, cpuBeginnerList, debugUnitList } from "./js_units_index.js";
 import {
   createBattleState,
   applyUnitDerivedState,
