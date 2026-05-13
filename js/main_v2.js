@@ -2134,8 +2134,16 @@ document.getElementById("playerLoginBtn")?.addEventListener("click", async () =>
   }
 
   updatePlayerCardUi();
-  updateDebugButtonVisibility();
-  showPopup("ログインしました");
+
+if (playerSession.profile?.unlocks) {
+  extraUnlockedUnits = Object.entries(playerSession.profile.unlocks)
+    .filter(([, unlocked]) => unlocked)
+    .map(([unlockKey]) => UNLOCKABLE_UNIT_MAP[unlockKey])
+    .filter(Boolean);
+}
+
+updateDebugButtonVisibility();
+showPopup("ログインしました");
 });
 
 document.getElementById("playerRegisterBtn")?.addEventListener("click", async () => {
