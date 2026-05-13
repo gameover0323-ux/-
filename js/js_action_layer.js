@@ -625,20 +625,23 @@ function resolvePendingChoice(selectedValue) {
     return;
   }
 
-  if (result.startSlotAction) {
-    if (ctx.isUnifiedTeam(ownerPlayer)) {
-      ctx.executeUnifiedSelectedSlot(ownerPlayer, result.startSlotAction.slotKey);
-      return;
-    }
+ if (result.startSlotAction) {
+  if (result.message) {
+    ctx.appendBattleNotice(result.message);
+  }
 
-    startSlotAction(
-      ownerPlayer,
-      result.startSlotAction.slotKey,
-      result.startSlotAction.slotData || null
-    );
+  if (ctx.isUnifiedTeam(ownerPlayer)) {
+    ctx.executeUnifiedSelectedSlot(ownerPlayer, result.startSlotAction.slotKey);
     return;
   }
 
+  startSlotAction(
+    ownerPlayer,
+    result.startSlotAction.slotKey,
+    result.startSlotAction.slotData || null
+  );
+  return;
+}
   if (Array.isArray(result.appendAttacks) && result.appendAttacks.length > 0) {
     const currentAttack = ctx.getCurrentAttack();
     const currentAttackContext = ctx.getCurrentAttackContext();
