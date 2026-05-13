@@ -93,7 +93,8 @@ export async function loginPlayer(id, password) {
   if (profile.passwordHash !== passwordHash) {
     return { ok: false, message: "パスワードが違います" };
   }
-
+updatePlayerAchievements(profile);
+await writePlayerProfile(profile.id, profile);
   playerSession.profile = profile;
   sessionStorage.setItem(SESSION_KEY, id);
 
@@ -116,7 +117,7 @@ export async function registerPlayer({ id, password, name }) {
     passwordHash,
     name: name || id
   });
-
+updatePlayerAchievements(profile);
   await writePlayerProfile(id, profile);
 
   playerSession.profile = profile;
@@ -314,7 +315,8 @@ export async function restorePlayerSession() {
 
   const profile = await readPlayerProfile(id);
   if (!profile) return null;
-
+updatePlayerAchievements(profile);
+await writePlayerProfile(profile.id, profile);
   playerSession.profile = profile;
   return profile;
 }
