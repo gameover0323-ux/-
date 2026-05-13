@@ -175,6 +175,14 @@ import {
   getCpuStrikeExtraWeaponResult
 } from "./js_unit_rules_cpu_strike_gundam.js";
 
+import {
+  getDaisyDerivedState,
+  executeDaisySpecial,
+  onDaisyTurnEnd,
+  modifyDaisyTakenDamage,
+  onDaisyResolveChoice
+} from "./js_unit_rules_daisy_ogre_ciel.js";
+
 
 export const unitRulesMap = {
   gundam_mc: {
@@ -354,3 +362,10 @@ extreme_gundam: {
 }
 
 };
+daisy_ogre_ciel: {
+  getDerivedState: getDaisyDerivedState,
+  executeSpecial: executeDaisySpecial,
+  onTurnEnd: onDaisyTurnEnd,
+  modifyTakenDamage: modifyDaisyTakenDamage,
+  onResolveChoice: onDaisyResolveChoice
+}
