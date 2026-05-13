@@ -1644,8 +1644,22 @@ function getUnitById(unitId) {
 function syncExtraUnlockedUnitsFromProfile() {
   if (!playerSession.profile?.unlocks) {
     extraUnlockedUnits = [];
-    return;
+  } else {
+    extraUnlockedUnits = Object.entries(playerSession.profile.unlocks)
+      .filter(([, unlocked]) => unlocked)
+      .map(([unlockKey]) => UNLOCKABLE_UNIT_MAP[unlockKey])
+      .filter(Boolean)
+      .map(unitId => getUnitById(unitId))
+      .filter(Boolean);
   }
+
+  if (canUseDebugUnit()) {
+    const debugUnit = getUnitById("daisy_ogre_ciel");
+    if (debugUnit && !extraUnlockedUnits.some(unit => unit.id === debugUnit.id)) {
+      extraUnlockedUnits.push(debugUnit);
+    }
+  }
+}
 
   extraUnlockedUnits = Object.entries(playerSession.profile.unlocks)
     .filter(([, unlocked]) => unlocked)
