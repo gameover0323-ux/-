@@ -697,7 +697,7 @@ function renderPlayerStatsPanel() {
 
     <button id="openTitleCustomizeBtn">称号・トロフィーカスタム</button>
   `;
-
+document.getElementById("openTitleCustomizeBtn")?.addEventListener("click", renderTitleCustomizePanel);
   panel.style.display = "";
 }
 
