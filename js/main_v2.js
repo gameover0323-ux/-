@@ -698,6 +698,110 @@ function renderPlayerStatsPanel() {
 
   panel.style.display = "";
 }
+
+function getUnlockedTitleMap(profile) {
+  return profile?.titles?.unlocked || {};
+}
+
+function renderTitleButtons(titleIds, profile, { hideLocked = false, clickable = true } = {}) {
+  const unlocked = getUnlockedTitleMap(profile);
+
+  return titleIds.map(titleId => {
+    const isUnlocked = !!unlocked[titleId];
+    if (hideLocked && !isUnlocked) return "";
+
+    const label = isUnlocked ? getTitleName(titleId) : "？？？";
+    const disabled = clickable && isUnlocked ? "" : "disabled";
+
+    return `
+      <button class="title-chip" data-title-id="${titleId}" ${disabled}>
+        [${label}]
+      </button>
+    `;
+  }).join("");
+}
+
+function renderTitleCustomizePanel() {
+  const profile = playerSession.profile;
+  if (!profile) {
+    showPopup("ログインしていません");
+    return;
+  }
+
+  const panel = document.getElementById("playerStatsPanel");
+  const content = document.getElementById("playerStatsContent");
+  if (!panel || !content) return;
+
+  const unlocked = Object.keys(getUnlockedTitleMap(profile));
+  const equipped = Array.isArray(profile.equippedTitles)
+    ? profile.equippedTitles
+    : [];
+
+  content.innerHTML = `
+    <h3>称号カスタム</h3>
+    <div class="player-stats-line">装備中：最大10個</div>
+
+    <div class="title-equipped-area">
+      ${equipped.length
+        ? equipped.map(id => `
+            <button class="title-chip equipped-title" data-title-id="${id}">
+              [${getTitleName(id)}] ✕
+            </button>
+          `).join("")
+        : `<div class="player-stats-line">称号なし</div>`
+      }
+    </div>
+
+    <h4>取得済み称号</h4>
+    <div class="title-list-area">
+      ${unlocked.map(id => `
+        <button class="title-chip owned-title" data-title-id="${id}">
+          [${getTitleName(id)}]
+        </button>
+      `).join("")}
+    </div>
+
+    <button id="openTitleListBtn">称号一覧</button>
+    <button id="openTrophyCustomizeBtn">トロフィーカスタム</button>
+    <button id="backToStatsBtn">戦績に戻る</button>
+  `;
+
+  content.querySelectorAll(".owned-title").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const titleId = btn.dataset.titleId;
+      if (!titleId) return;
+
+      if (!profile.equippedTitles) profile.equippedTitles = [];
+
+      if (profile.equippedTitles.includes(titleId)) {
+        return;
+      }
+
+      if (profile.equippedTitles.length >= 10) {
+        showPopup("装備できる称号は10個までです");
+        return;
+      }
+
+      profile.equippedTitles.push(titleId);
+      renderTitleCustomizePanel();
+    });
+  });
+
+  content.querySelectorAll(".equipped-title").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const titleId = btn.dataset.titleId;
+      profile.equippedTitles = profile.equippedTitles.filter(id => id !== titleId);
+      renderTitleCustomizePanel();
+    });
+  });
+
+  document.getElementById("openTitleListBtn")?.addEventListener("click", renderTitleListPanel);
+  document.getElementById("openTrophyCustomizeBtn")?.addEventListener("click", renderTrophyCustomizePanel);
+  document.getElementById("backToStatsBtn")?.addEventListener("click", renderPlayerStatsPanel);
+
+  updatePlayerCardUi();
+  panel.style.display = "";
+}
 function canExecuteSpecialForPlayer(playerKey, special) {
   if (!special || special.actionType === "auto") {
     return false;
