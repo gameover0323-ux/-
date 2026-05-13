@@ -306,7 +306,7 @@ export async function record2v2BattleResult({
       addTwoVtwoLose(bucket);
     }
   });
-
+updatePlayerAchievements(profile);
   await writePlayerProfile(profile.id, profile);
 }
 export async function restorePlayerSession() {
