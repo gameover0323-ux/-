@@ -802,6 +802,45 @@ function renderTitleCustomizePanel() {
   updatePlayerCardUi();
   panel.style.display = "";
 }
+function renderTitleListPanel() {
+  const profile = playerSession.profile;
+  if (!profile) return;
+
+  const panel = document.getElementById("playerStatsPanel");
+  const content = document.getElementById("playerStatsContent");
+  if (!panel || !content) return;
+
+  content.innerHTML = `
+    <h3>称号一覧</h3>
+
+    ${TITLE_GROUPS.map(group => `
+      <details>
+        <summary>${group.label}</summary>
+        <div class="title-list-area">
+          ${renderTitleButtons(group.titleIds, profile, { clickable: true })}
+        </div>
+      </details>
+    `).join("")}
+
+    <button id="backToTitleCustomizeBtn">称号カスタムに戻る</button>
+  `;
+
+  content.querySelectorAll(".title-chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const titleId = btn.dataset.titleId;
+      if (!titleId) return;
+
+      const unlocked = getUnlockedTitleMap(profile);
+      if (!unlocked[titleId]) return;
+
+      showPopup(getTitleConditionText(titleId));
+    });
+  });
+
+  document.getElementById("backToTitleCustomizeBtn")?.addEventListener("click", renderTitleCustomizePanel);
+
+  panel.style.display = "";
+}
 function canExecuteSpecialForPlayer(playerKey, special) {
   if (!special || special.actionType === "auto") {
     return false;
