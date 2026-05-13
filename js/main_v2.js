@@ -319,6 +319,11 @@ let gameSetup = null;
 
 let actionLayer = null;
 
+function canUseDebugUnit() {
+  const role = playerSession.profile?.role;
+  return role === "debug" || role === "Ciel_debugger";
+}
+
 function getTitleName(titleId) {
   return TITLE_NAME_MAP[titleId] || titleId;
 }
