@@ -328,3 +328,30 @@ button{
   color: #7ec8ff;
   font-weight: bold;
 }
+.player-card-panel,
+.player-stats-panel {
+  margin: 12px auto;
+  padding: 12px;
+  max-width: 420px;
+  border: 2px solid #888;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.player-stats-panel details {
+  margin: 8px 0;
+  padding: 8px;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  background: #f8f8f8;
+}
+
+.player-stats-panel summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.player-stats-line {
+  margin: 4px 0;
+  font-size: 14px;
+}
