@@ -1297,7 +1297,7 @@ async function saveBattleResultForCurrentPlayer(winnerPlayer) {
     return;
   }
   if (!playerSession.profile) return;
-  if (canUseTestMode()) return;
+  if (isTestMode) return;
 
   const playerSide = onlineState.enabled ? onlineState.myPlayer : "A";
   if (playerSide !== "A" && playerSide !== "B") return;
