@@ -41,40 +41,35 @@ export function createActionLayer(ctx) {
   }
 
   function processReservedActionsForTrigger(ownerPlayer, trigger) {
-    const actor = ctx.getPlayerState(ownerPlayer);
-    if (!actor) return false;
+  const actor = ctx.getPlayerState(ownerPlayer);
+  if (!actor) return false;
 
-    const list = ensureReservedActions(actor);
-    if (list.length === 0) return false;
+  const list = ensureReservedActions(actor);
+  if (list.length === 0) return false;
 
-    list.forEach((action) => {
-      if (action.trigger === trigger) {
-        action.delay -= 1;
-      }
-    });
+  list.forEach((action) => {
+    if (action.trigger === trigger) {
+      action.delay -= 1;
+    }
+  });
 
-    const readyActions = list.filter(action =>
-  action.trigger === trigger && action.delay <= 0
-);
+  const readyActions = list.filter(action =>
+    action.trigger === trigger && action.delay <= 0
+  );
 
-if (readyActions.length === 0) return false;
+  if (readyActions.length === 0) return false;
 
-readyActions.forEach(action => {
-  const index = list.indexOf(action);
-  if (index >= 0) {
-    list.splice(index, 1);
-  }
+  readyActions.forEach(action => {
+    const index = list.indexOf(action);
+    if (index >= 0) {
+      list.splice(index, 1);
+    }
 
-  startReservedAction(action);
-});
+    startReservedAction(action);
+  });
 
-return true;
-
-    if (index < 0) return false;
-
-    const action = list.splice(index, 1)[0];
-    return startReservedAction(action);
-  }
+  return true;
+}
 
   function startReservedAction(action) {
     if (!action) return false;
