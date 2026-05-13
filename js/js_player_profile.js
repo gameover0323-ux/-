@@ -48,18 +48,23 @@ function createProfile({ id, passwordHash, name }) {
   const isDebug = id === "testgameover";
 
   return {
-    id,
-    passwordHash,
-    name: isDebug ? "げむおば(デバッグ)" : name,
-    favoriteUnitId: "",
-    comment: "",
-    equippedTitles: [],
-    registeredAt: todayYmdSlash(),
-    role: isDebug ? "debug" : "player",
-    stats: createInitialStats(),
-    unlocks: {},
-    titles: {}
-  };
+  id,
+  passwordHash,
+  name: isDebug ? "げむおば(デバッグ)" : name,
+  favoriteUnitId: "",
+  comment: "",
+  equippedTitles: [],
+  registeredAt: todayYmdSlash(),
+  role: isDebug ? "debug" : "player",
+  stats: createInitialStats(),
+  unlocks: {},
+  titles: {
+    unlocked: {}
+  },
+  trophies: {
+    byUnit: {}
+  }
+};
 }
 
 export function isLoggedIn() {
