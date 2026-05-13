@@ -2152,15 +2152,7 @@ document.getElementById("playerLoginBtn")?.addEventListener("click", async () =>
     return;
   }
 syncExtraUnlockedUnitsFromProfile();
-  updatePlayerCardUi();
-
-if (playerSession.profile?.unlocks) {
-  extraUnlockedUnits = Object.entries(playerSession.profile.unlocks)
-    .filter(([, unlocked]) => unlocked)
-    .map(([unlockKey]) => UNLOCKABLE_UNIT_MAP[unlockKey])
-    .filter(Boolean);
-}
-
+updatePlayerCardUi();
 updateDebugButtonVisibility();
 showPopup("ログインしました");
 });
