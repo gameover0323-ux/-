@@ -66,7 +66,29 @@ function createProfile({ id, passwordHash, name }) {
   }
 };
 }
+function createProfile({ id, passwordHash, name }) {
+  const isDebug = id === "testgameover";
+  const isCielDebugger = id === "syuuyaCIELgodlove";
 
+  return {
+    id,
+    passwordHash,
+    name: isDebug ? "げむおば(デバッグ)" : name,
+    favoriteUnitId: "",
+    comment: "",
+    equippedTitles: [],
+    registeredAt: todayYmdSlash(),
+    role: isDebug ? "debug" : isCielDebugger ? "Ciel_debugger" : "player",
+    stats: createInitialStats(),
+    unlocks: {},
+    titles: {
+      unlocked: {}
+    },
+    trophies: {
+      byUnit: {}
+    }
+  };
+}
 export function isLoggedIn() {
   return !!playerSession.profile;
 }
@@ -93,6 +115,13 @@ export async function loginPlayer(id, password) {
   if (profile.passwordHash !== passwordHash) {
     return { ok: false, message: "パスワードが違います" };
   }
+  if (profile.id === "testgameover") {
+  profile.role = "debug";
+}
+
+if (profile.id === "syuuyaCIELgodlove") {
+  profile.role = "Ciel_debugger";
+}
 updatePlayerAchievements(profile);
 await writePlayerProfile(profile.id, profile);
   playerSession.profile = profile;
@@ -323,6 +352,13 @@ export async function restorePlayerSession() {
 
   const profile = await readPlayerProfile(id);
   if (!profile) return null;
+  if (profile.id === "testgameover") {
+  profile.role = "debug";
+}
+
+if (profile.id === "syuuyaCIELgodlove") {
+  profile.role = "Ciel_debugger";
+}
 updatePlayerAchievements(profile);
 await writePlayerProfile(profile.id, profile);
   playerSession.profile = profile;
