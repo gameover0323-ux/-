@@ -803,12 +803,15 @@ function renderTitleCustomizePanel() {
 });
 
   content.querySelectorAll(".equipped-title").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const titleId = btn.dataset.titleId;
-      profile.equippedTitles = profile.equippedTitles.filter(id => id !== titleId);
-      renderTitleCustomizePanel();
-    });
+  btn.addEventListener("click", async () => {
+    const titleId = btn.dataset.titleId;
+
+    profile.equippedTitles = profile.equippedTitles.filter(id => id !== titleId);
+
+    await savePlayerCustomizeState();
+    renderTitleCustomizePanel();
   });
+});
 
   document.getElementById("openTitleListBtn")?.addEventListener("click", renderTitleListPanel);
   document.getElementById("openTrophyCustomizeBtn")?.addEventListener("click", renderTrophyCustomizePanel);
