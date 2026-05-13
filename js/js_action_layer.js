@@ -227,7 +227,7 @@ if (Array.isArray(afterResult.reserveActions)) {
   });
 }
 
-return afterResult;
+return afterResult;}
   function startSlotAction(ownerPlayer, slotKey, slotOverride = null) {
     const enemyPlayer = ctx.getOpponentPlayer(ownerPlayer);
 
