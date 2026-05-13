@@ -841,6 +841,88 @@ function renderTitleListPanel() {
 
   panel.style.display = "";
 }
+
+function renderTrophyCustomizePanel() {
+  const profile = playerSession.profile;
+  if (!profile) return;
+
+  const panel = document.getElementById("playerStatsPanel");
+  const content = document.getElementById("playerStatsContent");
+  if (!panel || !content) return;
+
+  const unitStats = profile.stats?.units || {};
+  const trophiesByUnit = profile.trophies?.byUnit || {};
+
+  const unitSections = Object.keys(unitStats).map(unitId => {
+    const trophies = trophiesByUnit[unitId] || [];
+
+    return `
+      <details>
+        <summary>${getUnitNameById(unitId)} ${trophies.join("")}</summary>
+        <div class="trophy-button-area">
+          ${["D", "EX"].map(trophyId => {
+            const owned = trophies.includes(trophyId);
+            return `
+              <button class="trophy-toggle-btn" data-unit-id="${unitId}" data-trophy-id="${trophyId}">
+                ${owned ? `[${trophyId}] ON` : `[${trophyId}] OFF`}
+              </button>
+            `;
+          }).join("")}
+          <button class="trophy-clear-btn" data-unit-id="${unitId}">
+            全部外す
+          </button>
+        </div>
+      </details>
+    `;
+  }).join("");
+
+  content.innerHTML = `
+    <h3>トロフィーカスタム</h3>
+    <div class="player-stats-line">ボタンを押すと付け外しできます</div>
+
+    ${unitSections || `<div class="player-stats-line">トロフィー対象の戦績がありません</div>`}
+
+    <button id="backToTitleCustomizeBtn">称号カスタムに戻る</button>
+  `;
+
+  content.querySelectorAll(".trophy-toggle-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const unitId = btn.dataset.unitId;
+      const trophyId = btn.dataset.trophyId;
+
+      if (!profile.trophies) profile.trophies = {};
+      if (!profile.trophies.byUnit) profile.trophies.byUnit = {};
+      if (!profile.trophies.byUnit[unitId]) profile.trophies.byUnit[unitId] = [];
+
+      const trophies = profile.trophies.byUnit[unitId];
+
+      if (trophies.includes(trophyId)) {
+        profile.trophies.byUnit[unitId] = trophies.filter(id => id !== trophyId);
+      } else {
+        trophies.push(trophyId);
+      }
+
+      renderTrophyCustomizePanel();
+    });
+  });
+
+  content.querySelectorAll(".trophy-clear-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const unitId = btn.dataset.unitId;
+      if (!unitId) return;
+
+      if (!profile.trophies) profile.trophies = {};
+      if (!profile.trophies.byUnit) profile.trophies.byUnit = {};
+
+      profile.trophies.byUnit[unitId] = [];
+      renderTrophyCustomizePanel();
+    });
+  });
+
+  document.getElementById("backToTitleCustomizeBtn")?.addEventListener("click", renderTitleCustomizePanel);
+
+  panel.style.display = "";
+}
 function canExecuteSpecialForPlayer(playerKey, special) {
   if (!special || special.actionType === "auto") {
     return false;
