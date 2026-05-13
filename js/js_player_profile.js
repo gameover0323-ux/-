@@ -1,3 +1,4 @@
+import { updatePlayerAchievements } from "./js_player_achievements.js";
 import {
   readPlayerProfile,
   writePlayerProfile,
