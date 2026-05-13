@@ -2213,13 +2213,7 @@ document.getElementById("closePlayerStatsBtn")?.addEventListener("click", () => 
 loadUnitButtons();
 
 restorePlayerSession().then(() => {
-  if (playerSession.profile?.unlocks) {
-    extraUnlockedUnits = Object.entries(playerSession.profile.unlocks)
-      .filter(([, unlocked]) => unlocked)
-      .map(([unlockKey]) => UNLOCKABLE_UNIT_MAP[unlockKey])
-      .filter(Boolean);
-  }
-
+  syncExtraUnlockedUnitsFromProfile();
   updatePlayerCardUi();
   updateDebugButtonVisibility();
   bootOnlineFromUrl();
