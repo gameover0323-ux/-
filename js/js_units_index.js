@@ -21,6 +21,9 @@ import { cpu_shining_gundam } from "./js_units_cpu_shining_gundam.js";
 import { cpu_wing_zero } from "./js_units_cpu_wing_zero.js";
 import { cpu_strike_gundam } from "./js_units_cpu_strike_gundam.js";
 
+//デバッグ権限//
+import { daisy_ogre_ciel } from "./js_units_daisy_ogre_ciel.js";
+
 export const unitList = [
   gundam_mc,
   z_gundam,
@@ -47,4 +50,8 @@ export const cpuBeginnerList = [
   cpu_zaku_ii_soldier,
   cpu_gouf,
   cpu_mobile_ginn
+];
+
+export const debugUnitList = [
+  daisy_ogre_ciel
 ];
