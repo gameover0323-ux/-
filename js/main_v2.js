@@ -1,4 +1,10 @@
 import {
+  TITLE_DEFINITIONS,
+  TITLE_NAME_MAP,
+  UNLOCKABLE_UNIT_MAP
+} from "./js_player_titles.js";
+
+import {
   playerSession,
   loginPlayer,
   registerPlayer,
@@ -310,6 +316,21 @@ let uiController = null;
 let gameSetup = null;
 
 let actionLayer = null;
+
+function getTitleName(titleId) {
+  return TITLE_NAME_MAP[titleId] || titleId;
+}
+
+function getUnitTrophyText(profile, unitId) {
+  const trophies =
+    profile?.trophies?.byUnit?.[unitId] || [];
+
+  if (!trophies.length) {
+    return "";
+  }
+
+  return trophies.join("");
+}
 
 function resetOnlineStateForLocalBattle() {
   onlineState.enabled = false;
