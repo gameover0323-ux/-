@@ -370,3 +370,27 @@ button{
   font-size: 14px;
   color: #111;
 }
+.title-list-area,
+.title-equipped-area,
+.trophy-button-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.title-chip,
+.trophy-toggle-btn,
+.trophy-clear-btn {
+  padding: 6px 8px;
+  border: 1px solid #666;
+  border-radius: 8px;
+  background: #fff;
+  color: #111;
+  font-size: 13px;
+}
+
+.title-chip:disabled {
+  opacity: 0.65;
+  background: #ddd;
+}
