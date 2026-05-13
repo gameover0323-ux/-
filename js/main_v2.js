@@ -904,38 +904,43 @@ function renderTrophyCustomizePanel() {
   `;
 
   content.querySelectorAll(".trophy-toggle-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const unitId = btn.dataset.unitId;
-      const trophyId = btn.dataset.trophyId;
+  btn.addEventListener("click", async () => {
+    const unitId = btn.dataset.unitId;
+    const trophyId = btn.dataset.trophyId;
 
-      if (!profile.trophies) profile.trophies = {};
-      if (!profile.trophies.byUnit) profile.trophies.byUnit = {};
-      if (!profile.trophies.byUnit[unitId]) profile.trophies.byUnit[unitId] = [];
+    if (!unitId || !trophyId) return;
 
-      const trophies = profile.trophies.byUnit[unitId];
+    if (!profile.trophies) profile.trophies = {};
+    if (!profile.trophies.byUnit) profile.trophies.byUnit = {};
+    if (!profile.trophies.byUnit[unitId]) profile.trophies.byUnit[unitId] = [];
 
-      if (trophies.includes(trophyId)) {
-        profile.trophies.byUnit[unitId] = trophies.filter(id => id !== trophyId);
-      } else {
-        trophies.push(trophyId);
-      }
+    const trophies = profile.trophies.byUnit[unitId];
 
-      renderTrophyCustomizePanel();
-    });
+    if (trophies.includes(trophyId)) {
+      profile.trophies.byUnit[unitId] = trophies.filter(id => id !== trophyId);
+    } else {
+      trophies.push(trophyId);
+    }
+
+    await savePlayerCustomizeState();
+    renderTrophyCustomizePanel();
   });
+});
 
   content.querySelectorAll(".trophy-clear-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const unitId = btn.dataset.unitId;
-      if (!unitId) return;
+  btn.addEventListener("click", async () => {
+    const unitId = btn.dataset.unitId;
+    if (!unitId) return;
 
-      if (!profile.trophies) profile.trophies = {};
-      if (!profile.trophies.byUnit) profile.trophies.byUnit = {};
+    if (!profile.trophies) profile.trophies = {};
+    if (!profile.trophies.byUnit) profile.trophies.byUnit = {};
 
-      profile.trophies.byUnit[unitId] = [];
-      renderTrophyCustomizePanel();
-    });
+    profile.trophies.byUnit[unitId] = [];
+
+    await savePlayerCustomizeState();
+    renderTrophyCustomizePanel();
   });
+});
 
   document.getElementById("backToTitleCustomizeBtn")?.addEventListener("click", renderTitleCustomizePanel);
 
