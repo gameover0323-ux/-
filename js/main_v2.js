@@ -534,9 +534,10 @@ function updatePlayerCardUi() {
   }
 
   const titleText = Array.isArray(profile.equippedTitles) && profile.equippedTitles.length > 0
-    ? profile.equippedTitles.map(id => `[${id}]`).join("")
-    : "称号なし";
-
+  ? profile.equippedTitles
+      .map(id => `[${getTitleName(id)}]`)
+      .join("")
+  : "称号なし";
   summary.innerHTML = `
     ID：${profile.id}<br>
     名前：${profile.name}<br>
