@@ -2142,9 +2142,13 @@ document.getElementById("playerLogoutBtn")?.addEventListener("click", () => {
 });
 
 document.getElementById("playerStatsBtn")?.addEventListener("click", () => {
-  showPopup("戦績確認UIは次段階で実装します");
+  renderPlayerStatsPanel();
 });
 
+document.getElementById("closePlayerStatsBtn")?.addEventListener("click", () => {
+  const panel = document.getElementById("playerStatsPanel");
+  if (panel) panel.style.display = "none";
+});
 
 
 
