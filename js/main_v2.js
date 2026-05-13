@@ -1376,7 +1376,14 @@ let onlineBattleFinished = false;
 let onlineActionSeq = 0;
 let onlineSelectEntered = false;
 function getUnitById(unitId) {
-  return unitList.find(unit => unit.id === unitId) || null;
+  const allUnits = [
+    ...unitList,
+    ...bossList,
+    ...cpuList,
+    ...cpuBeginnerList
+  ];
+
+  return allUnits.find(unit => unit.id === unitId) || null;
 }
 
 function applyOnlineRoomData(roomData) {
