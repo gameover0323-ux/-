@@ -1,7 +1,9 @@
 import {
   TITLE_DEFINITIONS,
   TITLE_NAME_MAP,
-  UNLOCKABLE_UNIT_MAP
+  UNLOCKABLE_UNIT_MAP,
+  TITLE_GROUPS,
+  getTitleConditionText
 } from "./js_player_titles.js";
 
 import {
