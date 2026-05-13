@@ -132,8 +132,16 @@ export function logoutPlayer() {
 }
 
 export async function saveCurrentPlayerProfile() {
-  if (!playerSession.profile) return;
-  await writePlayerProfile(playerSession.profile.id, playerSession.profile);
+  if (!playerSession.profile) return { ok: false };
+
+  updatePlayerAchievements(playerSession.profile);
+
+  await writePlayerProfile(
+    playerSession.profile.id,
+    playerSession.profile
+  );
+
+  return { ok: true };
 }
 
 function ensureUnitStats(profile, unitId) {
