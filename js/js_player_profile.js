@@ -44,28 +44,7 @@ function createInitialStats() {
   };
 }
 
-function createProfile({ id, passwordHash, name }) {
-  const isDebug = id === "testgameover";
 
-  return {
-  id,
-  passwordHash,
-  name: isDebug ? "げむおば(デバッグ)" : name,
-  favoriteUnitId: "",
-  comment: "",
-  equippedTitles: [],
-  registeredAt: todayYmdSlash(),
-  role: isDebug ? "debug" : "player",
-  stats: createInitialStats(),
-  unlocks: {},
-  titles: {
-    unlocked: {}
-  },
-  trophies: {
-    byUnit: {}
-  }
-};
-}
 function createProfile({ id, passwordHash, name }) {
   const isDebug = id === "testgameover";
   const isCielDebugger = id === "syuuyaCIELgodlove";
