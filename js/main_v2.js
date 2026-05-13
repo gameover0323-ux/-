@@ -623,8 +623,11 @@ function renderPlayerStatsPanel() {
   const unitSections = Object.entries(unitsStats).map(([unitId, unitStats]) => {
     return `
       <details>
-        <summary>${getUnitNameById(unitId)} 使用回数 ${unitStats.used || 0}</summary>
-
+    <summary>
+  ${getUnitNameById(unitId)}
+  ${getUnitTrophyText(profile, unitId)}
+  使用回数 ${unitStats.used || 0}
+</summary>
         <div class="player-stats-line">総合：${formatWinLose(unitStats.total)}</div>
         <div class="player-stats-line">オフライン：${formatWinLose(unitStats.offline)}</div>
         <div class="player-stats-line">オンライン：${formatWinLose(unitStats.online)}</div>
