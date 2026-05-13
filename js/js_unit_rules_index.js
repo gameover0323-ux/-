@@ -177,9 +177,14 @@ import {
 
 import {
   getDaisyDerivedState,
+  canUseDaisySpecial,
   executeDaisySpecial,
   onDaisyTurnEnd,
+  onDaisyBeforeSlot,
+  onDaisyAfterSlotResolved,
+  onDaisyActionResolved,
   modifyDaisyTakenDamage,
+  modifyDaisyEvadeAttempt,
   onDaisyResolveChoice
 } from "./js_unit_rules_daisy_ogre_ciel.js";
 
@@ -364,8 +369,13 @@ extreme_gundam: {
 };
 daisy_ogre_ciel: {
   getDerivedState: getDaisyDerivedState,
+  canUseSpecial: canUseDaisySpecial,
   executeSpecial: executeDaisySpecial,
   onTurnEnd: onDaisyTurnEnd,
+  onBeforeSlot: onDaisyBeforeSlot,
+  onAfterSlotResolved: onDaisyAfterSlotResolved,
+  onActionResolved: onDaisyActionResolved,
   modifyTakenDamage: modifyDaisyTakenDamage,
+  modifyEvadeAttempt: modifyDaisyEvadeAttempt,
   onResolveChoice: onDaisyResolveChoice
-}
+  }
