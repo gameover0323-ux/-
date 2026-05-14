@@ -1653,12 +1653,7 @@ function syncExtraUnlockedUnitsFromProfile() {
       .filter(Boolean);
   }
 
-  if (canUseDebugUnit()) {
-    const debugUnit = getUnitById("daisy_ogre_ciel");
-    if (debugUnit && !extraUnlockedUnits.some(unit => unit.id === debugUnit.id)) {
-      extraUnlockedUnits.push(debugUnit);
-    }
-  }
+
 }
 function applyOnlineRoomData(roomData) {
   if (!onlineState.enabled || !roomData) return;
