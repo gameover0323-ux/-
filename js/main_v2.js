@@ -2339,6 +2339,7 @@ onlineBattleFinished = false;
   isTestMode = false;
 
   redrawBattleBoards();
+  ensureOnlineBattleExtraUi();
   document.getElementById("attackLog").textContent = "オンラインバトル開始";
   updateDebugButtonVisibility();
   showScreen("battle");
