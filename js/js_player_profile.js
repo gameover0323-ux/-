@@ -125,6 +125,7 @@ export async function loginPlayer(id, password) {
 if (profile.id === "syuuyaCIELgodlove") {
   profile.role = "Ciel_debugger";
 }
+  normalizeProfileShape(profile);
 updatePlayerAchievements(profile);
 await writePlayerProfile(profile.id, profile);
   playerSession.profile = profile;
@@ -149,6 +150,7 @@ export async function registerPlayer({ id, password, name }) {
     passwordHash,
     name: name || id
   });
+
 updatePlayerAchievements(profile);
   await writePlayerProfile(id, profile);
 
@@ -166,6 +168,7 @@ export function logoutPlayer() {
 export async function saveCurrentPlayerProfile() {
   if (!playerSession.profile) return { ok: false };
 
+  normalizeProfileShape(playerSession.profile);
   updatePlayerAchievements(playerSession.profile);
 
   await writePlayerProfile(
@@ -175,7 +178,6 @@ export async function saveCurrentPlayerProfile() {
 
   return { ok: true };
 }
-
 function ensureUnitStats(profile, unitId) {
   if (!profile.stats) profile.stats = createInitialStats();
   if (!profile.stats.units) profile.stats.units = {};
@@ -362,6 +364,7 @@ export async function restorePlayerSession() {
 if (profile.id === "syuuyaCIELgodlove") {
   profile.role = "Ciel_debugger";
 }
+  normalizeProfileShape(profile);
 updatePlayerAchievements(profile);
 await writePlayerProfile(profile.id, profile);
   playerSession.profile = profile;
