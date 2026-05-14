@@ -101,7 +101,7 @@ startOnline2v2Btn.addEventListener("click", () => {
 });
 
 createOnlineRoomBtn.addEventListener("click", async () => {
-  try {
+  try {await cleanupOldRooms();
     const roomId = createRoomId();
 
     onlineState.enabled = true;
@@ -112,8 +112,17 @@ onlineSelectEntered = false;
 onlineBattleStarted = false;
     onlineRoomStatus.textContent = `部屋作成中... 部屋ID：${roomId}`;
 
-    await writeRoom(roomId, buildInitialRoomData({ mode: "online1v1" }));
+    const initialRoomData = buildInitialRoomData({ mode: "online1v1" });
+Object.assign(initialRoomData.players.A, {
+  profileId: playerSession.profile?.id || null,
+  profileName: playerSession.profile?.name || playerSession.profile?.id || "ゲスト",
+  equippedTitles: Array.isArray(playerSession.profile?.equippedTitles)
+    ? playerSession.profile.equippedTitles
+    : [],
+  lastSeen: Date.now()
+});
 
+await writeRoom(roomId, initialRoomData);
     const inviteUrl = `${location.origin}${location.pathname}?mode=online1v1&room=${roomId}`;
 
     onlineRoomStatus.textContent = `部屋を作成しました。あなたはPLAYER Aです。部屋ID：${roomId}`;
