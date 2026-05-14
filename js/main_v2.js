@@ -2049,9 +2049,13 @@ function showOnlinePeaceFinishedPopup() {
   const btn = document.createElement("button");
   btn.textContent = "タイトルにもどる";
   btn.addEventListener("click", () => {
-    popup.style.display = "none";
-    showTitle();
-  });
+  popup.style.display = "none";
+  popup.innerHTML = "";
+  cleanupOnlineBattleUi();
+  resetOnlineStateForLocalBattle();
+  resetLocalSelectionAndBattleState();
+  showScreen("title");
+});
 
   popup.appendChild(msg);
   popup.appendChild(btn);
