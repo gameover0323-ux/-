@@ -780,7 +780,10 @@ function renderPlayerStatsPanel() {
       <summary>総合オンライン撃破数</summary>
       ${renderDefeatedList(defeated.onlinePlayer)}
     </details>
-
+<details>
+  <summary>出会ったプレイヤー一覧</summary>
+  ${renderEncounteredPlayerList(profile.encounteredPlayers)}
+</details>
     <button id="openTitleCustomizeBtn">称号・トロフィーカスタム</button>
   `;
 document.getElementById("openTitleCustomizeBtn")?.addEventListener("click", renderTitleCustomizePanel);
