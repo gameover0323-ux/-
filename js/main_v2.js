@@ -900,24 +900,7 @@ function sanitizeEquippedBossTrophies(profile) {
 
   return changed;
 }
-function sanitizeEquippedBossTrophies(profile) {
-  if (!profile?.trophies?.byUnit) return false;
 
-  let changed = false;
-
-  Object.keys(profile.trophies.byUnit).forEach(unitId => {
-    const unlocked = getUnlockedBossTrophiesForUnit(profile, unitId);
-    const current = profile.trophies.byUnit[unitId] || [];
-    const filtered = current.filter(trophyId => unlocked.includes(trophyId));
-
-    if (filtered.length !== current.length) {
-      profile.trophies.byUnit[unitId] = filtered;
-      changed = true;
-    }
-  });
-
-  return changed;
-}
 function getBossTrophyLabel(trophyId) {
   const rule = BOSS_TROPHY_RULES.find(rule => rule.trophyId === trophyId);
   return rule?.label || trophyId;
