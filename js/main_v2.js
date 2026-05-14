@@ -1789,40 +1789,42 @@ function ensureOnlineTopPlayerHud() {
   const battleScreen = document.getElementById("battle");
   if (!battleScreen) return;
 
+  battleScreen.style.position = "relative";
+
   const hud = document.createElement("div");
   hud.id = "onlineTopPlayerHud";
   hud.style.display = onlineState.enabled ? "grid" : "none";
-  hud.style.gridTemplateColumns = "1fr 120px 1fr";
+  hud.style.position = "absolute";
+  hud.style.top = "8px";
+  hud.style.left = "14px";
+  hud.style.right = "14px";
+  hud.style.zIndex = "5";
+  hud.style.gridTemplateColumns = "minmax(0, 1fr) 120px minmax(0, 1fr)";
   hud.style.gap = "8px";
   hud.style.alignItems = "start";
-  hud.style.margin = "0 0 8px 0";
+  hud.style.pointerEvents = "none";
 
   hud.innerHTML = `
-    <div id="onlineTopPlayerA" style="text-align:center;">
-      <div style="display:flex;gap:4px;justify-content:center;align-items:center;">
-        <input id="onlineChatInputA" maxlength="50" placeholder="50文字まで" style="width:150px;max-width:70%;">
-        <button id="onlineChatSendBtnA">送信</button>
+    <div id="onlineTopPlayerA" style="text-align:center;pointer-events:auto;min-width:0;">
+      <div style="display:flex;gap:4px;justify-content:center;align-items:center;min-width:0;">
+        <input id="onlineChatInputA" maxlength="50" placeholder="50文字まで" style="width:100%;min-width:0;max-width:210px;">
+        <button id="onlineChatSendBtnA" style="width:54px;min-width:54px;">送信</button>
       </div>
-      <div id="onlinePlayerInfoA" style="font-size:14px;margin-top:4px;line-height:1.4;"></div>
+      <div id="onlinePlayerInfoA" style="font-size:14px;margin-top:8px;line-height:1.4;word-break:break-word;"></div>
     </div>
 
     <div></div>
 
-    <div id="onlineTopPlayerB" style="text-align:center;">
-      <div style="display:flex;gap:4px;justify-content:center;align-items:center;">
-        <input id="onlineChatInputB" maxlength="50" placeholder="50文字まで" style="width:150px;max-width:70%;">
-        <button id="onlineChatSendBtnB">送信</button>
+    <div id="onlineTopPlayerB" style="text-align:center;pointer-events:auto;min-width:0;">
+      <div style="display:flex;gap:4px;justify-content:center;align-items:center;min-width:0;">
+        <input id="onlineChatInputB" maxlength="50" placeholder="50文字まで" style="width:100%;min-width:0;max-width:210px;">
+        <button id="onlineChatSendBtnB" style="width:54px;min-width:54px;">送信</button>
       </div>
-      <div id="onlinePlayerInfoB" style="font-size:14px;margin-top:4px;line-height:1.4;"></div>
+      <div id="onlinePlayerInfoB" style="font-size:14px;margin-top:8px;line-height:1.4;word-break:break-word;"></div>
     </div>
   `;
 
-  const title = battleScreen.querySelector("h2") || battleScreen.firstElementChild;
-  if (title?.nextSibling) {
-    battleScreen.insertBefore(hud, title.nextSibling);
-  } else {
-    battleScreen.prepend(hud);
-  }
+  battleScreen.prepend(hud);
 
   document.getElementById("onlineChatSendBtnA")?.addEventListener("click", () => sendOnlineChatFrom("A"));
   document.getElementById("onlineChatSendBtnB")?.addEventListener("click", () => sendOnlineChatFrom("B"));
