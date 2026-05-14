@@ -2020,6 +2020,7 @@ function applyOnlinePeaceRequest(roomData) {
 }
 
 async function markOnlinePlayerLeft() {
+  if (onlineBattleFinished) return;
   if (!onlineState.enabled || !onlineState.roomId || !onlineState.myPlayer) return;
 
   const leaver = onlineState.myPlayer;
