@@ -382,7 +382,7 @@ export function executeDaisySpecial(state, specialKey, context = {}) {
         source: "daisy_weapon_a",
         choiceType: "confirm",
         effectType: "daisy_weapon_a",
-        options: [
+        choices: [
           { value: "rifle", label: "アサルトライフル" },
           { value: "smg", label: "サブマシンガン" },
           { value: "sniper", label: "スナイパーライフル" }
@@ -400,7 +400,7 @@ export function executeDaisySpecial(state, specialKey, context = {}) {
         source: "daisy_weapon_b",
         choiceType: "confirm",
         effectType: "daisy_weapon_b",
-        options: [
+        choices: [
           { value: "launcher", label: "グレネードランチャー" },
           { value: "melee", label: "格闘" },
           { value: "plasma", label: "チャージプラズマガン" }
@@ -418,7 +418,7 @@ export function executeDaisySpecial(state, specialKey, context = {}) {
         source: "daisy_throw_weapon",
         choiceType: "confirm",
         effectType: "daisy_throw_weapon",
-        options: [
+        choices: [
           { value: "grenade", label: "グレネード" },
           { value: "incendiary", label: "焼夷弾" },
           { value: "chaff", label: "チャフグレネード" }
@@ -461,7 +461,7 @@ export function executeDaisySpecial(state, specialKey, context = {}) {
         source: "daisy_magius",
        choiceType: "confirm",
         effectType: "daisy_magius",
-        options: [
+        choices: [
           { value: "shade", label: "シェイドフィールド" },
           { value: "heal", label: "ヒールフィールド" },
           { value: "multi", label: "マルチシュート" },
@@ -572,7 +572,7 @@ export function onDaisyActionResolved(attacker, defender, context = {}) {
         choiceType: "confirm",
         effectType: "daisy_follow_up",
         slotKey: context.slotKey,
-        options: [
+        choices: [
           { value: "yes", label: "追撃する" },
           { value: "no", label: "追撃しない" }
         ]
