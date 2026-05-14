@@ -376,6 +376,8 @@ function resetOnlineStateForLocalBattle() {
   onlineSelectEntered = false;
   onlineActionSeq = 0;
   cleanupOnlineBattleUi();
+  onlineEncounterSaved = false;
+currentOnlineOpponentPlayerId = "";
 }
 function resetLocalSelectionAndBattleState() {
   selectingPlayer = "A";
@@ -1330,7 +1332,44 @@ function getBattleRecordMode() {
   if (onlineState.enabled) return "online";
   return "offline";
 }
+async function saveOnlineEncounteredPlayer(roomData) {
+  if (!onlineState.enabled) return;
+  if (onlineEncounterSaved) return;
+  if (!playerSession.profile) return;
 
+  const mySide = onlineState.myPlayer;
+  if (mySide !== "A" && mySide !== "B") return;
+
+  const enemySide = mySide === "A" ? "B" : "A";
+  const enemy = roomData?.players?.[enemySide];
+
+  if (!enemy?.profileId) return;
+
+  onlineEncounterSaved = true;
+  currentOnlineOpponentPlayerId = enemy.profileId;
+
+  if (!playerSession.profile.encounteredPlayers) {
+    playerSession.profile.encounteredPlayers = {};
+  }
+
+  const old = playerSession.profile.encounteredPlayers[enemy.profileId] || {};
+
+  playerSession.profile.encounteredPlayers[enemy.profileId] = {
+    profileId: enemy.profileId,
+    profileName: enemy.profileName || old.profileName || enemy.profileId,
+    equippedTitles: Array.isArray(enemy.equippedTitles)
+      ? enemy.equippedTitles
+      : [],
+    count: (old.count || 0) + 1,
+    lastMatchedAt: new Date().toISOString()
+  };
+
+  try {
+    await saveCurrentPlayerProfile();
+  } catch (error) {
+    console.error(error);
+  }
+}
 async function saveBattleResultForCurrentPlayer(winnerPlayer) {
   if (isTeamBattleMode()) {
     if (battleMode === "challenge2v2") {
@@ -1708,7 +1747,8 @@ function bootOnlineFromUrl() {
     onlineRoomStatus.textContent = "招待URLから部屋IDを読み込みました。「部屋に入る」を押してください。";
   }
 }
-
+let onlineEncounterSaved = false;
+let currentOnlineOpponentPlayerId = "";
 let onlineBattleStarted = false;
 let onlineBattleFinished = false;
 let onlineActionSeq = 0;
