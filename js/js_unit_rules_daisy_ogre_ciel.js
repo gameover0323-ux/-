@@ -598,7 +598,7 @@ export function onDaisyResolveChoice(state, pendingChoice, selectedValue, contex
     state.daisyUsedMagius = true;
 
     if (selectedValue === "shade") {
-      state.actionCount += 1;
+      state.actionCount = Number(state.actionCount || 0) + 1;
       return { handled: true, redraw: true, message: "シェイドフィールド：行動権+1" };
     }
 
