@@ -407,6 +407,7 @@ function cleanupOnlineBattleUi() {
   document.getElementById("onlinePeaceSurrenderBox")?.remove();
 }
 function showTitle() {
+  resetRandomMatchState();
   if (
   onlineState.enabled &&
   onlineState.roomId &&
@@ -2151,6 +2152,94 @@ async function cancelRandomMatch() {
       updatedAt: Date.now()
     }).catch(() => {});
   }
+}
+async function createRoomFromRandomMatchSession(sessionData) {
+  if (randomMatchState.enteringRoom) return;
+  randomMatchState.enteringRoom = true;
+
+  const roomId = createRoomId();
+  const now = Date.now();
+
+  const initialRoomData = buildInitialRoomData({ mode: "online1v1" });
+
+  initialRoomData.players.A = {
+    ...initialRoomData.players.A,
+    joined: true,
+    ready: false,
+    unitId: null,
+    left: false,
+    lastSeen: now,
+    profileId: sessionData.players?.A?.profileId || null,
+    profileName: sessionData.players?.A?.profileName || "ゲスト",
+    equippedTitles: Array.isArray(sessionData.players?.A?.equippedTitles)
+      ? sessionData.players.A.equippedTitles
+      : []
+  };
+
+  initialRoomData.players.B = {
+    ...initialRoomData.players.B,
+    joined: true,
+    ready: false,
+    unitId: null,
+    left: false,
+    lastSeen: now,
+    profileId: sessionData.players?.B?.profileId || null,
+    profileName: sessionData.players?.B?.profileName || "ゲスト",
+    equippedTitles: Array.isArray(sessionData.players?.B?.equippedTitles)
+      ? sessionData.players.B.equippedTitles
+      : []
+  };
+
+  initialRoomData.meta.status = "selecting";
+  initialRoomData.meta.updatedAt = now;
+
+  await writeRoom(roomId, initialRoomData);
+
+  await updateRandomMatchSession(randomMatchState.sessionId, {
+    status: "completed",
+    roomId,
+    updatedAt: Date.now()
+  });
+
+  enterRandomMatchedRoom(roomId);
+}
+
+function enterRandomMatchedRoom(roomId) {
+  if (!randomMatchState.enabled) return;
+
+  const playerSide = randomMatchState.playerSide;
+  if (playerSide !== "A" && playerSide !== "B") return;
+
+  randomMatchState.enteringRoom = true;
+
+  cleanupRandomMatchListeners();
+
+  onlineState.enabled = true;
+  onlineState.roomId = roomId;
+  onlineState.myPlayer = playerSide;
+  onlineState.isHost = playerSide === "A";
+  onlineState.lastAppliedActionId = 0;
+  onlineState.isApplyingRemote = false;
+
+  onlineSelectEntered = false;
+  onlineBattleStarted = false;
+  onlineBattleFinished = false;
+  onlineActionSeq = 0;
+
+  const panel = document.getElementById("randomMatchPanel");
+  if (panel) {
+    panel.style.display = "none";
+    panel.innerHTML = "";
+  }
+
+  onlineRoomStatus.textContent = `ランダムマッチ成立。あなたはPLAYER ${playerSide}です。`;
+
+  listenRoom(roomId, roomData => {
+    if (!roomData) return;
+
+    enterOnlineSelect();
+    applyOnlineRoomData(roomData);
+  });
 }
 function getOnlineProfilePatch(playerKey) {
   const profile = playerSession.profile;
