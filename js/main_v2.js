@@ -1879,13 +1879,37 @@ function renderOnlineExtraUi(roomData) {
   const chatA = roomData.chat?.A?.text || "";
   const chatB = roomData.chat?.B?.text || "";
 
-  const info = document.getElementById("onlinePlayerInfoArea");
-  if (info) {
-    info.innerHTML = `
-      <div>PLAYER A：${getOnlineTitleText(playerA)} ${playerA.profileName || "ゲスト"}</div>
-      <div>PLAYER B：${getOnlineTitleText(playerB)} ${playerB.profileName || "ゲスト"}</div>
-    `;
-  }
+  const topHud = document.getElementById("onlineTopPlayerHud");
+if (topHud) {
+  topHud.style.display = onlineState.enabled ? "grid" : "none";
+}
+
+const inputA = document.getElementById("onlineChatInputA");
+const inputB = document.getElementById("onlineChatInputB");
+const sendA = document.getElementById("onlineChatSendBtnA");
+const sendB = document.getElementById("onlineChatSendBtnB");
+
+if (inputA) inputA.disabled = onlineState.myPlayer !== "A";
+if (inputB) inputB.disabled = onlineState.myPlayer !== "B";
+if (sendA) sendA.disabled = onlineState.myPlayer !== "A";
+if (sendB) sendB.disabled = onlineState.myPlayer !== "B";
+
+const infoA = document.getElementById("onlinePlayerInfoA");
+const infoB = document.getElementById("onlinePlayerInfoB");
+
+if (infoA) {
+  infoA.innerHTML = `
+    <div>${getOnlineTitleText(playerA)}</div>
+    <div>${playerA.profileName || "ゲスト"}</div>
+  `;
+}
+
+if (infoB) {
+  infoB.innerHTML = `
+    <div>${getOnlineTitleText(playerB)}</div>
+    <div>${playerB.profileName || "ゲスト"}</div>
+  `;
+}
 
   const chatADiv = document.getElementById("onlineChatA");
   const chatBDiv = document.getElementById("onlineChatB");
