@@ -352,6 +352,43 @@ function resetOnlineStateForLocalBattle() {
   onlineSelectEntered = false;
   onlineActionSeq = 0;
 }
+function resetLocalSelectionAndBattleState() {
+  selectingPlayer = "A";
+  selectedUnitA = null;
+  selectedUnitB = null;
+  pendingSelectedUnit = null;
+
+  teamA = null;
+  teamB = null;
+  playerAState = null;
+  playerBState = null;
+
+  currentTurn = 1;
+  currentPlayer = "A";
+  currentAttack = [];
+  currentAttackContext = null;
+  currentAttackContexts = [];
+  battleNotice = "";
+  currentActionHeader = "";
+  currentActionLabel = "";
+  pendingChoice = null;
+
+  if (unitButtons) unitButtons.innerHTML = "";
+  if (selectedUnitsPreview) selectedUnitsPreview.innerHTML = "";
+}
+
+function showTitle() {
+  resetOnlineStateForLocalBattle();
+  resetLocalSelectionAndBattleState();
+
+  const popup = document.getElementById("popup");
+  if (popup) {
+    popup.style.display = "none";
+    popup.innerHTML = "";
+  }
+
+  showScreen("title");
+}
 function isTeamBattleMode() {
   return battleMode === "2v2" ||
     battleMode === "challenge2v2" ||
