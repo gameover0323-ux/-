@@ -24,7 +24,17 @@ import {
   updateRoom,
   listenRoom,
   buildInitialRoomData,
-  cleanupOldRooms
+  cleanupOldRooms,
+  writeRandomMatchWaiting,
+  updateRandomMatchWaiting,
+  removeRandomMatchWaiting,
+  readRandomMatchWaiting,
+  listenRandomMatchWaiting,
+  writeRandomMatchSession,
+  updateRandomMatchSession,
+  listenRandomMatchSession,
+  removeRandomMatchSession,
+  cleanupOldRandomMatch
 } from "./js_online_firebase.js";
 import { onlineState } from "./js_online_state.js";
 import { unitList, bossList, cpuList, cpuBeginnerList, debugUnitList } from "./js_units_index.js";
