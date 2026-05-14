@@ -190,7 +190,7 @@ document.getElementById("start1v1Btn").addEventListener("click", () => {
   selectedUnitA = null;
   selectedUnitB = null;
   showScreen("select");
-  updateSelectUi();
+  loadUnitButtons();
 });
 
 document.getElementById("start2v2Btn").addEventListener("click", () => {
@@ -203,7 +203,7 @@ document.getElementById("start2v2Btn").addEventListener("click", () => {
   selectedUnitA = null;
   selectedUnitB = null;
   showScreen("select");
-  updateSelectUi();
+  loadUnitButtons();
 });
 
 document.getElementById("startChallenge1v1Btn").addEventListener("click", () => {
@@ -216,7 +216,7 @@ document.getElementById("startChallenge1v1Btn").addEventListener("click", () => 
   selectedUnitA = null;
   selectedUnitB = null;
   showScreen("select");
-  updateSelectUi();
+  loadUnitButtons();
 });
 
 document.getElementById("startChallenge2v2Btn").addEventListener("click", () => {
@@ -229,7 +229,7 @@ document.getElementById("startChallenge2v2Btn").addEventListener("click", () => 
   selectedUnitA = null;
   selectedUnitB = null;
   showScreen("select");
-  updateSelectUi();
+  loadUnitButtons();
 });
 document.getElementById("startVsCpu1v1Btn").addEventListener("click", () => {
   resetOnlineStateForLocalBattle();
@@ -241,7 +241,7 @@ document.getElementById("startVsCpu1v1Btn").addEventListener("click", () => {
   selectedUnitA = null;
   selectedUnitB = null;
   showScreen("select");
-  updateSelectUi();
+  loadUnitButtons();
 });
 
 document.getElementById("startVsCpu2v2Btn").addEventListener("click", () => {
@@ -254,7 +254,7 @@ document.getElementById("startVsCpu2v2Btn").addEventListener("click", () => {
   selectedUnitA = null;
   selectedUnitB = null;
   showScreen("select");
-  updateSelectUi();
+  loadUnitButtons();
 });
 
 const units = unitList;
@@ -1696,7 +1696,7 @@ function enterOnlineSelect() {
   onlineSelectEntered = true;
 
   showScreen("select");
-  updateSelectUi();
+  loadUnitButtons();
 }
 function canOperateOnlinePlayer() {
   if (!onlineState.enabled) return true;
