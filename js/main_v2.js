@@ -1976,24 +1976,24 @@ async function requestOnlinePeace() {
 async function respondOnlinePeace(accept) {
   if (!onlineState.enabled || !onlineState.roomId) return;
 
-  if (accept) {
-    await updateRoom(onlineState.roomId, {
-      "peace/status": "accepted",
-      "peace/updatedAt": Date.now(),
-      "meta/status": "peace",
-      "meta/result": {
-        type: "peace",
-        winner: null,
-        loser: null,
-        reason: "peace",
-        finishedAt: Date.now()
-      },
-      "meta/notice": "和平成立しました",
-      "meta/updatedAt": Date.now()
-    });
-    showOnlinePeaceFinishedPopup();
-    return;
-  }
+if (accept) {
+  await updateRoom(onlineState.roomId, {
+    "peace/status": "accepted",
+    "peace/updatedAt": Date.now(),
+    "meta/status": "peace",
+    "meta/result": {
+      type: "peace",
+      reason: "peace",
+      finishedAt: Date.now()
+    },
+    "meta/notice": "和平成立しました",
+    "meta/updatedAt": Date.now()
+  });
+
+  onlineBattleFinished = true;
+  showOnlinePeaceFinishedPopup();
+  return;
+}
 
   await updateRoom(onlineState.roomId, {
     "peace/status": "rejected",
