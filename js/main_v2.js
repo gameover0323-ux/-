@@ -1845,11 +1845,11 @@ function ensureOnlineCenterButtons() {
 
   const wrap = document.createElement("div");
   wrap.id = "onlinePeaceSurrenderBox";
-  wrap.style.marginTop = "8px";
+  wrap.style.marginTop = "4px";
   wrap.style.display = "flex";
   wrap.style.flexDirection = "column";
   wrap.style.alignItems = "center";
-  wrap.style.gap = "6px";
+  wrap.style.gap = "4px";
 
   wrap.innerHTML = `
   <button id="onlinePeaceBtn"
