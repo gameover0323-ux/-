@@ -2088,6 +2088,8 @@ function applyOnlineMetaResult(roomData) {
   if (!result) return;
 
   if (result.type === "peace") {
+    if (onlineBattleFinished) return;
+    onlineBattleFinished = true;
     showOnlinePeaceFinishedPopup();
     return;
   }
