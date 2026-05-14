@@ -1712,6 +1712,15 @@ let onlineBattleStarted = false;
 let onlineBattleFinished = false;
 let onlineActionSeq = 0;
 let onlineSelectEntered = false;
+let randomMatchState = {
+  enabled: false,
+  ticketId: null,
+  sessionId: null,
+  playerSide: null,
+  waitingUnsubscribe: null,
+  sessionUnsubscribe: null,
+  enteringRoom: false
+};
 function getUnitById(unitId) {
   const allUnits = [
   ...unitList,
