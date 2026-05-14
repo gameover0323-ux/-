@@ -65,7 +65,8 @@ function createProfile({ id, passwordHash, name }) {
     },
     trophies: {
       byUnit: {}
-    }
+    },
+    encounteredPlayers: {}
   };
 }
 export function isLoggedIn() {
