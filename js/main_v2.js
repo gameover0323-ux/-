@@ -150,9 +150,11 @@ await writeRoom(roomId, initialRoomData);
 });
 
 joinOnlineRoomBtn.addEventListener("click", async () => {
+  await cleanupOldRooms();
+
   const roomId = onlineRoomIdInput.value.trim();
+
   if (!roomId) {
-    await cleanupOldRooms();
     showPopup("部屋IDを入力してください");
     return;
   }
