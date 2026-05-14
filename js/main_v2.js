@@ -390,6 +390,9 @@ function resetLocalSelectionAndBattleState() {
 }
 
 function showTitle() {
+  if (onlineState.enabled && onlineState.roomId && onlineState.myPlayer) {
+  markOnlinePlayerLeft();
+  }
   resetOnlineStateForLocalBattle();
   resetLocalSelectionAndBattleState();
 
