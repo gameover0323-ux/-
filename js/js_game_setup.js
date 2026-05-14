@@ -128,24 +128,15 @@ function getDebugUnits() {
     appendUnitSection("初心者向けCPU", ctx.cpuBeginnerList || [], "cpuBeginnerSection");
   } else {
     const normalUnits = getSelectList();
-
     const debugUnits =
       canUseDebugUnit() && !isOnlineMode()
         ? getDebugUnits()
         : [];
 
-    appendUnitSection(
-      "プレイアブル機体",
-      normalUnits,
-      "playableSection"
-    );
+    appendUnitSection("プレイアブル機体", normalUnits, "playableSection");
 
     if (debugUnits.length > 0) {
-      appendUnitSection(
-        "デバッグ権限",
-        debugUnits,
-        "debugUnitSection"
-      );
+      appendUnitSection("デバッグ権限", debugUnits, "debugUnitSection");
     }
   }
 
@@ -159,10 +150,7 @@ function getDebugUnits() {
 
       if (enemyList.length < 1) return;
 
-      startChallengePreview2v2(
-        ctx.getTeamA().units,
-        enemyList
-      );
+      startChallengePreview2v2(ctx.getTeamA().units, enemyList);
     });
 
     ctx.unitButtons.appendChild(decideBtn);
