@@ -2131,6 +2131,8 @@ gameSetup = createGameSetup({
   bosses: bossList,
   cpus: cpuList,
   cpuBeginnerList,
+  debugUnits: debugUnitList,
+  canUseDebugUnit,
   unitButtons,
   selectGuide,
   selectedUnitsPreview,
