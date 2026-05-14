@@ -398,7 +398,11 @@ function resetLocalSelectionAndBattleState() {
   if (unitButtons) unitButtons.innerHTML = "";
   if (selectedUnitsPreview) selectedUnitsPreview.innerHTML = "";
 }
-
+function cleanupOnlineBattleUi() {
+  document.getElementById("onlineTopPlayerHud")?.remove();
+  document.getElementById("onlineBattleExtraArea")?.remove();
+  document.getElementById("onlinePeaceSurrenderBox")?.remove();
+}
 function showTitle() {
   if (
   onlineState.enabled &&
