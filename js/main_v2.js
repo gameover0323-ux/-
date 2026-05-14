@@ -832,6 +832,13 @@ function renderPlayerStatsPanel() {
     <button id="openTitleCustomizeBtn">称号・トロフィーカスタム</button>
   `;
 document.getElementById("openTitleCustomizeBtn")?.addEventListener("click", renderTitleCustomizePanel);
+  content.querySelectorAll(".encountered-player-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const profileId = btn.dataset.profileId;
+    if (!profileId) return;
+    showEncounteredPlayerCard(profileId);
+  });
+});
   panel.style.display = "";
 }
 
