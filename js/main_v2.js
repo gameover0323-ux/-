@@ -1747,6 +1747,8 @@ function getOnlineTitleText(playerData) {
 }
 
 function ensureOnlineBattleExtraUi() {
+  ensureOnlineTopPlayerHud();
+
   if (!document.getElementById("onlineBattleExtraArea")) {
     const area = document.createElement("div");
     area.id = "onlineBattleExtraArea";
@@ -1757,11 +1759,6 @@ function ensureOnlineBattleExtraUi() {
     area.style.display = onlineState.enabled ? "" : "none";
 
     area.innerHTML = `
-      <div id="onlineChatInputArea" style="margin-bottom:8px;">
-        <input id="onlineChatInput" maxlength="50" placeholder="50文字まで" style="max-width:170px;">
-        <button id="onlineChatSendBtn">送信</button>
-      </div>
-      <div id="onlinePlayerInfoArea" style="font-size:14px;margin-bottom:8px;"></div>
       <div id="onlinePeaceStatusArea" style="font-size:14px;margin-bottom:8px;"></div>
       <div id="onlineChatFixedArea" style="text-align:left;margin-bottom:8px;">
         <div id="onlineChatA">[PLAYER Aチャット]</div>
@@ -1775,15 +1772,8 @@ function ensureOnlineBattleExtraUi() {
     }
   }
 
-  const sendBtn = document.getElementById("onlineChatSendBtn");
-  if (sendBtn && !sendBtn.dataset.bound) {
-    sendBtn.dataset.bound = "1";
-    sendBtn.addEventListener("click", sendOnlineChat);
-  }
-
   ensureOnlineCenterButtons();
 }
-
 function ensureOnlineCenterButtons() {
   if (!onlineState.enabled) return;
   if (document.getElementById("onlinePeaceBtn")) return;
