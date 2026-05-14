@@ -591,11 +591,21 @@ export function executeUnitEnemyBeforeSlot(state, rolledSlotNumber, context = {}
 }
 
 
-export function executeUnitAfterSlotResolved(state, slotNumber, context = {}) {
+export function executeUnitAfterSlotResolved(
+  state,
+  slotNumber,
+  resolveResult,
+  context = {}
+) {
   const rules = unitRulesMap[state.unitId];
 
   if (rules && rules.onAfterSlotResolved) {
-    return rules.onAfterSlotResolved(state, slotNumber, context);
+    return rules.onAfterSlotResolved(
+      state,
+      slotNumber,
+      resolveResult,
+      context
+    );
   }
 
   return {
@@ -603,7 +613,6 @@ export function executeUnitAfterSlotResolved(state, slotNumber, context = {}) {
     message: null
   };
 }
-
 export function executeUnitActionResolved(attacker, defender, context = {}) {
   const rules = unitRulesMap[attacker.unitId];
 
