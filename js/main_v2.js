@@ -176,7 +176,7 @@ onlineBattleStarted = false;
 });
 
 backFromOnlineRoomBtn.addEventListener("click", () => {
-  showScreen("title");
+  showTitle();
 });
 
 
@@ -387,7 +387,7 @@ function showTitle() {
     popup.innerHTML = "";
   }
 
-  showScreen("title");
+  showTitle();
 }
 function isTeamBattleMode() {
   return battleMode === "2v2" ||
@@ -1419,7 +1419,7 @@ saveBattleResultForCurrentPlayer(winnerPlayer);
     onlineSelectEntered = false;
     onlineActionSeq = 0;
 
-    showScreen("title");
+    showTitle();
   });
 
   popup.appendChild(message);
@@ -2180,7 +2180,7 @@ showTitle: () => {
   selectedUnitB = null;
   teamA = null;
   teamB = null;
-  showScreen("title");
+  showTitle();
 },
   onSelectUnit: (unit) => {
     if (!onlineState.enabled) return false;
