@@ -365,14 +365,7 @@ function resetOnlineStateForLocalBattle() {
   onlineBattleFinished = false;
   onlineSelectEntered = false;
   onlineActionSeq = 0;
-  const topHud = document.getElementById("onlineTopPlayerHud");
-if (topHud) topHud.style.display = "none";
-
-const extraArea = document.getElementById("onlineBattleExtraArea");
-if (extraArea) extraArea.style.display = "none";
-
-const peaceBox = document.getElementById("onlinePeaceSurrenderBox");
-if (peaceBox) peaceBox.remove();
+  cleanupOnlineBattleUi();
 }
 function resetLocalSelectionAndBattleState() {
   selectingPlayer = "A";
