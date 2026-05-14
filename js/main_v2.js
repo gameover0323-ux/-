@@ -1852,9 +1852,26 @@ function ensureOnlineCenterButtons() {
   wrap.style.gap = "6px";
 
   wrap.innerHTML = `
-    <button id="onlinePeaceBtn" style="width:64px;">和平</button>
-    <button id="onlineSurrenderBtn" style="width:64px;">降伏</button>
-  `;
+  <button id="onlinePeaceBtn"
+    style="
+      width:40px;
+      height:28px;
+      font-size:12px;
+      padding:0;
+    ">
+    和平
+  </button>
+
+  <button id="onlineSurrenderBtn"
+    style="
+      width:40px;
+      height:28px;
+      font-size:12px;
+      padding:0;
+    ">
+    降伏
+  </button>
+`;
 
   actionBox.parentNode.appendChild(wrap);
 
