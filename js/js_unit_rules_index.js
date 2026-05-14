@@ -351,6 +351,19 @@ cpu_gouf: {
   onActionResolved: onCpuMobileGinnActionResolved,
   getExtraWeaponResult: getCpuMobileGinnExtraWeaponResult
 },
+//デバッグ権限//
+  daisy_ogre_ciel: {
+  getDerivedState: getDaisyDerivedState,
+  canUseSpecial: canUseDaisySpecial,
+  executeSpecial: executeDaisySpecial,
+  onTurnEnd: onDaisyTurnEnd,
+  onBeforeSlot: onDaisyBeforeSlot,
+  onAfterSlotResolved: onDaisyAfterSlotResolved,
+  onActionResolved: onDaisyActionResolved,
+  modifyTakenDamage: modifyDaisyTakenDamage,
+  modifyEvadeAttempt: modifyDaisyEvadeAttempt,
+  onResolveChoice: onDaisyResolveChoice
+  },
 //ボス機体//
 devil_gundam: devilGundamRules,
 
@@ -367,15 +380,3 @@ extreme_gundam: {
 }
 
 };
-daisy_ogre_ciel: {
-  getDerivedState: getDaisyDerivedState,
-  canUseSpecial: canUseDaisySpecial,
-  executeSpecial: executeDaisySpecial,
-  onTurnEnd: onDaisyTurnEnd,
-  onBeforeSlot: onDaisyBeforeSlot,
-  onAfterSlotResolved: onDaisyAfterSlotResolved,
-  onActionResolved: onDaisyActionResolved,
-  modifyTakenDamage: modifyDaisyTakenDamage,
-  modifyEvadeAttempt: modifyDaisyEvadeAttempt,
-  onResolveChoice: onDaisyResolveChoice
-  }
