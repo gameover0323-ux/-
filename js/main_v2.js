@@ -2164,6 +2164,7 @@ async function markOnlinePlayerLeft() {
 
 window.addEventListener("beforeunload", () => {
   if (onlineBattleFinished) return;
+  if (!onlineBattleStarted) return;
   if (!onlineState.enabled || !onlineState.roomId || !onlineState.myPlayer) return;
 
   const leaver = onlineState.myPlayer;
