@@ -691,7 +691,52 @@ function renderVsList(vs = {}) {
     })
     .join("");
 }
+function renderEncounteredPlayerList(encounteredPlayers = {}) {
+  const entries = Object.entries(encounteredPlayers);
 
+  if (entries.length === 0) {
+    return `<div class="player-stats-line">記録なし</div>`;
+  }
+
+  return entries
+    .sort((a, b) => {
+      const aTime = new Date(a[1]?.lastMatchedAt || 0).getTime();
+      const bTime = new Date(b[1]?.lastMatchedAt || 0).getTime();
+      return bTime - aTime;
+    })
+    .map(([profileId, data]) => {
+      const titles = Array.isArray(data.equippedTitles) && data.equippedTitles.length > 0
+        ? data.equippedTitles.map(id => `[${getTitleName(id)}]`).join("")
+        : "称号なし";
+
+      return `
+        <button class="encountered-player-btn" data-profile-id="${profileId}">
+          ${titles}<br>
+          ${data.profileName || profileId}<br>
+          対戦回数：${data.count || 1}
+        </button>
+      `;
+    })
+    .join("");
+}
+
+function showEncounteredPlayerCard(profileId) {
+  const data = playerSession.profile?.encounteredPlayers?.[profileId];
+  if (!data) return;
+
+  const titles = Array.isArray(data.equippedTitles) && data.equippedTitles.length > 0
+    ? data.equippedTitles.map(id => `[${getTitleName(id)}]`).join("")
+    : "称号なし";
+
+  showPopup(
+    `プレイヤーカード<br>` +
+    `ID：${data.profileId}<br>` +
+    `名前：${data.profileName || data.profileId}<br>` +
+    `称号：${titles}<br>` +
+    `対戦回数：${data.count || 1}<br>` +
+    `最終遭遇：${data.lastMatchedAt || "不明"}`
+  );
+}
 function renderPlayerStatsPanel() {
   const panel = document.getElementById("playerStatsPanel");
   const content = document.getElementById("playerStatsContent");
