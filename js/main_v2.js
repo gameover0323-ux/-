@@ -1899,6 +1899,259 @@ function renderRandomMatchSession(sessionData) {
   document.getElementById("randomMatchReadyBtn")?.addEventListener("click", readyRandomMatch);
   document.getElementById("randomMatchRerollBtn")?.addEventListener("click", rerollRandomMatch);
     }
+async function startRandomMatch() {
+  try {
+    await cleanupOldRandomMatch();
+
+    resetRandomMatchState();
+
+    randomMatchState.enabled = true;
+    renderRandomMatchSearching();
+
+    const myTicketId = createRoomId() + "_" + Date.now();
+    const myProfile = getRandomMatchProfileData();
+    const now = Date.now();
+
+    randomMatchState.ticketId = myTicketId;
+
+    const waitingSnapshot = await readRandomMatchWaiting();
+
+    let opponentTicket = null;
+    let opponentTicketId = null;
+
+    if (waitingSnapshot.exists()) {
+      waitingSnapshot.forEach(childSnap => {
+        if (opponentTicket) return;
+
+        const data = childSnap.val();
+        if (!data) return;
+        if (childSnap.key === myTicketId) return;
+        if (data.status !== "waiting") return;
+
+        opponentTicket = data;
+        opponentTicketId = childSnap.key;
+      });
+    }
+
+    if (opponentTicket && opponentTicketId) {
+      await createRandomMatchSessionFromTickets({
+        opponentTicketId,
+        opponentTicket,
+        myTicketId,
+        myProfile
+      });
+      return;
+    }
+
+    await writeRandomMatchWaiting(myTicketId, {
+      ticketId: myTicketId,
+      status: "waiting",
+      sessionId: null,
+      createdAt: now,
+      updatedAt: now,
+      ...myProfile
+    });
+
+    randomMatchState.waitingUnsubscribe = listenRandomMatchWaiting(myTicketId, data => {
+      if (!data) return;
+
+      if (data.status === "matched" && data.sessionId) {
+        cleanupRandomMatchListeners();
+
+        randomMatchState.sessionId = data.sessionId;
+        randomMatchState.playerSide = "A";
+
+        listenRandomMatchSessionById(data.sessionId);
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    showPopup(`ランダムマッチ開始エラー：${error.message}`);
+    resetRandomMatchState();
+  }
+}
+
+async function createRandomMatchSessionFromTickets({
+  opponentTicketId,
+  opponentTicket,
+  myTicketId,
+  myProfile
+}) {
+  const sessionId = createRoomId() + "_" + Date.now();
+  const now = Date.now();
+
+  randomMatchState.sessionId = sessionId;
+  randomMatchState.playerSide = "B";
+
+  await writeRandomMatchSession(sessionId, {
+    sessionId,
+    status: "confirming",
+    roomId: null,
+    rerollBy: null,
+    createdAt: now,
+    updatedAt: now,
+    players: {
+      A: {
+        profileId: opponentTicket.profileId || null,
+        profileName: opponentTicket.profileName || "ゲスト",
+        equippedTitles: Array.isArray(opponentTicket.equippedTitles)
+          ? opponentTicket.equippedTitles
+          : [],
+        ready: false
+      },
+      B: {
+        ...myProfile,
+        ready: false
+      }
+    },
+    chat: {
+      A: {
+        text: "",
+        updatedAt: 0
+      },
+      B: {
+        text: "",
+        updatedAt: 0
+      }
+    }
+  });
+
+  await updateRandomMatchWaiting(opponentTicketId, {
+    status: "matched",
+    sessionId,
+    updatedAt: now
+  });
+
+  await removeRandomMatchWaiting(myTicketId).catch(() => {});
+
+  listenRandomMatchSessionById(sessionId);
+}
+
+function listenRandomMatchSessionById(sessionId) {
+  cleanupRandomMatchListeners();
+
+  randomMatchState.sessionUnsubscribe = listenRandomMatchSession(sessionId, sessionData => {
+    if (!sessionData) {
+      if (randomMatchState.enabled && !randomMatchState.enteringRoom) {
+        showPopup("マッチングが解除されました");
+        resetRandomMatchState();
+      }
+      return;
+    }
+
+    handleRandomMatchSessionUpdate(sessionData);
+  });
+}
+
+function handleRandomMatchSessionUpdate(sessionData) {
+  if (!randomMatchState.enabled) return;
+
+  if (sessionData.status === "reroll") {
+    const rerollBy = sessionData.rerollBy;
+    if (rerollBy && rerollBy !== randomMatchState.playerSide) {
+      showPopup("再抽選が選択されました");
+    }
+
+    const oldSessionId = randomMatchState.sessionId;
+
+    resetRandomMatchState();
+
+    setTimeout(() => {
+      if (oldSessionId) {
+        removeRandomMatchSession(oldSessionId).catch(() => {});
+      }
+      startRandomMatch();
+    }, 700);
+
+    return;
+  }
+
+  if (sessionData.status === "completed" && sessionData.roomId) {
+    enterRandomMatchedRoom(sessionData.roomId);
+    return;
+  }
+
+  renderRandomMatchSession(sessionData);
+
+  const playerAReady = !!sessionData.players?.A?.ready;
+  const playerBReady = !!sessionData.players?.B?.ready;
+
+  if (
+    sessionData.status === "confirming" &&
+    playerAReady &&
+    playerBReady &&
+    randomMatchState.playerSide === "A" &&
+    !randomMatchState.enteringRoom
+  ) {
+    createRoomFromRandomMatchSession(sessionData);
+  }
+}
+
+async function sendRandomMatchChat() {
+  if (!randomMatchState.sessionId || !randomMatchState.playerSide) return;
+
+  const input = document.getElementById("randomMatchChatInput");
+  const text = String(input?.value || "").trim().slice(0, 50);
+
+  await updateRandomMatchSession(randomMatchState.sessionId, {
+    [`chat/${randomMatchState.playerSide}/text`]: text,
+    [`chat/${randomMatchState.playerSide}/updatedAt`]: Date.now(),
+    updatedAt: Date.now()
+  });
+
+  if (input) {
+    input.value = "";
+  }
+}
+
+async function readyRandomMatch() {
+  if (!randomMatchState.sessionId || !randomMatchState.playerSide) return;
+
+  await updateRandomMatchSession(randomMatchState.sessionId, {
+    [`players/${randomMatchState.playerSide}/ready`]: true,
+    updatedAt: Date.now()
+  });
+
+  const status = document.getElementById("randomMatchReadyStatus");
+  if (status) {
+    status.textContent = "相手からの返答待ちです";
+  }
+}
+
+async function rerollRandomMatch() {
+  if (!randomMatchState.sessionId || !randomMatchState.playerSide) {
+    resetRandomMatchState();
+    startRandomMatch();
+    return;
+  }
+
+  await updateRandomMatchSession(randomMatchState.sessionId, {
+    status: "reroll",
+    rerollBy: randomMatchState.playerSide,
+    updatedAt: Date.now()
+  });
+
+  showPopup("再抽選します");
+}
+
+async function cancelRandomMatch() {
+  const ticketId = randomMatchState.ticketId;
+  const sessionId = randomMatchState.sessionId;
+
+  resetRandomMatchState();
+
+  if (ticketId) {
+    await removeRandomMatchWaiting(ticketId).catch(() => {});
+  }
+
+  if (sessionId) {
+    await updateRandomMatchSession(sessionId, {
+      status: "reroll",
+      rerollBy: null,
+      updatedAt: Date.now()
+    }).catch(() => {});
+  }
+}
 function getOnlineProfilePatch(playerKey) {
   const profile = playerSession.profile;
 
