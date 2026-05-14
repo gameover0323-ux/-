@@ -2063,7 +2063,9 @@ window.addEventListener("beforeunload", () => {
 });
 function applyOnlineRoomData(roomData) {
   if (!onlineState.enabled || !roomData) return;
-
+renderOnlineExtraUi(roomData);
+applyOnlinePeaceRequest(roomData);
+applyOnlineMetaResult(roomData);
   const playerA = roomData.players?.A || {};
   const playerB = roomData.players?.B || {};
 
