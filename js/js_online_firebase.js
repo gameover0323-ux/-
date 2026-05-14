@@ -5,7 +5,11 @@ import {
   set,
   update,
   onValue,
-  get
+  get,
+  remove,
+  query,
+  orderByChild,
+  endAt
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
@@ -30,6 +34,10 @@ export function getRoomRef(roomId) {
   return ref(db, `rooms/${roomId}`);
 }
 
+export function getRoomsRef() {
+  return ref(db, "rooms");
+}
+
 export function writeRoom(roomId, data) {
   return set(getRoomRef(roomId), data);
 }
@@ -42,10 +50,36 @@ export function readRoom(roomId) {
   return get(getRoomRef(roomId));
 }
 
+export function removeRoom(roomId) {
+  return remove(getRoomRef(roomId));
+}
+
 export function listenRoom(roomId, callback) {
   return onValue(getRoomRef(roomId), snapshot => {
     callback(snapshot.val());
   });
+}
+
+export async function cleanupOldRooms(maxAgeMs = 24 * 60 * 60 * 1000) {
+  const border = Date.now() - maxAgeMs;
+  const oldRoomsQuery = query(
+    getRoomsRef(),
+    orderByChild("meta/updatedAt"),
+    endAt(border)
+  );
+
+  const snapshot = await get(oldRoomsQuery);
+  if (!snapshot.exists()) {
+    return 0;
+  }
+
+  const removals = [];
+  snapshot.forEach(child => {
+    removals.push(remove(child.ref));
+  });
+
+  await Promise.all(removals);
+  return removals.length;
 }
 
 export function buildInitialRoomData({ mode = "online1v1" } = {}) {
@@ -57,19 +91,46 @@ export function buildInitialRoomData({ mode = "online1v1" } = {}) {
       mode,
       hostPlayer: "A",
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
+      result: null,
+      notice: ""
     },
     players: {
       A: {
         joined: true,
         ready: false,
-        unitId: null
+        unitId: null,
+        left: false,
+        lastSeen: now,
+        profileId: null,
+        profileName: null,
+        equippedTitles: []
       },
       B: {
         joined: false,
         ready: false,
-        unitId: null
+        unitId: null,
+        left: false,
+        lastSeen: null,
+        profileId: null,
+        profileName: null,
+        equippedTitles: []
       }
+    },
+    chat: {
+      A: {
+        text: "",
+        updatedAt: 0
+      },
+      B: {
+        text: "",
+        updatedAt: 0
+      }
+    },
+    peace: {
+      requestedBy: null,
+      status: "none",
+      updatedAt: 0
     },
     battle: null,
     action: {
@@ -81,6 +142,7 @@ export function buildInitialRoomData({ mode = "online1v1" } = {}) {
     }
   };
 }
+
 export function getPlayerProfileRef(playerId) {
   return ref(db, `players/${playerId}`);
 }
