@@ -2,8 +2,7 @@ import { createAttack } from "./js_battle_system.js";
 
 import {
   setStateEffect,
-  getStateEffect,
-  clearStateEffect
+  getStateEffect
 } from "./js_unit_runtime.js";
 
 const WEAPON_A = {
@@ -15,10 +14,10 @@ const WEAPON_A = {
       label: "アサルトライフル",
       desc: "10ダメージ×5回 射撃",
       effect: {
-        kind: "attack",
+        type: "attack",
         damage: 10,
         count: 5,
-        type: "shoot"
+        attackType: "shoot"
       }
     }
   },
@@ -30,10 +29,10 @@ const WEAPON_A = {
       label: "サブマシンガン",
       desc: "5ダメージ×10回 射撃",
       effect: {
-        kind: "attack",
+        type: "attack",
         damage: 5,
         count: 10,
-        type: "shoot"
+        attackType: "shoot"
       }
     }
   },
@@ -45,10 +44,10 @@ const WEAPON_A = {
       label: "スナイパーライフル",
       desc: "50ダメージ 射撃 軽減不可",
       effect: {
-        kind: "attack",
+        type: "attack",
         damage: 50,
         count: 1,
-        type: "shoot",
+        attackType: "shoot",
         ignoreReduction: true
       }
     }
@@ -64,10 +63,10 @@ const WEAPON_B = {
       label: "グレネードランチャー",
       desc: "80ダメージ 射撃 軽減不可",
       effect: {
-        kind: "attack",
+        type: "attack",
         damage: 80,
         count: 1,
-        type: "shoot",
+        attackType: "shoot",
         ignoreReduction: true
       }
     }
@@ -80,10 +79,10 @@ const WEAPON_B = {
       label: "格闘",
       desc: "60ダメージ×2回 格闘 [∞]",
       effect: {
-        kind: "attack",
+        type: "attack",
         damage: 60,
         count: 2,
-        type: "melee"
+        attackType: "melee"
       }
     }
   },
@@ -95,10 +94,10 @@ const WEAPON_B = {
       label: "チャージプラズマガン",
       desc: "90ダメージ 射撃 ビーム",
       effect: {
-        kind: "attack",
+        type: "attack",
         damage: 90,
         count: 1,
-        type: "shoot",
+        attackType: "shoot",
         beam: true
       }
     }
@@ -114,10 +113,10 @@ const THROW_WEAPON = {
       label: "グレネード",
       desc: "100ダメージ 射撃",
       effect: {
-        kind: "attack",
+        type: "attack",
         damage: 100,
         count: 1,
-        type: "shoot"
+        attackType: "shoot"
       }
     }
   },
@@ -129,10 +128,10 @@ const THROW_WEAPON = {
       label: "焼夷弾",
       desc: "20ダメージ 格闘。次ターン以降5ターン間、毎ターン開始時20ダメージ格闘攻撃",
       effect: {
-        kind: "attack",
+        type: "attack",
         damage: 20,
         count: 1,
-        type: "melee"
+        attackType: "melee"
       }
     }
   },
@@ -144,31 +143,12 @@ const THROW_WEAPON = {
       label: "チャフグレネード",
       desc: "3ターン間、必中を除く攻撃を回避消費なしで回避可能",
       effect: {
-        kind: "custom"
+        type: "custom"
       }
     }
   }
 };
-function isReloadNeededSlot(state, slotNumber) {
-  const info = getCurrentWeaponInfoBySlot(state, slotNumber);
-  if (!info || !info.data) return false;
-  return !hasAmmoForWeapon(state, info.id, info.data);
-}
 
-function getReloadSlotForSlotNumber(state, slotNumber) {
-  const info = getCurrentWeaponInfoBySlot(state, slotNumber);
-  if (!info) return null;
-
-  const message = reloadGroup(state, info.group);
-
-  return {
-    label: "リロード",
-    desc: message,
-    effect: {
-      kind: "custom"
-    }
-  };
-}
 function ensureDaisyState(state) {
   if (!state) return;
 
@@ -220,7 +200,7 @@ function getCurrentWeaponInfoBySlot(state, slotNumber) {
     return {
       group: "A",
       id,
-      data: WEAPON_A[id]
+      data: WEAPON_A[id] || WEAPON_A.rifle
     };
   }
 
@@ -229,7 +209,7 @@ function getCurrentWeaponInfoBySlot(state, slotNumber) {
     return {
       group: "B",
       id,
-      data: WEAPON_B[id]
+      data: WEAPON_B[id] || WEAPON_B.launcher
     };
   }
 
@@ -238,7 +218,7 @@ function getCurrentWeaponInfoBySlot(state, slotNumber) {
     return {
       group: "throw",
       id,
-      data: THROW_WEAPON[id]
+      data: THROW_WEAPON[id] || THROW_WEAPON.grenade
     };
   }
 
@@ -255,6 +235,7 @@ function hasAmmoForWeapon(state, weaponId, weapon) {
 
 function consumeAmmo(state, weaponId, weapon) {
   if (!weapon || weapon.maxAmmo === null) return;
+
   state.daisyAmmo[weaponId] = Math.max(
     0,
     Number(state.daisyAmmo[weaponId] || 0) - weapon.consume
@@ -288,12 +269,18 @@ function reloadGroup(state, group) {
   return "リロード";
 }
 
+function isReloadNeededSlot(state, slotNumber) {
+  const info = getCurrentWeaponInfoBySlot(state, slotNumber);
+  if (!info || !info.data) return false;
+  return !hasAmmoForWeapon(state, info.id, info.data);
+}
+
 function buildReloadSlot(message) {
   return {
     label: "リロード",
     desc: message,
     effect: {
-      kind: "custom"
+      type: "custom"
     }
   };
 }
@@ -322,30 +309,18 @@ export function getDaisyDerivedState(state) {
   return {
     status,
     slots: {
-  slot2: isReloadNeededSlot(state, 2)
-    ? {
-        label: "リロード",
-        desc: "武器攻撃Aを全リロード",
-        effect: { kind: "custom" }
-      }
-    : withAmmoLabel(state, state.daisyWeaponA, weaponA),
+      slot2: isReloadNeededSlot(state, 2)
+        ? buildReloadSlot("武器攻撃Aを全リロード")
+        : withAmmoLabel(state, state.daisyWeaponA, weaponA),
 
-  slot3: isReloadNeededSlot(state, 3)
-    ? {
-        label: "リロード",
-        desc: "武器攻撃Bを全リロード",
-        effect: { kind: "custom" }
-      }
-    : withAmmoLabel(state, state.daisyWeaponB, weaponB),
+      slot3: isReloadNeededSlot(state, 3)
+        ? buildReloadSlot("武器攻撃Bを全リロード")
+        : withAmmoLabel(state, state.daisyWeaponB, weaponB),
 
-  slot4: isReloadNeededSlot(state, 4)
-    ? {
-        label: "リロード",
-        desc: "投擲武器を全リロード",
-        effect: { kind: "custom" }
-      }
-    : withAmmoLabel(state, state.daisyThrowWeapon, throwWeapon)
-}
+      slot4: isReloadNeededSlot(state, 4)
+        ? buildReloadSlot("投擲武器を全リロード")
+        : withAmmoLabel(state, state.daisyThrowWeapon, throwWeapon)
+    }
   };
 }
 
@@ -354,10 +329,15 @@ export function canUseDaisySpecial(state, specialKey, context = {}) {
 
   if (specialKey === "special4") {
     const ctx = context.currentAttackContext;
-    if (!ctx) return { allowed: false, message: "追撃できる攻撃がありません" };
+
+    if (!ctx) {
+      return { allowed: false, message: "追撃できる攻撃がありません" };
+    }
+
     if (![2, 3, 4].includes(ctx.slotNumber)) {
       return { allowed: false, message: "追撃対象外です" };
     }
+
     if (state.evade < 1) {
       return { allowed: false, message: "回避が足りません" };
     }
@@ -429,6 +409,7 @@ export function executeDaisySpecial(state, specialKey, context = {}) {
 
   if (specialKey === "special4") {
     const ctx = context.currentAttackContext;
+
     if (!ctx || ![2, 3, 4].includes(ctx.slotNumber)) {
       return { handled: true, message: "追撃対象外" };
     }
@@ -459,7 +440,7 @@ export function executeDaisySpecial(state, specialKey, context = {}) {
         ownerPlayer: context.ownerPlayer,
         enemyPlayer: context.enemyPlayer,
         source: "daisy_magius",
-       choiceType: "confirm",
+        choiceType: "confirm",
         effectType: "daisy_magius",
         choices: [
           { value: "shade", label: "シェイドフィールド" },
@@ -503,6 +484,7 @@ export function onDaisyAfterSlotResolved(state, slotNumber, context = {}) {
   }
 
   const info = getCurrentWeaponInfoBySlot(state, slotNumber);
+
   if (!info || !info.data) {
     return { redraw: false, message: null };
   }
@@ -632,7 +614,11 @@ export function onDaisyResolveChoice(state, pendingChoice, selectedValue, contex
 
     if (selectedValue === "heal") {
       state.daisyHealFieldTurns = 5;
-      return { handled: true, redraw: true, message: "ヒールフィールド：5ターン間、ターン終了時に追加回復" };
+      return {
+        handled: true,
+        redraw: true,
+        message: "ヒールフィールド：5ターン間、ターン終了時に追加回復"
+      };
     }
 
     if (selectedValue === "multi") {
@@ -649,7 +635,12 @@ export function onDaisyResolveChoice(state, pendingChoice, selectedValue, contex
     if (selectedValue === "jammer") {
       const enemy = context.enemyState;
       if (enemy) enemy.evade = 0;
-      return { handled: true, redraw: true, message: "モビリティジャマー：相手回避0" };
+
+      return {
+        handled: true,
+        redraw: true,
+        message: "モビリティジャマー：相手回避0"
+      };
     }
 
     if (selectedValue === "protect") {
@@ -658,7 +649,11 @@ export function onDaisyResolveChoice(state, pendingChoice, selectedValue, contex
         skipNextTick: true
       });
 
-      return { handled: true, redraw: true, message: "プロテクション：完全無敵" };
+      return {
+        handled: true,
+        redraw: true,
+        message: "プロテクション：完全無敵"
+      };
     }
   }
 
@@ -732,4 +727,4 @@ export function modifyDaisyTakenDamage(defender, attacker, attack, damage) {
     damage,
     message: null
   };
-      }
+}
