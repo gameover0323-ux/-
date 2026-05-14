@@ -2764,6 +2764,8 @@ applyOnlineAction(roomData.action);
     selectedUnitA &&
     selectedUnitB
   ) {
+
+    saveOnlineEncounteredPlayer(roomData);
     onlineBattleStarted = true;
     initOnline1v1Battle(selectedUnitA, selectedUnitB);
   }
