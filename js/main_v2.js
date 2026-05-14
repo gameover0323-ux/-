@@ -152,6 +152,7 @@ await writeRoom(roomId, initialRoomData);
 joinOnlineRoomBtn.addEventListener("click", async () => {
   const roomId = onlineRoomIdInput.value.trim();
   if (!roomId) {
+    await cleanupOldRooms();
     showPopup("部屋IDを入力してください");
     return;
   }
@@ -169,10 +170,12 @@ joinOnlineRoomBtn.addEventListener("click", async () => {
 onlineSelectEntered = false;
 onlineBattleStarted = false;
   await updateRoom(roomId, {
-    "players/B/joined": true,
-    "meta/updatedAt": Date.now()
-  });
-
+  "players/B/joined": true,
+  "players/B/left": false,
+  "players/B/lastSeen": Date.now(),
+  ...getOnlineProfilePatch("B"),
+  "meta/updatedAt": Date.now()
+});
   onlineRoomStatus.textContent = "部屋に参加しました。あなたはPLAYER Bです。";
 
   listenRoom(roomId, (roomData) => {
