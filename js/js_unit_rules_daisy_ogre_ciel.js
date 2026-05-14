@@ -499,7 +499,6 @@ export function onDaisyBeforeSlot(state, slotNumber, context = {}) {
 }
 
 export function onDaisyAfterSlotResolved(state, slotNumber, resolveResult, context = {}) {
-export function onDaisyAfterSlotResolved(state, slotNumber, resolveResult, context = {}) {
   ensureDaisyState(state);
 
   if (slotNumber === 4 && state.daisyThrowWeapon === "incendiary") {
