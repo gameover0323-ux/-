@@ -387,7 +387,7 @@ function showTitle() {
     popup.innerHTML = "";
   }
 
-  showTitle();
+  showScreen("title");
 }
 function isTeamBattleMode() {
   return battleMode === "2v2" ||
