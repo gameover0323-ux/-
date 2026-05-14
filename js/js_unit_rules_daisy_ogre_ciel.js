@@ -149,7 +149,26 @@ const THROW_WEAPON = {
     }
   }
 };
+function isReloadNeededSlot(state, slotNumber) {
+  const info = getCurrentWeaponInfoBySlot(state, slotNumber);
+  if (!info || !info.data) return false;
+  return !hasAmmoForWeapon(state, info.id, info.data);
+}
 
+function getReloadSlotForSlotNumber(state, slotNumber) {
+  const info = getCurrentWeaponInfoBySlot(state, slotNumber);
+  if (!info) return null;
+
+  const message = reloadGroup(state, info.group);
+
+  return {
+    label: "リロード",
+    desc: message,
+    effect: {
+      kind: "custom"
+    }
+  };
+}
 function ensureDaisyState(state) {
   if (!state) return;
 
@@ -303,10 +322,30 @@ export function getDaisyDerivedState(state) {
   return {
     status,
     slots: {
-      slot2: withAmmoLabel(state, state.daisyWeaponA, weaponA),
-      slot3: withAmmoLabel(state, state.daisyWeaponB, weaponB),
-      slot4: withAmmoLabel(state, state.daisyThrowWeapon, throwWeapon)
-    }
+  slot2: isReloadNeededSlot(state, 2)
+    ? {
+        label: "リロード",
+        desc: "武器攻撃Aを全リロード",
+        effect: { kind: "custom" }
+      }
+    : withAmmoLabel(state, state.daisyWeaponA, weaponA),
+
+  slot3: isReloadNeededSlot(state, 3)
+    ? {
+        label: "リロード",
+        desc: "武器攻撃Bを全リロード",
+        effect: { kind: "custom" }
+      }
+    : withAmmoLabel(state, state.daisyWeaponB, weaponB),
+
+  slot4: isReloadNeededSlot(state, 4)
+    ? {
+        label: "リロード",
+        desc: "投擲武器を全リロード",
+        effect: { kind: "custom" }
+      }
+    : withAmmoLabel(state, state.daisyThrowWeapon, throwWeapon)
+}
   };
 }
 
@@ -341,7 +380,7 @@ export function executeDaisySpecial(state, specialKey, context = {}) {
         ownerPlayer: context.ownerPlayer,
         enemyPlayer: context.enemyPlayer,
         source: "daisy_weapon_a",
-        choiceType: "select",
+        choiceType: "confirm",
         effectType: "daisy_weapon_a",
         options: [
           { value: "rifle", label: "アサルトライフル" },
@@ -438,9 +477,15 @@ export function executeDaisySpecial(state, specialKey, context = {}) {
 
 export function onDaisyBeforeSlot(state, slotNumber, context = {}) {
   ensureDaisyState(state);
+  return { redraw: false, message: null };
+}
+
+export function onDaisyAfterSlotResolved(state, slotNumber, context = {}) {
+  ensureDaisyState(state);
 
   if (slotNumber === 6) {
     state.evade *= 2;
+
     if (state.evade > state.evadeMax) {
       state.overEvadeMode = true;
       state.overEvadeCap = state.evade;
@@ -458,16 +503,12 @@ export function onDaisyBeforeSlot(state, slotNumber, context = {}) {
   }
 
   const info = getCurrentWeaponInfoBySlot(state, slotNumber);
-  if (!info || !info.data) return { redraw: false, message: null };
+  if (!info || !info.data) {
+    return { redraw: false, message: null };
+  }
 
   if (!hasAmmoForWeapon(state, info.id, info.data)) {
     const message = reloadGroup(state, info.group);
-
-    context.slot.label = "リロード";
-    context.slot.desc = message;
-    context.slot.effect = {
-      kind: "custom"
-    };
 
     return {
       redraw: true,
@@ -483,27 +524,15 @@ export function onDaisyBeforeSlot(state, slotNumber, context = {}) {
       skipNextTick: true
     });
 
-    context.slot.label = "チャフグレネード";
-    context.slot.desc = "3ターン間、必中を除く攻撃を回避消費なしで回避可能";
-    context.slot.effect = {
-      kind: "custom"
-    };
-
     return {
       redraw: true,
       message: "チャフグレネード：無償回避状態"
     };
   }
 
-  return { redraw: true, message: null };
-}
-
-export function onDaisyAfterSlotResolved(state, slotNumber, resolveResult, context = {}) {
-  ensureDaisyState(state);
-
-  if (slotNumber === 4 && state.daisyThrowWeapon === "incendiary") {
-    const enemyPlayer = context.enemyPlayer;
+  if (slotNumber === 4 && info.id === "incendiary") {
     const ownerPlayer = context.ownerPlayer;
+    const enemyPlayer = context.enemyPlayer;
 
     return {
       redraw: true,
@@ -523,7 +552,7 @@ export function onDaisyAfterSlotResolved(state, slotNumber, resolveResult, conte
     };
   }
 
-  return { redraw: false, message: null };
+  return { redraw: true, message: null };
 }
 
 export function onDaisyActionResolved(attacker, defender, context = {}) {
@@ -703,4 +732,4 @@ export function modifyDaisyTakenDamage(defender, attacker, attack, damage) {
     damage,
     message: null
   };
-}
+      }
