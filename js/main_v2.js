@@ -1842,20 +1842,28 @@ function ensureOnlineCenterButtons() {
   document.getElementById("onlineSurrenderBtn")?.addEventListener("click", requestOnlineSurrender);
 }
 
-async function sendOnlineChat() {
+async function sendOnlineChatFrom(playerKey) {
   if (!onlineState.enabled || !onlineState.roomId || !onlineState.myPlayer) return;
 
-  const input = document.getElementById("onlineChatInput");
+  if (playerKey !== onlineState.myPlayer) {
+    showPopup("自分側のチャット欄だけ送信できます");
+    return;
+  }
+
+  const input = document.getElementById(`onlineChatInput${playerKey}`);
   const text = String(input?.value || "").trim().slice(0, 50);
 
   await updateRoom(onlineState.roomId, {
-    [`chat/${onlineState.myPlayer}/text`]: text,
-    [`chat/${onlineState.myPlayer}/updatedAt`]: Date.now(),
-    [`players/${onlineState.myPlayer}/lastSeen`]: Date.now(),
+    [`chat/${playerKey}/text`]: text,
+    [`chat/${playerKey}/updatedAt`]: Date.now(),
+    [`players/${playerKey}/lastSeen`]: Date.now(),
     "meta/updatedAt": Date.now()
   });
-}
 
+  if (input) {
+    input.value = "";
+  }
+}
 function renderOnlineExtraUi(roomData) {
   ensureOnlineBattleExtraUi();
 
