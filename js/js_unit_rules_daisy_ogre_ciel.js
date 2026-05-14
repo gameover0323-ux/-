@@ -416,7 +416,7 @@ export function executeDaisySpecial(state, specialKey, context = {}) {
         ownerPlayer: context.ownerPlayer,
         enemyPlayer: context.enemyPlayer,
         source: "daisy_throw_weapon",
-        choiceType: "select",
+        choiceType: "confirm",
         effectType: "daisy_throw_weapon",
         options: [
           { value: "grenade", label: "グレネード" },
@@ -459,7 +459,7 @@ export function executeDaisySpecial(state, specialKey, context = {}) {
         ownerPlayer: context.ownerPlayer,
         enemyPlayer: context.enemyPlayer,
         source: "daisy_magius",
-        choiceType: "select",
+       choiceType: "confirm",
         effectType: "daisy_magius",
         options: [
           { value: "shade", label: "シェイドフィールド" },
