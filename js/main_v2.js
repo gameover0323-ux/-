@@ -1854,8 +1854,8 @@ function ensureOnlineCenterButtons() {
   wrap.innerHTML = `
   <button id="onlinePeaceBtn"
     style="
-      width:40px;
-      height:28px;
+      width:25px;
+      height:25px;
       font-size:12px;
       padding:0;
     ">
@@ -1864,8 +1864,8 @@ function ensureOnlineCenterButtons() {
 
   <button id="onlineSurrenderBtn"
     style="
-      width:40px;
-      height:28px;
+      width:25px;
+      height:25px;
       font-size:12px;
       padding:0;
     ">
