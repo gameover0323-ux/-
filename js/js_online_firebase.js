@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import {
   getDatabase,
   ref,
+  child,
   set,
   update,
   onValue,
@@ -11,7 +12,6 @@ import {
   orderByChild,
   endAt
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyAycT0fkOYGT59qutLaBjxOTq9ZILNDTL4",
   authDomain: "online-gvs.firebaseapp.com",
