@@ -392,9 +392,14 @@ function resetLocalSelectionAndBattleState() {
 }
 
 function showTitle() {
-  if (onlineState.enabled && onlineState.roomId && onlineState.myPlayer) {
+  if (
+  onlineState.enabled &&
+  onlineState.roomId &&
+  onlineState.myPlayer &&
+  !onlineBattleFinished
+) {
   markOnlinePlayerLeft();
-  }
+}
   resetOnlineStateForLocalBattle();
   resetLocalSelectionAndBattleState();
 
