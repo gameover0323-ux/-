@@ -100,7 +100,18 @@ function getDebugUnits() {
 
   function loadUnitButtons() {
   ctx.unitButtons.innerHTML = "";
+} else {
+    const normalUnits = getSelectList();
+    const debugUnits = canUseDebugUnit() && !isOnlineMode()
+      ? getDebugUnits()
+      : [];
 
+    appendUnitSection("プレイアブル機体", normalUnits, "playableSection");
+
+    if (debugUnits.length > 0) {
+      appendUnitSection("デバッグ権限", debugUnits, "debugUnitSection");
+    }
+  }
   function appendUnitSection(titleText, units, className) {
     if (!units || units.length <= 0) return;
 
