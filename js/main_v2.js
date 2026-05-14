@@ -1821,27 +1821,32 @@ function ensureOnlineTopPlayerHud() {
   document.getElementById("onlineChatSendBtnB")?.addEventListener("click", () => sendOnlineChatFrom("B"));
 }
 function ensureOnlineCenterButtons() {
+function ensureOnlineCenterButtons() {
   if (!onlineState.enabled) return;
-  if (document.getElementById("onlinePeaceBtn")) return;
+  if (document.getElementById("onlinePeaceSurrenderBox")) return;
 
   const actionCounterValue = document.getElementById("actionCounterValue");
-  const centerBox = actionCounterValue?.parentNode?.parentNode || actionCounterValue?.parentNode;
-  if (!centerBox) return;
+  const actionBox = actionCounterValue?.parentNode;
+  if (!actionBox?.parentNode) return;
 
   const wrap = document.createElement("div");
   wrap.id = "onlinePeaceSurrenderBox";
   wrap.style.marginTop = "8px";
+  wrap.style.display = "flex";
+  wrap.style.flexDirection = "column";
+  wrap.style.alignItems = "center";
+  wrap.style.gap = "6px";
+
   wrap.innerHTML = `
-    <button id="onlinePeaceBtn" style="margin:2px;">和平</button>
-    <button id="onlineSurrenderBtn" style="margin:2px;">降伏</button>
+    <button id="onlinePeaceBtn" style="width:64px;">和平</button>
+    <button id="onlineSurrenderBtn" style="width:64px;">降伏</button>
   `;
 
-  centerBox.appendChild(wrap);
+  actionBox.parentNode.appendChild(wrap);
 
   document.getElementById("onlinePeaceBtn")?.addEventListener("click", requestOnlinePeace);
   document.getElementById("onlineSurrenderBtn")?.addEventListener("click", requestOnlineSurrender);
 }
-
 async function sendOnlineChatFrom(playerKey) {
   if (!onlineState.enabled || !onlineState.roomId || !onlineState.myPlayer) return;
 
