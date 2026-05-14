@@ -405,6 +405,8 @@ function showTitle() {
 ) {
   markOnlinePlayerLeft();
 }
+
+  cleanupOnlineBattleUi();
   resetOnlineStateForLocalBattle();
   resetLocalSelectionAndBattleState();
 
