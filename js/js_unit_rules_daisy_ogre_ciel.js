@@ -499,33 +499,30 @@ export function onDaisyBeforeSlot(state, slotNumber, context = {}) {
 }
 
 export function onDaisyAfterSlotResolved(state, slotNumber, resolveResult, context = {}) {
+export function onDaisyAfterSlotResolved(state, slotNumber, resolveResult, context = {}) {
   ensureDaisyState(state);
 
   if (slotNumber === 4 && state.daisyThrowWeapon === "incendiary") {
     const enemyPlayer = context.enemyPlayer;
     const ownerPlayer = context.ownerPlayer;
 
-    if (slotNumber === 4 && state.daisyThrowWeapon === "incendiary") {
-  const enemyPlayer = context.enemyPlayer;
-  const ownerPlayer = context.ownerPlayer;
-
-  return {
-    redraw: true,
-    message: "焼夷弾：5ターン継続燃焼を予約",
-    reserveActions: [1, 2, 3, 4, 5].map(delay => ({
-      ownerPlayer,
-      enemyPlayer,
-      trigger: "turn_start",
-      delay,
-      type: "attack",
-      label: `焼夷弾 継続ダメージ ${delay}/5`,
-      attacks: createAttack(20, 1, {
-        type: "melee",
-        source: "焼夷弾 継続ダメージ"
-      })
-    }))
-  };
-}
+    return {
+      redraw: true,
+      message: "焼夷弾：5ターン継続燃焼を予約",
+      reserveActions: [1, 2, 3, 4, 5].map(delay => ({
+        ownerPlayer,
+        enemyPlayer,
+        trigger: "turn_start",
+        delay,
+        type: "attack",
+        label: `焼夷弾 継続ダメージ ${delay}/5`,
+        attacks: createAttack(20, 1, {
+          type: "melee",
+          source: "焼夷弾 継続ダメージ"
+        })
+      }))
+    };
+  }
 
   return { redraw: false, message: null };
 }
