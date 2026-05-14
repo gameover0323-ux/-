@@ -1828,7 +1828,7 @@ function ensureOnlineTopPlayerHud() {
   document.getElementById("onlineChatSendBtnA")?.addEventListener("click", () => sendOnlineChatFrom("A"));
   document.getElementById("onlineChatSendBtnB")?.addEventListener("click", () => sendOnlineChatFrom("B"));
 }
-function ensureOnlineCenterButtons() {
+
 function ensureOnlineCenterButtons() {
   if (!onlineState.enabled) return;
   if (document.getElementById("onlinePeaceSurrenderBox")) return;
