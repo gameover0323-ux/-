@@ -69,6 +69,29 @@ function createProfile({ id, passwordHash, name }) {
     encounteredPlayers: {}
   };
 }
+function normalizeProfileShape(profile) {
+  if (!profile) return profile;
+
+  if (!profile.stats) profile.stats = createInitialStats();
+  if (!profile.stats.units) profile.stats.units = {};
+  if (!profile.stats.defeated) {
+    profile.stats.defeated = {
+      cpu: {},
+      playable: {},
+      boss: {},
+      onlinePlayer: {}
+    };
+  }
+
+  if (!profile.trophies) profile.trophies = {};
+  if (!profile.trophies.byUnit) profile.trophies.byUnit = {};
+
+  if (!profile.encounteredPlayers) {
+    profile.encounteredPlayers = {};
+  }
+
+  return profile;
+}
 export function isLoggedIn() {
   return !!playerSession.profile;
 }
