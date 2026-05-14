@@ -401,6 +401,7 @@ function showTitle() {
   onlineState.enabled &&
   onlineState.roomId &&
   onlineState.myPlayer &&
+  onlineBattleStarted &&
   !onlineBattleFinished
 ) {
   markOnlinePlayerLeft();
