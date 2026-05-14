@@ -398,7 +398,7 @@ export function executeDaisySpecial(state, specialKey, context = {}) {
         ownerPlayer: context.ownerPlayer,
         enemyPlayer: context.enemyPlayer,
         source: "daisy_weapon_b",
-        choiceType: "select",
+        choiceType: "confirm",
         effectType: "daisy_weapon_b",
         options: [
           { value: "launcher", label: "グレネードランチャー" },
