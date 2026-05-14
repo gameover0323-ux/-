@@ -1429,7 +1429,7 @@ async function saveBattleResultForCurrentPlayer(winnerPlayer) {
     mode: getBattleRecordMode(),
     playerUnitId: playerState.unitId,
     opponentUnitId: opponentState.unitId,
-    opponentPlayerId: "",
+    opponentPlayerId: onlineState.enabled ? currentOnlineOpponentPlayerId : "",
     opponentCategory: getOpponentCategoryByMode(),
     result: winnerPlayer === playerSide ? "win" : "lose"
   });
