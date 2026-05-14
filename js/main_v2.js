@@ -1399,7 +1399,8 @@ async function saveOnlineEncounteredPlayer(roomData) {
   const enemy = roomData?.players?.[enemySide];
 
   if (!enemy?.profileId) return;
-
+if (enemy.profileId === playerSession.profile.id) return;
+  
   onlineEncounterSaved = true;
   currentOnlineOpponentPlayerId = enemy.profileId;
 
