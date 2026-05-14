@@ -1,8 +1,10 @@
 import {
+import {
   TITLE_DEFINITIONS,
   TITLE_NAME_MAP,
   UNLOCKABLE_UNIT_MAP,
   TITLE_GROUPS,
+  BOSS_TROPHY_RULES,
   getTitleConditionText
 } from "./js_player_titles.js";
 
@@ -874,6 +876,53 @@ async function savePlayerCustomizeState() {
     showPopup("保存に失敗しました");
   }
 }
+function getUnlockedBossTrophiesForUnit(profile, unitId) {
+  const vs = profile?.stats?.units?.[unitId]?.cpu?.vs || {};
+
+  return BOSS_TROPHY_RULES
+    .filter(rule => Number(vs?.[rule.bossId]?.win || 0) >= Number(rule.unlockAt || 1))
+    .map(rule => rule.trophyId);
+}
+function sanitizeEquippedBossTrophies(profile) {
+  if (!profile?.trophies?.byUnit) return false;
+
+  let changed = false;
+
+  Object.keys(profile.trophies.byUnit).forEach(unitId => {
+    const unlocked = getUnlockedBossTrophiesForUnit(profile, unitId);
+    const current = profile.trophies.byUnit[unitId] || [];
+    const filtered = current.filter(trophyId => unlocked.includes(trophyId));
+
+    if (filtered.length !== current.length) {
+      profile.trophies.byUnit[unitId] = filtered;
+      changed = true;
+    }
+  });
+
+  return changed;
+}
+function sanitizeEquippedBossTrophies(profile) {
+  if (!profile?.trophies?.byUnit) return false;
+
+  let changed = false;
+
+  Object.keys(profile.trophies.byUnit).forEach(unitId => {
+    const unlocked = getUnlockedBossTrophiesForUnit(profile, unitId);
+    const current = profile.trophies.byUnit[unitId] || [];
+    const filtered = current.filter(trophyId => unlocked.includes(trophyId));
+
+    if (filtered.length !== current.length) {
+      profile.trophies.byUnit[unitId] = filtered;
+      changed = true;
+    }
+  });
+
+  return changed;
+}
+function getBossTrophyLabel(trophyId) {
+  const rule = BOSS_TROPHY_RULES.find(rule => rule.trophyId === trophyId);
+  return rule?.label || trophyId;
+}
 function renderTitleCustomizePanel() {
   const profile = playerSession.profile;
   if (!profile) {
@@ -1000,6 +1049,7 @@ function renderTitleListPanel() {
   panel.style.display = "";
 }
 
+
 function renderTrophyCustomizePanel() {
   const profile = playerSession.profile;
   if (!profile) return;
@@ -1007,80 +1057,95 @@ function renderTrophyCustomizePanel() {
   const panel = document.getElementById("playerStatsPanel");
   const content = document.getElementById("playerStatsContent");
   if (!panel || !content) return;
-
+if (sanitizeEquippedBossTrophies(profile)) {
+  savePlayerCustomizeState();
+}
   const unitStats = profile.stats?.units || {};
-  const trophiesByUnit = profile.trophies?.byUnit || {};
 
-  const unitSections = Object.keys(unitStats).map(unitId => {
-    const trophies = trophiesByUnit[unitId] || [];
+  const unitSections = Object.keys(unitStats)
+    .map(unitId => {
+      const unlockedTrophies = getUnlockedBossTrophiesForUnit(profile, unitId);
+      const equippedTrophies = profile.trophies?.byUnit?.[unitId] || [];
 
-    return `
-      <details>
-        <summary>${getUnitNameById(unitId)} ${trophies.join("")}</summary>
-        <div class="trophy-button-area">
-          ${["D", "EX"].map(trophyId => {
-            const owned = trophies.includes(trophyId);
-            return `
-              <button class="trophy-toggle-btn" data-unit-id="${unitId}" data-trophy-id="${trophyId}">
-                ${owned ? `[${trophyId}] ON` : `[${trophyId}] OFF`}
-              </button>
-            `;
-          }).join("")}
-          <button class="trophy-clear-btn" data-unit-id="${unitId}">
-            全部外す
-          </button>
-        </div>
-      </details>
-    `;
-  }).join("");
+      if (unlockedTrophies.length === 0) {
+        return "";
+      }
+
+      return `
+        <details>
+          <summary>${getUnitNameById(unitId)} ${equippedTrophies.join("")}</summary>
+          <div class="trophy-button-area">
+            ${unlockedTrophies.map(trophyId => {
+              const owned = equippedTrophies.includes(trophyId);
+              return `
+                <button class="trophy-toggle-btn" data-unit-id="${unitId}" data-trophy-id="${trophyId}">
+                  ${owned ? `[${getBossTrophyLabel(trophyId)}] ON` : `[${getBossTrophyLabel(trophyId)}] OFF`}
+                </button>
+              `;
+            }).join("")}
+
+            <button class="trophy-clear-btn" data-unit-id="${unitId}">
+              全部外す
+            </button>
+          </div>
+        </details>
+      `;
+    })
+    .join("");
 
   content.innerHTML = `
     <h3>トロフィーカスタム</h3>
-    <div class="player-stats-line">ボタンを押すと付け外しできます</div>
+    <div class="player-stats-line">実際にその機体で撃破したボスのトロフィーだけ装備できます</div>
 
-    ${unitSections || `<div class="player-stats-line">トロフィー対象の戦績がありません</div>`}
+    ${unitSections || `<div class="player-stats-line">装備可能なボストロフィーがありません</div>`}
 
     <button id="backToTitleCustomizeBtn">称号カスタムに戻る</button>
   `;
 
   content.querySelectorAll(".trophy-toggle-btn").forEach(btn => {
-  btn.addEventListener("click", async () => {
-    const unitId = btn.dataset.unitId;
-    const trophyId = btn.dataset.trophyId;
+    btn.addEventListener("click", async () => {
+      const unitId = btn.dataset.unitId;
+      const trophyId = btn.dataset.trophyId;
 
-    if (!unitId || !trophyId) return;
+      if (!unitId || !trophyId) return;
 
-    if (!profile.trophies) profile.trophies = {};
-    if (!profile.trophies.byUnit) profile.trophies.byUnit = {};
-    if (!profile.trophies.byUnit[unitId]) profile.trophies.byUnit[unitId] = [];
+      const unlockedTrophies = getUnlockedBossTrophiesForUnit(profile, unitId);
+      if (!unlockedTrophies.includes(trophyId)) {
+        showPopup("この機体ではまだ装備できないトロフィーです");
+        return;
+      }
 
-    const trophies = profile.trophies.byUnit[unitId];
+      if (!profile.trophies) profile.trophies = {};
+      if (!profile.trophies.byUnit) profile.trophies.byUnit = {};
+      if (!profile.trophies.byUnit[unitId]) profile.trophies.byUnit[unitId] = [];
 
-    if (trophies.includes(trophyId)) {
-      profile.trophies.byUnit[unitId] = trophies.filter(id => id !== trophyId);
-    } else {
-      trophies.push(trophyId);
-    }
+      const trophies = profile.trophies.byUnit[unitId];
 
-    await savePlayerCustomizeState();
-    renderTrophyCustomizePanel();
+      if (trophies.includes(trophyId)) {
+        profile.trophies.byUnit[unitId] = trophies.filter(id => id !== trophyId);
+      } else {
+        trophies.push(trophyId);
+      }
+
+      await savePlayerCustomizeState();
+      renderTrophyCustomizePanel();
+    });
   });
-});
 
   content.querySelectorAll(".trophy-clear-btn").forEach(btn => {
-  btn.addEventListener("click", async () => {
-    const unitId = btn.dataset.unitId;
-    if (!unitId) return;
+    btn.addEventListener("click", async () => {
+      const unitId = btn.dataset.unitId;
+      if (!unitId) return;
 
-    if (!profile.trophies) profile.trophies = {};
-    if (!profile.trophies.byUnit) profile.trophies.byUnit = {};
+      if (!profile.trophies) profile.trophies = {};
+      if (!profile.trophies.byUnit) profile.trophies.byUnit = {};
 
-    profile.trophies.byUnit[unitId] = [];
+      profile.trophies.byUnit[unitId] = [];
 
-    await savePlayerCustomizeState();
-    renderTrophyCustomizePanel();
+      await savePlayerCustomizeState();
+      renderTrophyCustomizePanel();
+    });
   });
-});
 
   document.getElementById("backToTitleCustomizeBtn")?.addEventListener("click", renderTitleCustomizePanel);
 
