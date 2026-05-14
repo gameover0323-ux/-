@@ -3510,5 +3510,6 @@ restorePlayerSession().then(() => {
   syncExtraUnlockedUnitsFromProfile();
   updatePlayerCardUi();
   updateDebugButtonVisibility();
+  ensureRandomMatchUi();
   bootOnlineFromUrl();
 });
