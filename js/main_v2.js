@@ -2176,10 +2176,7 @@ getExtraUnlockedUnits: () => extraUnlockedUnits,
 setExtraUnlockedUnits: (units) => { extraUnlockedUnits = units; },
 showTitle: () => {
   pendingSelectedUnit = null;
-  selectedUnitA = null;
-  selectedUnitB = null;
-  teamA = null;
-  teamB = null;
+showTitle: () => {
   showTitle();
 },
   onSelectUnit: (unit) => {
