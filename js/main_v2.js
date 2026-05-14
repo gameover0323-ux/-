@@ -1746,6 +1746,159 @@ function syncExtraUnlockedUnitsFromProfile() {
 
 
 }
+function getRandomMatchProfileData() {
+  const profile = playerSession.profile;
+
+  return {
+    profileId: profile?.id || null,
+    profileName: profile?.name || profile?.id || "ゲスト",
+    equippedTitles: Array.isArray(profile?.equippedTitles)
+      ? profile.equippedTitles
+      : []
+  };
+}
+
+function cleanupRandomMatchListeners() {
+  if (typeof randomMatchState.waitingUnsubscribe === "function") {
+    randomMatchState.waitingUnsubscribe();
+  }
+
+  if (typeof randomMatchState.sessionUnsubscribe === "function") {
+    randomMatchState.sessionUnsubscribe();
+  }
+
+  randomMatchState.waitingUnsubscribe = null;
+  randomMatchState.sessionUnsubscribe = null;
+}
+
+function resetRandomMatchState() {
+  cleanupRandomMatchListeners();
+
+  randomMatchState.enabled = false;
+  randomMatchState.ticketId = null;
+  randomMatchState.sessionId = null;
+  randomMatchState.playerSide = null;
+  randomMatchState.enteringRoom = false;
+
+  const panel = document.getElementById("randomMatchPanel");
+  if (panel) {
+    panel.style.display = "none";
+    panel.innerHTML = "";
+  }
+}
+
+function ensureRandomMatchUi() {
+  if (document.getElementById("randomMatchBtn")) return;
+
+  const btn = document.createElement("button");
+  btn.id = "randomMatchBtn";
+  btn.textContent = "ランダムマッチ";
+  btn.style.margin = "8px";
+
+  const panel = document.createElement("div");
+  panel.id = "randomMatchPanel";
+  panel.style.display = "none";
+  panel.style.margin = "12px 0";
+  panel.style.padding = "8px";
+  panel.style.border = "2px solid #fff";
+
+  const parent = onlineRoomStatus?.parentNode || screens.onlineRoom;
+  if (!parent) return;
+
+  if (createOnlineRoomBtn?.parentNode) {
+    createOnlineRoomBtn.parentNode.insertBefore(btn, createOnlineRoomBtn.nextSibling);
+  } else {
+    parent.appendChild(btn);
+  }
+
+  parent.appendChild(panel);
+
+  btn.addEventListener("click", startRandomMatch);
+}
+
+function renderRandomMatchSearching() {
+  const panel = document.getElementById("randomMatchPanel");
+  if (!panel) return;
+
+  panel.style.display = "";
+  panel.innerHTML = `
+    <h3>ランダムマッチ</h3>
+    <div id="randomMatchStatus">マッチング相手を探しています...</div>
+    <button id="randomMatchCancelBtn">キャンセル</button>
+  `;
+
+  document.getElementById("randomMatchCancelBtn")?.addEventListener("click", cancelRandomMatch);
+}
+
+function getRandomMatchTitleText(playerData) {
+  const titleIds = Array.isArray(playerData?.equippedTitles)
+    ? playerData.equippedTitles
+    : [];
+
+  if (titleIds.length === 0) {
+    return "称号なし";
+  }
+
+  return titleIds.map(id => `[${getTitleName(id)}]`).join("");
+}
+
+function getRandomMatchPlayerLabel(playerData) {
+  return `
+    <div>${getRandomMatchTitleText(playerData)}</div>
+    <div>${playerData?.profileName || "ゲスト"}</div>
+  `;
+}
+
+function renderRandomMatchSession(sessionData) {
+  const panel = document.getElementById("randomMatchPanel");
+  if (!panel || !sessionData) return;
+
+  const side = randomMatchState.playerSide;
+  const enemySide = side === "A" ? "B" : "A";
+  const myData = sessionData.players?.[side] || {};
+  const enemyData = sessionData.players?.[enemySide] || {};
+  const myReady = !!myData.ready;
+  const enemyReady = !!enemyData.ready;
+  const myChat = sessionData.chat?.[side]?.text || "";
+  const enemyChat = sessionData.chat?.[enemySide]?.text || "";
+
+  panel.style.display = "";
+  panel.innerHTML = `
+    <h3>ランダムマッチ成立</h3>
+
+    <div style="margin-bottom:8px;">
+      <div>あなた</div>
+      ${getRandomMatchPlayerLabel(myData)}
+    </div>
+
+    <div style="margin-bottom:8px;">
+      <div>対戦相手</div>
+      ${getRandomMatchPlayerLabel(enemyData)}
+    </div>
+
+    <div style="border-top:1px solid #fff;border-bottom:1px solid #fff;padding:6px;margin:8px 0;text-align:left;">
+      <div>[あなた] ${myChat}</div>
+      <div>[相手] ${enemyChat}</div>
+    </div>
+
+    <div>
+      <input id="randomMatchChatInput" maxlength="50" placeholder="生存確認チャット 50文字まで">
+      <button id="randomMatchChatSendBtn">送信</button>
+    </div>
+
+    <div id="randomMatchReadyStatus" style="margin:8px 0;">
+      ${myReady ? "相手からの返答待ちです" : "準備OKを押してください"}
+      ${enemyReady ? "<br>相手は準備OKです" : ""}
+    </div>
+
+    <button id="randomMatchReadyBtn" ${myReady ? "disabled" : ""}>準備OK</button>
+    <button id="randomMatchRerollBtn">再抽選</button>
+  `;
+
+  document.getElementById("randomMatchChatSendBtn")?.addEventListener("click", sendRandomMatchChat);
+  document.getElementById("randomMatchReadyBtn")?.addEventListener("click", readyRandomMatch);
+  document.getElementById("randomMatchRerollBtn")?.addEventListener("click", rerollRandomMatch);
+    }
 function getOnlineProfilePatch(playerKey) {
   const profile = playerSession.profile;
 
