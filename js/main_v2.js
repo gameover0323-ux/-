@@ -2174,8 +2174,7 @@ getPendingSelectedUnit: () => pendingSelectedUnit,
 setPendingSelectedUnit: (unit) => { pendingSelectedUnit = unit; },
 getExtraUnlockedUnits: () => extraUnlockedUnits,
 setExtraUnlockedUnits: (units) => { extraUnlockedUnits = units; },
-showTitle: () => {
-  pendingSelectedUnit = null;
+
 showTitle: () => {
   showTitle();
 },
