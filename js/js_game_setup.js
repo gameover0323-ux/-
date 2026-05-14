@@ -100,18 +100,7 @@ function getDebugUnits() {
 
   function loadUnitButtons() {
   ctx.unitButtons.innerHTML = "";
-} else {
-    const normalUnits = getSelectList();
-    const debugUnits = canUseDebugUnit() && !isOnlineMode()
-      ? getDebugUnits()
-      : [];
 
-    appendUnitSection("プレイアブル機体", normalUnits, "playableSection");
-
-    if (debugUnits.length > 0) {
-      appendUnitSection("デバッグ権限", debugUnits, "debugUnitSection");
-    }
-  }
   function appendUnitSection(titleText, units, className) {
     if (!units || units.length <= 0) return;
 
@@ -138,9 +127,26 @@ function getDebugUnits() {
     appendUnitSection("CPU機体", ctx.cpus || [], "cpuNormalSection");
     appendUnitSection("初心者向けCPU", ctx.cpuBeginnerList || [], "cpuBeginnerSection");
   } else {
-    getSelectList().forEach(unit => {
-      ctx.unitButtons.appendChild(makeUnitButton(unit));
-    });
+    const normalUnits = getSelectList();
+
+    const debugUnits =
+      canUseDebugUnit() && !isOnlineMode()
+        ? getDebugUnits()
+        : [];
+
+    appendUnitSection(
+      "プレイアブル機体",
+      normalUnits,
+      "playableSection"
+    );
+
+    if (debugUnits.length > 0) {
+      appendUnitSection(
+        "デバッグ権限",
+        debugUnits,
+        "debugUnitSection"
+      );
+    }
   }
 
   if (isSelectableEnemy2v2() && ctx.getSelectingPlayer() === "B") {
@@ -153,7 +159,10 @@ function getDebugUnits() {
 
       if (enemyList.length < 1) return;
 
-      startChallengePreview2v2(ctx.getTeamA().units, enemyList);
+      startChallengePreview2v2(
+        ctx.getTeamA().units,
+        enemyList
+      );
     });
 
     ctx.unitButtons.appendChild(decideBtn);
