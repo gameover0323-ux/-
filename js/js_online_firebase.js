@@ -159,3 +159,91 @@ export function writePlayerProfile(playerId, data) {
 export function updatePlayerProfile(playerId, patch) {
   return update(getPlayerProfileRef(playerId), patch);
 }
+export function getRandomMatchWaitingRef(ticketId = null) {
+  return ticketId
+    ? ref(db, `randomMatch/waiting/${ticketId}`)
+    : ref(db, "randomMatch/waiting");
+}
+
+export function getRandomMatchSessionRef(sessionId) {
+  return ref(db, `randomMatch/sessions/${sessionId}`);
+}
+
+export function writeRandomMatchWaiting(ticketId, data) {
+  return set(getRandomMatchWaitingRef(ticketId), data);
+}
+
+export function updateRandomMatchWaiting(ticketId, patch) {
+  return update(getRandomMatchWaitingRef(ticketId), patch);
+}
+
+export function removeRandomMatchWaiting(ticketId) {
+  return remove(getRandomMatchWaitingRef(ticketId));
+}
+
+export function readRandomMatchWaiting() {
+  return get(getRandomMatchWaitingRef());
+}
+
+export function listenRandomMatchWaiting(ticketId, callback) {
+  return onValue(getRandomMatchWaitingRef(ticketId), snapshot => {
+    callback(snapshot.val());
+  });
+}
+
+export function writeRandomMatchSession(sessionId, data) {
+  return set(getRandomMatchSessionRef(sessionId), data);
+}
+
+export function updateRandomMatchSession(sessionId, patch) {
+  return update(getRandomMatchSessionRef(sessionId), patch);
+}
+
+export function readRandomMatchSession(sessionId) {
+  return get(getRandomMatchSessionRef(sessionId));
+}
+
+export function listenRandomMatchSession(sessionId, callback) {
+  return onValue(getRandomMatchSessionRef(sessionId), snapshot => {
+    callback(snapshot.val());
+  });
+}
+
+export function removeRandomMatchSession(sessionId) {
+  return remove(getRandomMatchSessionRef(sessionId));
+}
+
+export async function cleanupOldRandomMatch(maxAgeMs = 10 * 60 * 1000) {
+  const border = Date.now() - maxAgeMs;
+  let count = 0;
+
+  const waitingSnapshot = await get(getRandomMatchWaitingRef());
+  if (waitingSnapshot.exists()) {
+    const removals = [];
+    waitingSnapshot.forEach(childSnap => {
+      const data = childSnap.val();
+      const updatedAt = Number(data?.updatedAt || data?.createdAt || 0);
+      if (updatedAt && updatedAt < border) {
+        removals.push(remove(childSnap.ref));
+      }
+    });
+    await Promise.all(removals);
+    count += removals.length;
+  }
+
+  const sessionsSnapshot = await get(ref(db, "randomMatch/sessions"));
+  if (sessionsSnapshot.exists()) {
+    const removals = [];
+    sessionsSnapshot.forEach(childSnap => {
+      const data = childSnap.val();
+      const updatedAt = Number(data?.updatedAt || data?.createdAt || 0);
+      if (updatedAt && updatedAt < border) {
+        removals.push(remove(childSnap.ref));
+      }
+    });
+    await Promise.all(removals);
+    count += removals.length;
+  }
+
+  return count;
+}
