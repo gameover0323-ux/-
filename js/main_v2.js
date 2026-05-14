@@ -1382,12 +1382,12 @@ function get2v2StatsModeKey() {
 
   return "offline";
 }
-function finishBattle(winnerPlayer) {
+async function finishBattle(winnerPlayer) {
   if (onlineBattleFinished) return;
   onlineBattleFinished = true;
 
   publishOnlineBattleEnd(winnerPlayer);
-saveBattleResultForCurrentPlayer(winnerPlayer);
+await saveBattleResultForCurrentPlayer(winnerPlayer);
   const popup = document.getElementById("popup");
   if (!popup) return;
 
