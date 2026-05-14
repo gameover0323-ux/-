@@ -32,7 +32,13 @@ export function createGameSetup(ctx) {
       ctx.setPendingSelectedUnit(unit);
     }
   }
+function getDebugUnits() {
+    return Array.isArray(ctx.debugUnits) ? ctx.debugUnits : [];
+  }
 
+  function canUseDebugUnit() {
+    return typeof ctx.canUseDebugUnit === "function" && ctx.canUseDebugUnit();
+  }
   function getSelectList() {
     const extraUnits =
       typeof ctx.getExtraUnlockedUnits === "function"
