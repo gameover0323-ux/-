@@ -1399,7 +1399,12 @@ async function finishBattle(winnerPlayer) {
   onlineBattleFinished = true;
 
   publishOnlineBattleEnd(winnerPlayer);
-await saveBattleResultForCurrentPlayer(winnerPlayer);
+
+try {
+  await saveBattleResultForCurrentPlayer(winnerPlayer);
+} catch (error) {
+  console.error(error);
+}
   const popup = document.getElementById("popup");
   if (!popup) return;
 
