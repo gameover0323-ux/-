@@ -1774,6 +1774,52 @@ function ensureOnlineBattleExtraUi() {
 
   ensureOnlineCenterButtons();
 }
+function ensureOnlineTopPlayerHud() {
+  if (document.getElementById("onlineTopPlayerHud")) {
+    return;
+  }
+
+  const battleScreen = document.getElementById("battle");
+  if (!battleScreen) return;
+
+  const hud = document.createElement("div");
+  hud.id = "onlineTopPlayerHud";
+  hud.style.display = onlineState.enabled ? "grid" : "none";
+  hud.style.gridTemplateColumns = "1fr 120px 1fr";
+  hud.style.gap = "8px";
+  hud.style.alignItems = "start";
+  hud.style.margin = "0 0 8px 0";
+
+  hud.innerHTML = `
+    <div id="onlineTopPlayerA" style="text-align:center;">
+      <div style="display:flex;gap:4px;justify-content:center;align-items:center;">
+        <input id="onlineChatInputA" maxlength="50" placeholder="50文字まで" style="width:150px;max-width:70%;">
+        <button id="onlineChatSendBtnA">送信</button>
+      </div>
+      <div id="onlinePlayerInfoA" style="font-size:14px;margin-top:4px;line-height:1.4;"></div>
+    </div>
+
+    <div></div>
+
+    <div id="onlineTopPlayerB" style="text-align:center;">
+      <div style="display:flex;gap:4px;justify-content:center;align-items:center;">
+        <input id="onlineChatInputB" maxlength="50" placeholder="50文字まで" style="width:150px;max-width:70%;">
+        <button id="onlineChatSendBtnB">送信</button>
+      </div>
+      <div id="onlinePlayerInfoB" style="font-size:14px;margin-top:4px;line-height:1.4;"></div>
+    </div>
+  `;
+
+  const title = battleScreen.querySelector("h2") || battleScreen.firstElementChild;
+  if (title?.nextSibling) {
+    battleScreen.insertBefore(hud, title.nextSibling);
+  } else {
+    battleScreen.prepend(hud);
+  }
+
+  document.getElementById("onlineChatSendBtnA")?.addEventListener("click", () => sendOnlineChatFrom("A"));
+  document.getElementById("onlineChatSendBtnB")?.addEventListener("click", () => sendOnlineChatFrom("B"));
+}
 function ensureOnlineCenterButtons() {
   if (!onlineState.enabled) return;
   if (document.getElementById("onlinePeaceBtn")) return;
