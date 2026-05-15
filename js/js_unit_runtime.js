@@ -643,17 +643,26 @@ export function executeUnitModifyEvadeAttempt(defender, attacker, attack, contex
     handled: false
   };
 }
-
 export function executeUnitTurnEnd(state, context = {}) {
-  const rules = unitRulesMap[state.unitId];
+  const beforeEvade = state.evade;
+  const beforeGoldCap = state.evadeGoldCap;
+  const beforeRedCap = state.evadeRedCap;
 
-  if (rules && rules.onTurnEnd) {
-    return rules.onTurnEnd(state, context);
-  }
+  const rules = unitRulesMap[state.unitId];
+  const result = rules && rules.onTurnEnd
+    ? rules.onTurnEnd(state, context)
+    : { redraw: false, message: null };
+
+  settleEvadeAtTurnEnd(state);
+
+  const changed =
+    beforeEvade !== state.evade ||
+    beforeGoldCap !== state.evadeGoldCap ||
+    beforeRedCap !== state.evadeRedCap;
 
   return {
-    redraw: false,
-    message: null
+    ...result,
+    redraw: !!result.redraw || changed
   };
 }
 
