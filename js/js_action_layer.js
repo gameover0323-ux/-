@@ -350,7 +350,241 @@ ctx.setCurrentAction(
 
     return merged;
   }
+function collectCpuSlotAction(ownerPlayer, slotKey, slotOverride = null, actionIndex = 1) {
+    const enemyPlayer = ctx.getOpponentPlayer(ownerPlayer);
+    const actor = ctx.getPlayerState(ownerPlayer);
+    const defender = ctx.getCombatTargetState(enemyPlayer);
 
+    if (!actor) {
+      return null;
+    }
+
+    const slot = slotOverride || getSlotByKey(actor, slotKey);
+    if (!slot) {
+      return null;
+    }
+
+    const slotNumber = getSlotNumberFromKey(slotKey);
+    const sourceLabel = `${actionIndex}回目スロット行動：${slotNumber}.${slot.label}`;
+
+    actor.lastSlotKey = slotKey;
+
+    const notices = [];
+
+    const beforeResult = executeUnitBeforeSlot(actor, slotNumber, {
+      ownerPlayer,
+      enemyPlayer,
+      enemyPlayerLabel: `PLAYER ${enemyPlayer}`,
+      enemyState: defender,
+      slotKey,
+      slot,
+      isForcedSlotAction: !!slotOverride,
+      isCpuBatchSlotAction: true
+    });
+
+    if (beforeResult.message) {
+      notices.push(beforeResult.message);
+    }
+
+    if (beforeResult.redraw) {
+      ctx.redrawBattleBoards();
+    }
+
+    if (beforeResult.cancelSlot) {
+      return {
+        ok: false,
+        attacks: [],
+        notices,
+        message: beforeResult.message || `${sourceLabel}：行動不能`
+      };
+    }
+
+    if (defender) {
+      const enemyBeforeResult = executeUnitEnemyBeforeSlot(defender, slotNumber, {
+        ownerPlayer: enemyPlayer,
+        enemyPlayer: ownerPlayer,
+        enemyPlayerLabel: `PLAYER ${ownerPlayer}`,
+        enemyRolledSlotKey: slotKey,
+        enemyState: actor,
+        isCpuBatchSlotAction: true
+      });
+
+      if (enemyBeforeResult.message) {
+        notices.push(enemyBeforeResult.message);
+      }
+
+      if (enemyBeforeResult.redraw) {
+        ctx.redrawBattleBoards();
+      }
+    }
+
+    const result = resolveSlotEffect({ slot, actor });
+
+    const afterResult = runAfterSlotResolvedHook(actor, slotNumber, result, {
+      ownerPlayer,
+      enemyPlayer,
+      slotKey,
+      slotNumber,
+      slot,
+      isCpuBatchSlotAction: true
+    });
+
+    if (afterResult?.message) {
+      notices.push(afterResult.message);
+    }
+
+    const extraResult = executeUnitExtraWeaponResult(actor, {
+      ownerPlayer,
+      enemyPlayer,
+      slotKey,
+      slotNumber,
+      slot,
+      isCpuBatchSlotAction: true
+    });
+
+    if (extraResult?.message) {
+      notices.push(extraResult.message);
+    }
+
+    if (Array.isArray(extraResult?.appendMessages)) {
+      notices.push(...extraResult.appendMessages.filter(Boolean));
+    }
+
+    if (extraResult?.redraw || afterResult?.redraw) {
+      ctx.redrawBattleBoards();
+    }
+
+    const attacks = [
+      ...(Array.isArray(result.attacks) ? result.attacks : []),
+      ...(Array.isArray(afterResult?.appendAttacks) ? afterResult.appendAttacks : []),
+      ...(Array.isArray(extraResult?.appendAttacks) ? extraResult.appendAttacks : [])
+    ].map((attack) => ({
+      ...attack,
+      sourceLabel
+    }));
+
+    if (result.message && attacks.length === 0) {
+      notices.push(`${sourceLabel}：${result.message}`);
+    }
+
+    return {
+      ok: true,
+      attacks,
+      notices,
+      sourceLabel,
+      slotNumber,
+      slotLabel: slot.label,
+      slotDesc: slot.desc
+    };
+  }
+
+  function executeCpuAutoSlotBatch(ownerPlayer) {
+    const actor = ctx.getPlayerState(ownerPlayer);
+    if (!actor) return false;
+
+    if (typeof ctx.ensureActionState === "function") {
+      ctx.ensureActionState(actor);
+    }
+
+    const maxLoop = Math.max(1, Number(actor.actionCount || 0));
+    const allAttacks = [];
+    const notices = [];
+    const labels = [];
+
+    let usedCount = 0;
+
+    for (let i = 1; i <= maxLoop; i += 1) {
+      if (typeof ctx.canConsumeAction === "function" && !ctx.canConsumeAction(actor, 1)) {
+        break;
+      }
+
+      const rollableSlotKeys = ctx.getRollableSlotKeys(actor);
+      if (!Array.isArray(rollableSlotKeys) || rollableSlotKeys.length === 0) {
+        notices.push(`${actor.name}：使用可能なスロットがない`);
+        break;
+      }
+
+      const slotKey = rollableSlotKeys[Math.floor(Math.random() * rollableSlotKeys.length)];
+      const part = collectCpuSlotAction(ownerPlayer, slotKey, null, i);
+
+      if (!part) {
+        break;
+      }
+
+      usedCount += 1;
+
+      if (typeof ctx.consumeActionCount === "function") {
+        ctx.consumeActionCount(actor, 1);
+      } else {
+        actor.actionCount = Math.max(0, Number(actor.actionCount || 0) - 1);
+      }
+
+      if (part.message) {
+        notices.push(part.message);
+      }
+
+      if (Array.isArray(part.notices)) {
+        notices.push(...part.notices.filter(Boolean));
+      }
+
+      if (part.sourceLabel) {
+        labels.push(part.sourceLabel);
+      }
+
+      if (Array.isArray(part.attacks) && part.attacks.length > 0) {
+        allAttacks.push(...part.attacks);
+      }
+
+      if (ctx.getPendingChoice && ctx.getPendingChoice()) {
+        break;
+      }
+
+      if (ctx.getCurrentAttack && ctx.getCurrentAttack().length > 0) {
+        break;
+      }
+    }
+
+    ctx.redrawBattleBoards();
+
+    if (notices.length > 0) {
+      notices.forEach((text) => ctx.appendBattleNotice(text));
+    }
+
+    if (allAttacks.length > 0) {
+      const enemyPlayer = ctx.getOpponentPlayer(ownerPlayer);
+
+      ctx.setCurrentAction(
+        `${actor.name} の連続行動`,
+        labels.join(" + ")
+      );
+
+      ctx.setCurrentAttack(allAttacks);
+      ctx.setCurrentAttackContext({
+        ownerPlayer,
+        enemyPlayer,
+        slotKey: null,
+        slotNumber: null,
+        slotLabel: "連続スロット行動",
+        slotDesc: labels.join(" / "),
+        totalCount: allAttacks.length,
+        hitCount: 0,
+        evadeCount: 0,
+        cpuBatchAction: true,
+        usedActionCount: usedCount
+      });
+
+      ctx.renderAttackChoices();
+      return true;
+    }
+
+    ctx.renderAttackLogText(
+      notices.length > 0
+        ? notices.join("\n")
+        : `${actor.name} は行動を完了`
+    );
+
+    return usedCount > 0;
+  }
   function startAttackQte(attacks, extraContext = {}) {
   ctx.setCurrentAttack(attacks);
   ctx.setCurrentAttackContext({
