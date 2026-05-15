@@ -1,3 +1,5 @@
+import { addEvade } from "./js_unit_runtime.js";
+
 import { createAttack } from "./js_battle_system.js";
 
 function parseSpecial(desc) {
