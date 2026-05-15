@@ -237,20 +237,24 @@ export async function recordBattleResult(record) {
   unitStats.used += 1;
   addWinLose(unitStats.total, result);
 
-  if (mode === "online") {
-    addWinLose(unitStats.online, result);
+ if (mode === "online") {
+  addWinLose(unitStats.online, result);
 
-    if (opponentPlayerId) {
-      if (!unitStats.vsOnlinePlayer[opponentPlayerId]) {
-        unitStats.vsOnlinePlayer[opponentPlayerId] = { win: 0, lose: 0 };
-      }
-      addWinLose(unitStats.vsOnlinePlayer[opponentPlayerId], result);
+  if (opponentPlayerId) {
+    if (!unitStats.vsOnlinePlayer[opponentPlayerId]) {
+      unitStats.vsOnlinePlayer[opponentPlayerId] = { win: 0, lose: 0 };
     }
+    addWinLose(unitStats.vsOnlinePlayer[opponentPlayerId], result);
+  }
 
-    if (result === "win") {
-      addDefeated(profile, "onlinePlayer", opponentUnitId);
-    }
-  } else if (opponentCategory === "cpu" || opponentCategory === "boss") {
+  if (result === "win") {
+    addDefeated(profile, "onlinePlayer", opponentUnitId);
+
+    // オンラインでプレイアブル機体使用者に勝利した場合も、
+    // プレイアブル撃破称号の対象にする
+    addDefeated(profile, "playable", opponentUnitId);
+  }
+} else if (opponentCategory === "cpu" || opponentCategory === "boss") {
     addWinLose(unitStats.cpu.total, result);
 
     if (!unitStats.cpu.vs[opponentUnitId]) {
