@@ -738,6 +738,18 @@ function showEncounteredPlayerCard(profileId) {
     `最終遭遇：${data.lastMatchedAt || "不明"}`
   );
 }
+async function refreshPlayerAchievementsNow() {
+  const profile = playerSession.profile;
+  if (!profile) return;
+
+  const result = updatePlayerAchievements(profile);
+
+  if (result?.changed) {
+    await saveCurrentPlayerProfile();
+  }
+
+  updatePlayerCardUi();
+}
 function renderPlayerStatsPanel() {
   const panel = document.getElementById("playerStatsPanel");
   const content = document.getElementById("playerStatsContent");
