@@ -1,5 +1,7 @@
 import { unitRulesMap } from "./js_unit_rules_index.js";
 
+export const EVADE_GOLD_CAP_LIMIT = 50;
+
 function sortSlotKeys(slotKeys) {
   return [...slotKeys].sort((a, b) => {
     const aNum = Number(String(a).replace(/^slot/, ""));
@@ -90,6 +92,7 @@ function buildFallbackForms(unit) {
     }
   };
 }
+
 function normalizeForms(unit) {
   const rawForms =
     unit.forms && Object.keys(unit.forms).length > 0
@@ -138,6 +141,110 @@ export function getCurrentFormData(state) {
   return state.forms[state.formId] || null;
 }
 
+export function getEvadeGoldCap(state) {
+  if (!state) return 0;
+
+  const base = typeof state.evadeMax === "number" ? state.evadeMax : 0;
+  const gold =
+    typeof state.evadeGoldCap === "number"
+      ? state.evadeGoldCap
+      : base;
+
+  return Math.min(EVADE_GOLD_CAP_LIMIT, Math.max(base, gold));
+}
+
+export function normalizeEvadeCapState(state) {
+  if (!state) return;
+
+  const goldCap = getEvadeGoldCap(state);
+  state.evadeGoldCap = goldCap;
+
+  if (typeof state.evade !== "number") {
+    state.evade = goldCap;
+  }
+
+  state.evade = Math.max(0, state.evade);
+
+  if (typeof state.evadeRedCap !== "number") {
+    state.evadeRedCap = goldCap;
+  }
+
+  state.evadeRedCap = Math.max(goldCap, state.evadeRedCap, state.evade);
+
+  state.overEvadeMode = state.evade > goldCap || state.evadeRedCap > goldCap;
+  state.overEvadeCap = state.evadeRedCap;
+  state.overEvadeBaseMax = goldCap;
+  state.overEvadeAbsoluteMax = EVADE_GOLD_CAP_LIMIT;
+}
+
+export function addEvade(state, amount) {
+  if (!state) return;
+
+  const add = Math.max(0, Number(amount || 0));
+  normalizeEvadeCapState(state);
+
+  state.evade += add;
+
+  state.evadeGoldCap = Math.min(
+    EVADE_GOLD_CAP_LIMIT,
+    Math.max(state.evadeGoldCap, state.evade)
+  );
+
+  state.evadeRedCap = Math.max(state.evadeRedCap, state.evade);
+
+  normalizeEvadeCapState(state);
+}
+
+export function reduceEvade(state, amount = 1) {
+  if (!state) return;
+
+  normalizeEvadeCapState(state);
+
+  state.evade = Math.max(0, Number(state.evade || 0) - Number(amount || 0));
+
+  if (state.evade <= state.evadeGoldCap) {
+    state.evadeRedCap = state.evadeGoldCap;
+  } else {
+    state.evadeRedCap = Math.max(state.evadeRedCap, state.evade);
+  }
+
+  normalizeEvadeCapState(state);
+}
+
+export function doubleEvadeRedCap(state) {
+  if (!state) return;
+
+  normalizeEvadeCapState(state);
+
+  const doubled = Math.max(0, Number(state.evade || 0) * 2);
+  state.evade = doubled;
+
+  state.evadeGoldCap = Math.min(
+    EVADE_GOLD_CAP_LIMIT,
+    Math.max(state.evadeGoldCap, doubled)
+  );
+
+  state.evadeRedCap = Math.max(state.evadeGoldCap, doubled);
+
+  normalizeEvadeCapState(state);
+}
+
+export function settleEvadeAtTurnEnd(state) {
+  if (!state) return;
+
+  normalizeEvadeCapState(state);
+
+  const goldCap = getEvadeGoldCap(state);
+
+  if (state.evade > goldCap) {
+    state.evade = goldCap;
+  }
+
+  state.evadeRedCap = goldCap;
+
+  normalizeEvadeCapState(state);
+}
+
 function setBaseFromCurrentForm(state) {
   const form = getCurrentFormData(state);
   if (!form) return;
@@ -180,23 +287,15 @@ function setFormCore(state, nextFormId, options = {}) {
   }
 
   if (preserveEvade) {
-  state.evade = Math.max(0, prevEvade);
-
-  if (state.evade > state.evadeMax) {
-    state.overEvadeMode = true;
-    state.overEvadeCap = state.evade;
-    state.overEvadeBaseMax = state.evadeMax;
+    state.evade = Math.max(0, prevEvade);
   } else {
-    state.overEvadeMode = false;
-    state.overEvadeCap = state.evadeMax;
-    state.overEvadeBaseMax = state.evadeMax;
+    state.evade = state.evadeMax;
+    state.evadeGoldCap = state.evadeMax;
+    state.evadeRedCap = state.evadeMax;
   }
-} else {
-  state.evade = state.evadeMax;
-  state.overEvadeMode = false;
-  state.overEvadeCap = state.evadeMax;
-  state.overEvadeBaseMax = state.evadeMax;
-}
+
+  normalizeEvadeCapState(state);
+
   return true;
 }
 
@@ -225,6 +324,7 @@ function resetAllSpecialsToBase(state) {
     resetSpecialToBase(state, specialKey);
   });
 }
+
 function applyDerivedStateResult(state, derived) {
   state.name = state.baseName;
   state.statusList = [];
@@ -239,7 +339,10 @@ function applyDerivedStateResult(state, derived) {
     state.rollableSlotOrder = [...currentForm.rollableSlotOrder];
   }
 
-  if (!derived) return;
+  if (!derived) {
+    normalizeEvadeCapState(state);
+    return;
+  }
 
   if (derived.name) {
     state.name = derived.name;
@@ -249,18 +352,11 @@ function applyDerivedStateResult(state, derived) {
     state.statusList = [...derived.status];
   }
 
- if (typeof derived.evadeMax === "number") {
-  state.evadeMax = derived.evadeMax;
-
-  if (state.evade > state.evadeMax) {
-    state.overEvadeMode = true;
-    state.overEvadeCap = Math.max(
-      state.evade,
-      typeof state.overEvadeCap === "number" ? state.overEvadeCap : state.evade
-    );
-    state.overEvadeBaseMax = state.evadeMax;
+  if (typeof derived.evadeMax === "number") {
+    state.evadeMax = derived.evadeMax;
   }
-}
+
+  normalizeEvadeCapState(state);
 
   if (Array.isArray(derived.ownedSlotOrder)) {
     state.ownedSlotOrder = [...derived.ownedSlotOrder];
@@ -282,7 +378,7 @@ function applyDerivedStateResult(state, derived) {
     });
   }
 
- if (derived.specials) {
+  if (derived.specials) {
     Object.entries(derived.specials).forEach(([specialKey, specialData]) => {
       const current = state.specials[specialKey];
 
@@ -362,97 +458,7 @@ export function setStateEffect(state, effectId, effectData = {}) {
 export function clearStateEffect(state, effectId) {
   delete state.stateEffects[effectId];
 }
-export const EVADE_GOLD_CAP_LIMIT = 50;
 
-export function getEvadeGoldCap(state) {
-  if (!state) return 0;
-  const base = typeof state.evadeMax === "number" ? state.evadeMax : 0;
-  const gold = typeof state.evadeGoldCap === "number" ? state.evadeGoldCap : base;
-  return Math.min(EVADE_GOLD_CAP_LIMIT, Math.max(base, gold));
-}
-
-export function normalizeEvadeCapState(state) {
-  if (!state) return;
-
-  const goldCap = getEvadeGoldCap(state);
-  state.evadeGoldCap = goldCap;
-
-  if (typeof state.evade !== "number") state.evade = goldCap;
-  state.evade = Math.max(0, state.evade);
-
-  if (typeof state.evadeRedCap !== "number") {
-    state.evadeRedCap = goldCap;
-  }
-
-  state.evadeRedCap = Math.max(goldCap, state.evadeRedCap, state.evade);
-
-  state.overEvadeMode = state.evade > goldCap || state.evadeRedCap > goldCap;
-  state.overEvadeCap = state.evadeRedCap;
-  state.overEvadeBaseMax = goldCap;
-  state.overEvadeAbsoluteMax = EVADE_GOLD_CAP_LIMIT;
-}
-
-export function addEvade(state, amount) {
-  if (!state) return;
-  const add = Math.max(0, Number(amount || 0));
-
-  normalizeEvadeCapState(state);
-
-  state.evade += add;
-  state.evadeGoldCap = Math.min(
-    EVADE_GOLD_CAP_LIMIT,
-    Math.max(state.evadeGoldCap, state.evade)
-  );
-  state.evadeRedCap = Math.max(state.evadeRedCap, state.evade);
-
-  normalizeEvadeCapState(state);
-}
-
-export function reduceEvade(state, amount = 1) {
-  if (!state) return;
-
-  normalizeEvadeCapState(state);
-
-  state.evade = Math.max(0, Number(state.evade || 0) - Number(amount || 0));
-
-  if (state.evade <= state.evadeGoldCap) {
-    state.evadeRedCap = state.evadeGoldCap;
-  } else {
-    state.evadeRedCap = Math.max(state.evadeRedCap, state.evade);
-  }
-
-  normalizeEvadeCapState(state);
-}
-
-export function doubleEvadeRedCap(state) {
-  if (!state) return;
-
-  normalizeEvadeCapState(state);
-
-  const doubled = Math.max(0, Number(state.evade || 0) * 2);
-  state.evade = doubled;
-  state.evadeGoldCap = Math.min(
-    EVADE_GOLD_CAP_LIMIT,
-    Math.max(state.evadeGoldCap, doubled)
-  );
-  state.evadeRedCap = Math.max(state.evadeGoldCap, doubled);
-
-  normalizeEvadeCapState(state);
-}
-
-export function settleEvadeAtTurnEnd(state) {
-  if (!state) return;
-
-  normalizeEvadeCapState(state);
-
-  const goldCap = getEvadeGoldCap(state);
-  if (state.evade > goldCap) {
-    state.evade = goldCap;
-  }
-  state.evadeRedCap = goldCap;
-
-  normalizeEvadeCapState(state);
-}
 export function isBoostStateEffect(effect) {
   return !!effect && effect.boost === true;
 }
@@ -466,6 +472,7 @@ export function getBoostStateEffects(state) {
   if (!state || !state.stateEffects) return [];
   return Object.values(state.stateEffects).filter(isBoostStateEffect);
 }
+
 export function decrementStateEffectTurns(state) {
   Object.keys(state.stateEffects).forEach((effectId) => {
     const effect = state.stateEffects[effectId];
@@ -528,14 +535,15 @@ export function createBattleState(unit) {
 
     hp: defaultForm.hp,
     maxHp: defaultForm.hp,
+
     evade: defaultForm.evadeMax,
-evadeMax: defaultForm.evadeMax,
-evadeGoldCap: defaultForm.evadeMax,
-evadeRedCap: defaultForm.evadeMax,
-    
+    evadeMax: defaultForm.evadeMax,
+    evadeGoldCap: defaultForm.evadeMax,
+    evadeRedCap: defaultForm.evadeMax,
+
     actionCount: 1,
     baseActionCount: 1,
-    
+
     shieldCount: 3,
     shieldActive: false,
 
@@ -572,12 +580,13 @@ evadeRedCap: defaultForm.evadeMax,
     overEvadeMode: false,
     overEvadeCap: defaultForm.evadeMax,
     overEvadeBaseMax: defaultForm.evadeMax,
-    overEvadeAbsoluteMax: null,
+    overEvadeAbsoluteMax: EVADE_GOLD_CAP_LIMIT,
 
     stateEffects: {},
     statusList: []
   };
 }
+
 export function applyUnitDerivedState(state) {
   setBaseFromCurrentForm(state);
 
@@ -643,15 +652,18 @@ export function executeUnitModifyEvadeAttempt(defender, attacker, attack, contex
     handled: false
   };
 }
+
 export function executeUnitTurnEnd(state, context = {}) {
   const beforeEvade = state.evade;
   const beforeGoldCap = state.evadeGoldCap;
   const beforeRedCap = state.evadeRedCap;
 
   const rules = unitRulesMap[state.unitId];
-  const result = rules && rules.onTurnEnd
-    ? rules.onTurnEnd(state, context)
-    : { redraw: false, message: null };
+
+  const result =
+    rules && rules.onTurnEnd
+      ? rules.onTurnEnd(state, context)
+      : { redraw: false, message: null };
 
   settleEvadeAtTurnEnd(state);
 
@@ -692,7 +704,6 @@ export function executeUnitEnemyBeforeSlot(state, rolledSlotNumber, context = {}
   };
 }
 
-
 export function executeUnitAfterSlotResolved(
   state,
   slotNumber,
@@ -715,6 +726,7 @@ export function executeUnitAfterSlotResolved(
     message: null
   };
 }
+
 export function executeUnitActionResolved(attacker, defender, context = {}) {
   const rules = unitRulesMap[attacker.unitId];
 
@@ -786,7 +798,7 @@ export function tickPendingAttacks(state) {
   const messages = [];
   const remaining = [];
 
-  state.pendingAttacks.forEach(item => {
+  state.pendingAttacks.forEach((item) => {
     const next = {
       ...item,
       turns: Number(item.turns || 0) - 1
@@ -807,7 +819,7 @@ export function tickPendingAttacks(state) {
 export function hasPendingAttackLock(state, specialEffectType) {
   if (!state || !Array.isArray(state.pendingAttacks)) return false;
 
-  return state.pendingAttacks.some(item =>
+  return state.pendingAttacks.some((item) =>
     Array.isArray(item.lockSpecials) &&
     item.lockSpecials.includes(specialEffectType)
   );
