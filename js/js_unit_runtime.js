@@ -424,7 +424,71 @@ export function getBoostStateEffects(state) {
   if (!state || !state.stateEffects) return [];
   return Object.values(state.stateEffects).filter(isBoostStateEffect);
 }
+export function clearBoostStateEffects(state, options = {}) {
+  if (!state || !state.stateEffects) {
+    return {
+      cleared: [],
+      changed: false
+    };
+  }
 
+  const {
+    excludeIds = [],
+    includeNonBoost = false
+  } = options;
+
+  const excludeSet = new Set(excludeIds);
+  const cleared = [];
+
+  Object.entries(state.stateEffects).forEach(([effectId, effect]) => {
+    if (excludeSet.has(effectId)) return;
+
+    const shouldClear =
+      includeNonBoost === true ||
+      isBoostStateEffect(effect);
+
+    if (!shouldClear) return;
+
+    cleared.push({
+      id: effectId,
+      effect
+    });
+
+    delete state.stateEffects[effectId];
+  });
+
+  return {
+    cleared,
+    changed: cleared.length > 0
+  };
+}
+
+export function executeUnitDispelBoostState(target, source, context = {}) {
+  if (!target) {
+    return {
+      handled: false,
+      changed: false,
+      message: null
+    };
+  }
+
+  const rules = unitRulesMap[target.unitId];
+
+  if (rules && rules.onDispelBoostState) {
+    return rules.onDispelBoostState(target, source, context);
+  }
+
+  const result = clearBoostStateEffects(target);
+
+  return {
+    handled: true,
+    changed: result.changed,
+    cleared: result.cleared,
+    message: result.changed
+      ? `${target.name}の強化状態が解除された！`
+      : null
+  };
+}
 export function decrementStateEffectTurns(state) {
   Object.keys(state.stateEffects).forEach((effectId) => {
     const effect = state.stateEffects[effectId];
