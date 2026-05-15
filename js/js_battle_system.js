@@ -21,7 +21,11 @@ export function createAttack(damage, count, options = {}) {
       source: options.source || null,
       sourceLabel: options.sourceLabel || null,
       onHit: options.onHit || null,
-
+psychommu: options.psychommu || false,
+funnel: options.funnel || false,
+dragoon: options.dragoon || false,
+incom: options.incom || false,
+specialAttribute: options.specialAttribute || null,
       moonlightButterfly: options.moonlightButterfly || false,
       minEvadeRequired: options.minEvadeRequired || 0
     });
