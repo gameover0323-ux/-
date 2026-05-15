@@ -162,7 +162,42 @@ export const DEFEAT_TITLE_RULES = [
       [50, "失格となる！"]
     ]
   }),
-
+...makeDefeatTitleRules({
+    category: "playable",
+    targetId: "unicorn_gundam",
+    prefix: "unicorn_gundam",
+    entries: [
+      [1, "流石だな"],
+      [5, "機体が"],
+      [10, "一角獣"],
+      [15, "幻獣"],
+      [20, "UC"],
+      [25, "ユニコーン"],
+      [30, "デストロイ"],
+      [35, "ビームマグナム"],
+      [40, "覚醒"],
+      [45, "NT-D"],
+      [50, "やったんですよ"]
+    ]
+  }),
+  ...makeDefeatTitleRules({
+    category: "cpu",
+    targetId: "cpu_unicorn_gundam",
+    prefix: "cpu_unicorn_gundam",
+    entries: [
+      [1, "トンファー"],
+      [5, "必死に"],
+      [10, "その結果"],
+      [15, "これなんです"],
+      [20, "バナージ"],
+      [25, "答えてくれ"],
+      [30, "やります"],
+      [35, "でていけぇ！"],
+      [40, "ラプラスの箱"],
+      [45, "心の光"],
+      [50, "ユニコォォォォン"]
+    ]
+  }),
   ...makeDefeatTitleRules({
     category: "playable",
     targetId: "wing_gundam_zero",
@@ -453,6 +488,8 @@ export function getTitleConditionText(titleId) {
     cpu_wing_gundam_zero: "ウイングガンダムゼロのCPU",
     strike_gundam: "ストライクガンダム",
     cpu_strike_gundam: "ストライクガンダムのCPU",
+    unicorn_gundam: "ユニコーンガンダム",
+    cpu_unicorn_gundam: "ユニコーンガンダムのCPU",
     jegan_d_type: "ジェガンD型",
     cpu_zaku_ii_soldier: "ザクⅡ(一般兵)",
     cpu_gouf: "グフ",
@@ -496,6 +533,8 @@ export const TITLE_GROUPS = [
     ["cpu_wing_gundam_zero", "CPUウイングガンダムゼロ撃破"],
     ["strike_gundam", "ストライクガンダム撃破"],
     ["cpu_strike_gundam", "CPUストライクガンダム撃破"],
+    ["unicorn_gundam", "ユニコーンガンダム撃破"],
+    ["cpu_unicorn_gundam", "CPUユニコーンガンダム撃破"],
     ["jegan_d_type", "ジェガンD型撃破"],
     ["cpu_zaku_ii_soldier", "ザクⅡ(一般兵)撃破"],
     ["cpu_gouf", "グフ撃破"],
