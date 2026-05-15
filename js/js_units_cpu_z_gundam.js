@@ -1,6 +1,6 @@
 export const cpu_z_gundam = {
   id: "cpu_z_gundam",
-  name: "CPU Zガンダム",
+  name: "Zガンダム",
   defaultFormId: "ms",
   isCpu: true,
 
