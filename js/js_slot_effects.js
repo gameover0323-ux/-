@@ -28,7 +28,7 @@ function resolveStructuredEffect({ slot, actor }) {
 
   if (effect.type === "evade") {
     const amount = Number(effect.amount || 0);
-    actor.evade += amount;
+    addEvade(actor, amount);
 
     return {
       kind: "evade",
