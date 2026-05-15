@@ -437,6 +437,8 @@ export function onWingZeroBeforeSlot(state, rolledSlotNumber, context = {}) {
 
   if (hasWingZeroHit(state) && !state.wingZeroHitAppliedThisTurn && context.enemyState) {
     context.enemyState.evade = 0;
+context.enemyState.evadeRedCap = context.enemyState.evadeGoldCap || context.enemyState.evadeMax;
+normalizeEvadeCapState(context.enemyState);
     state.wingZeroHitAppliedThisTurn = true;
 
     return {
