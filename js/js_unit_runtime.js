@@ -362,6 +362,97 @@ export function setStateEffect(state, effectId, effectData = {}) {
 export function clearStateEffect(state, effectId) {
   delete state.stateEffects[effectId];
 }
+export const EVADE_GOLD_CAP_LIMIT = 50;
+
+export function getEvadeGoldCap(state) {
+  if (!state) return 0;
+  const base = typeof state.evadeMax === "number" ? state.evadeMax : 0;
+  const gold = typeof state.evadeGoldCap === "number" ? state.evadeGoldCap : base;
+  return Math.min(EVADE_GOLD_CAP_LIMIT, Math.max(base, gold));
+}
+
+export function normalizeEvadeCapState(state) {
+  if (!state) return;
+
+  const goldCap = getEvadeGoldCap(state);
+  state.evadeGoldCap = goldCap;
+
+  if (typeof state.evade !== "number") state.evade = goldCap;
+  state.evade = Math.max(0, state.evade);
+
+  if (typeof state.evadeRedCap !== "number") {
+    state.evadeRedCap = goldCap;
+  }
+
+  state.evadeRedCap = Math.max(goldCap, state.evadeRedCap, state.evade);
+
+  state.overEvadeMode = state.evade > goldCap || state.evadeRedCap > goldCap;
+  state.overEvadeCap = state.evadeRedCap;
+  state.overEvadeBaseMax = goldCap;
+  state.overEvadeAbsoluteMax = EVADE_GOLD_CAP_LIMIT;
+}
+
+export function addEvade(state, amount) {
+  if (!state) return;
+  const add = Math.max(0, Number(amount || 0));
+
+  normalizeEvadeCapState(state);
+
+  state.evade += add;
+  state.evadeGoldCap = Math.min(
+    EVADE_GOLD_CAP_LIMIT,
+    Math.max(state.evadeGoldCap, state.evade)
+  );
+  state.evadeRedCap = Math.max(state.evadeRedCap, state.evade);
+
+  normalizeEvadeCapState(state);
+}
+
+export function reduceEvade(state, amount = 1) {
+  if (!state) return;
+
+  normalizeEvadeCapState(state);
+
+  state.evade = Math.max(0, Number(state.evade || 0) - Number(amount || 0));
+
+  if (state.evade <= state.evadeGoldCap) {
+    state.evadeRedCap = state.evadeGoldCap;
+  } else {
+    state.evadeRedCap = Math.max(state.evadeRedCap, state.evade);
+  }
+
+  normalizeEvadeCapState(state);
+}
+
+export function doubleEvadeRedCap(state) {
+  if (!state) return;
+
+  normalizeEvadeCapState(state);
+
+  const doubled = Math.max(0, Number(state.evade || 0) * 2);
+  state.evade = doubled;
+  state.evadeGoldCap = Math.min(
+    EVADE_GOLD_CAP_LIMIT,
+    Math.max(state.evadeGoldCap, doubled)
+  );
+  state.evadeRedCap = Math.max(state.evadeGoldCap, doubled);
+
+  normalizeEvadeCapState(state);
+}
+
+export function settleEvadeAtTurnEnd(state) {
+  if (!state) return;
+
+  normalizeEvadeCapState(state);
+
+  const goldCap = getEvadeGoldCap(state);
+  if (state.evade > goldCap) {
+    state.evade = goldCap;
+  }
+  state.evadeRedCap = goldCap;
+
+  normalizeEvadeCapState(state);
+}
 export function isBoostStateEffect(effect) {
   return !!effect && effect.boost === true;
 }
