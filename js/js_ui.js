@@ -120,10 +120,9 @@ export function renderPlayerState(state, container, label, handlers) {
       `
       : "";
 
-  const evadeHtml = state.overEvadeMode
-    ? `<div style="color:#ff4d4d;font-weight:bold;">回避:${state.evade}/${state.overEvadeCap}<span style="color:white;font-weight:normal;">(${state.evadeMax})</span></div>`
-    : `<div>回避:${state.evade}/${state.evadeMax}</div>`;
-
+  const evadeHtml = `
+<div class="evadeInfo">赤→${getEvadeDisplay(state)}←金上限</div>
+`;
   container.innerHTML = `
     <h3>${label}</h3>
     <div ${nameStyle}><b>${state.name}</b></div>
