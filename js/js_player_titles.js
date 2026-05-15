@@ -292,7 +292,24 @@ export const DEFEAT_TITLE_RULES = [
       [50, "装備"]
     ]
   }),
-
+...makeDefeatTitleRules({
+    category: "cpu",
+    targetId: "cpu_jegan_d_type",
+    prefix: "cpu_jegan_d_type",
+    entries: [
+      [1, "複雑"],
+      [5, "援護射撃"],
+      [10, "索敵"],
+      [15, "名も無き"],
+      [20, "敬意"],
+      [25, "表する"],
+      [30, "専用機"],
+      [35, "モブ"],
+      [40, "有能"],
+      [45, "実力者"],
+      [50, "ゲーセン"]
+    ]
+  }),
   ...makeDefeatTitleRules({
     category: "cpu",
     targetId: "cpu_zaku_ii_soldier",
@@ -491,6 +508,7 @@ export function getTitleConditionText(titleId) {
     unicorn_gundam: "ユニコーンガンダム",
     cpu_unicorn_gundam: "ユニコーンガンダムのCPU",
     jegan_d_type: "ジェガンD型",
+    cpu_jegan_d_type: "ジェガンD型のCPU",
     cpu_zaku_ii_soldier: "ザクⅡ(一般兵)",
     cpu_gouf: "グフ",
     cpu_mobile_ginn: "モビルジン",
@@ -540,6 +558,7 @@ export const TITLE_GROUPS = [
     ["unicorn_gundam", "ユニコーンガンダム使用"],
     ["cpu_unicorn_gundam", "CPUユニコーンガンダム撃破"],
     ["jegan_d_type", "ジェガンD型使用"],
+    ["cpu_jegan_d_type", "CPUジェガンD型撃破"],
     ["cpu_zaku_ii_soldier", "ザクⅡ(一般兵)撃破"],
     ["cpu_gouf", "グフ撃破"],
     ["cpu_mobile_ginn", "モビルジン撃破"],
