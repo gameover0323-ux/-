@@ -64,10 +64,9 @@ if (attack.special === "jegan_ewac_grenade_power_up") {
   }
 
   if (attack.special === "devil_finger_zero_evade") {
-    defender.evade = 0;
-    defender.overEvadeMode = false;
-    defender.overEvadeCap = defender.evadeMax;
-    defender.overEvadeBaseMax = defender.evadeMax;
+   defender.evade = 0;
+defender.evadeRedCap = defender.evadeGoldCap || defender.evadeMax;
+normalizeEvadeCapState(defender);
     return `${defender.name} の回避が消滅`;
   }
 if (attack.special === "jegan_evade_plus_1") {
