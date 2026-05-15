@@ -1788,7 +1788,9 @@ function finishCurrentAttackResolution() {
 function startSlotAction(ownerPlayer, slotKey, slotOverride = null) {
   return actionLayer.startSlotAction(ownerPlayer, slotKey, slotOverride);
 }
-
+function executeCpuAutoSlotBatch(ownerPlayer) {
+  return actionLayer.executeCpuAutoSlotBatch(ownerPlayer);
+}
 function runAfterSlotResolvedHook(actor, slotNumber, resolveResult, slotMeta = {}) {
   return actionLayer.runAfterSlotResolvedHook(actor, slotNumber, resolveResult, slotMeta);
 }
@@ -3309,7 +3311,11 @@ attackResolution = createAttackResolution({
 actionLayer = createActionLayer({
   getBattleMode: () => battleMode,
   getCurrentPlayer: () => currentPlayer,
-
+getRollableSlotKeys,
+  ensureActionState,
+  canConsumeAction,
+  consumeActionCount,
+  executeCpuAutoSlotBatch,
   getPendingChoice,
   clearPendingChoice,
 
@@ -3354,7 +3360,7 @@ battleFlow = createBattleFlow({
 isTeamBattleMode,
 isChallengeMode,
 executeTeamSlot: () => twoVtwoActions.executeTeamSlot(),
-
+executeCpuAutoSlotBatch,
   getCurrentPlayer: () => currentPlayer,
   setCurrentPlayer: (value) => { currentPlayer = value; },
 
