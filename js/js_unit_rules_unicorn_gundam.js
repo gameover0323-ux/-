@@ -110,7 +110,7 @@ function consumeResonanceForAwaken(state) {
     enterAwaken(state);
     return {
       ok: true,
-      message: `${state.name}が覚醒した！`
+      message: `覚醒した`
     };
   }
 
@@ -121,7 +121,7 @@ function consumeResonanceForAwaken(state) {
 
   return {
     ok: true,
-    message: "覚醒は不発。デストロイモードの強化ターン+1"
+    message: "デストロイモードの強化ターン+1"
   };
 }
 
@@ -277,14 +277,14 @@ export function executeUnicornSpecial(state, specialKey, context = {}) {
       return {
         handled: true,
         redraw: true,
-        message: "共振成功。デストロイモードに変形！"
+        message: "共振成功。デストロイモードに変形"
       };
     }
 
     return {
       handled: true,
       redraw: true,
-      message: "共振は不発"
+      message: "共振せず"
     };
   }
 
@@ -310,10 +310,7 @@ export function executeUnicornSpecial(state, specialKey, context = {}) {
 
     return {
       handled: true,
-      redraw: true,
-      message: state.unicornWeaponExMode
-        ? "武装変更：3EX/4EXへ変更"
-        : "武装変更：通常3/4へ戻した"
+      redraw: true
     };
   }
 
@@ -369,7 +366,7 @@ export function onUnicornAfterSlotResolved(state, slotNumber, payload = {}) {
 
     return {
       redraw: true,
-      message: "NT-D発動。5ターン間デストロイモードへ変形！"
+      message: "NT-D発動。5ターン間デストロイモード"
     };
   }
 
@@ -491,14 +488,13 @@ export function onUnicornTurnEnd(state, context = {}) {
         returnToDestroy(state);
         return {
           redraw: true,
-          message: "覚醒終了。デストロイモードへ戻った。"
+          message: "覚醒終了。デストロイモードへ以降"
         };
       }
     }
 
     return {
       redraw: true,
-      message: "覚醒特性：HP20回復"
     };
   }
 
@@ -559,8 +555,7 @@ export function onUnicornDispelBoostState(state, source, context = {}) {
   if (isAwaken(state)) {
     return {
       handled: true,
-      changed: false,
-      message: `${state.name}は強化形態ではないため解除されない！`
+      changed: false
     };
   }
 
@@ -577,7 +572,6 @@ export function onUnicornDispelBoostState(state, source, context = {}) {
 
   return {
     handled: true,
-    changed: true,
-    message: `${state.name}のNT-Dが解除された！`
+    changed: true
   };
 }
