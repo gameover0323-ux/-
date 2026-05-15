@@ -71,7 +71,7 @@ if (attack.special === "jegan_ewac_grenade_power_up") {
     return `${defender.name} の回避が消滅`;
   }
 if (attack.special === "jegan_evade_plus_1") {
-  attacker.evade += 1;
+  addEvade(attacker, 1);
   return `${attacker.name} ハンドグレネード命中：回避+1`;
 }
   
