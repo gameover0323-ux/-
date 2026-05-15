@@ -186,10 +186,9 @@ export function renderPlayerState2v2(team, container, label, handlers) {
       `
       : "";
 
-  const evadeHtml = activeState.overEvadeMode
-    ? `<div style="color:#ff4d4d;font-weight:bold;">回避:${activeState.evade}/${activeState.overEvadeCap}<span style="color:white;font-weight:normal;">(${activeState.evadeMax})</span></div>`
-    : `<div>回避:${activeState.evade}/${activeState.evadeMax}</div>`;
-
+  const evadeHtml = `
+<div class="evadeInfo">赤→${getEvadeDisplay(activeState)}←金上限</div>
+`;
   const focusDisabled = handlers.canChangeFocus ? "" : "disabled";
 
   container.innerHTML = `
@@ -210,7 +209,7 @@ export function renderPlayerState2v2(team, container, label, handlers) {
         <b>2. ${team.unit2 ? team.unit2.name : "空き"}
 </b>
         <div>${team.unit2 ? `HP:${team.unit2.hp}/${team.unit2.maxHp}` : "HP:-"}</div>
-        <div>${team.unit2 ? `回避:${team.unit2.evade}/${team.unit2.evadeMax}` : "回避:-"}</div>
+        <div>${getEvadeDisplay(team.unit2)}</div>
       </div>
     </div>
 
