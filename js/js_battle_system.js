@@ -45,16 +45,18 @@ function applyAttackOnHitSpecial({ attacker, defender, attack }) {
   if (!attacker || !defender || !attack) {
     return null;
   }
-if (attack.special === "jegan_ewac_grenade_power_up") {
-  attacker.jeganEwacGrenadeBonus =
-    typeof attacker.jeganEwacGrenadeBonus === "number"
-      ? attacker.jeganEwacGrenadeBonus + 5
-      : 5;
 
-  return `${attacker.name} 支給急造ハンドグレネード：次回威力+5`;
-}
+  if (attack.special === "jegan_ewac_grenade_power_up") {
+    attacker.jeganEwacGrenadeBonus =
+      typeof attacker.jeganEwacGrenadeBonus === "number"
+        ? attacker.jeganEwacGrenadeBonus + 5
+        : 5;
+
+    return `${attacker.name} 支給急造ハンドグレネード：次回威力+5`;
+  }
+
   if (attack.special === "devil_head_each_hit") {
-    defender.evade = Math.max(0, defender.evade - 1);
+    reduceEvade(defender, 1);
     return `${defender.name} の回避-1`;
   }
 
@@ -64,16 +66,17 @@ if (attack.special === "jegan_ewac_grenade_power_up") {
   }
 
   if (attack.special === "devil_finger_zero_evade") {
-   defender.evade = 0;
-defender.evadeRedCap = defender.evadeGoldCap || defender.evadeMax;
-normalizeEvadeCapState(defender);
+    defender.evade = 0;
+    defender.evadeRedCap = defender.evadeGoldCap || defender.evadeMax;
+    normalizeEvadeCapState(defender);
     return `${defender.name} の回避が消滅`;
   }
-if (attack.special === "jegan_evade_plus_1") {
-  addEvade(attacker, 1);
-  return `${attacker.name} ハンドグレネード命中：回避+1`;
-}
-  
+
+  if (attack.special === "jegan_evade_plus_1") {
+    addEvade(attacker, 1);
+    return `${attacker.name} ハンドグレネード命中：回避+1`;
+  }
+
   return null;
 }
 
@@ -101,6 +104,7 @@ export function takeHit({
 
       return {
         defender,
+        attacker,
         currentAttack,
         cancelled: true,
         attack: null,
@@ -118,50 +122,52 @@ export function takeHit({
     finalDamage = Math.floor(defender.hp / 2);
   }
 
-let damageMessage = null;
+  let damageMessage = null;
 
-if (typeof modifyTakenDamage === "function") {
-  const modified = modifyTakenDamage(defender, attacker, attack, finalDamage) || {};
+  if (typeof modifyTakenDamage === "function") {
+    const modified = modifyTakenDamage(defender, attacker, attack, finalDamage) || {};
 
-  if (modified.cancelled) {
-    defender.lastDamageTaken = 0;
-    currentAttack.splice(attackIndex, 1);
+    if (modified.cancelled) {
+      defender.lastDamageTaken = 0;
+      currentAttack.splice(attackIndex, 1);
 
-    return {
-      defender,
-      attacker,
-      currentAttack,
-      attack,
-      finalDamage: 0,
-      damageMessage: modified.message || "攻撃を無効化した",
-      cancelled: true
-    };
+      return {
+        defender,
+        attacker,
+        currentAttack,
+        attack,
+        finalDamage: 0,
+        damageMessage: modified.message || "攻撃を無効化した",
+        cancelled: true
+      };
+    }
+
+    finalDamage = typeof modified.damage === "number" ? modified.damage : finalDamage;
+    damageMessage = modified.message || null;
   }
 
-  finalDamage = typeof modified.damage === "number" ? modified.damage : finalDamage;
-  damageMessage = modified.message || null;
-}
   defender.hp -= finalDamage;
-if (defender.hp < 0) defender.hp = 0;
+  if (defender.hp < 0) defender.hp = 0;
 
-const onHitMessage = applyAttackOnHitSpecial({ attacker, defender, attack });
-if (onHitMessage) {
-  damageMessage = damageMessage
-    ? `${damageMessage}<br>${onHitMessage}`
-    : onHitMessage;
+  const onHitMessage = applyAttackOnHitSpecial({ attacker, defender, attack });
+  if (onHitMessage) {
+    damageMessage = damageMessage
+      ? `${damageMessage}<br>${onHitMessage}`
+      : onHitMessage;
+  }
+
+  currentAttack.splice(attackIndex, 1);
+
+  return {
+    defender,
+    attacker,
+    currentAttack,
+    attack,
+    finalDamage,
+    damageMessage
+  };
 }
 
-currentAttack.splice(attackIndex, 1);
-
-return {
-  defender,
-  attacker,
-  currentAttack,
-  attack,
-  finalDamage,
-  damageMessage
-};
-}
 export function evadeAttack({
   defender,
   currentAttack,
@@ -198,10 +204,8 @@ export function evadeAttack({
   }
 
   reduceEvade(defender, 1);
-currentAttack.splice(attackIndex, 1);
-normalizeEvadeCapState(defender);
-return { ok: true, defender, currentAttack };
-  }
+  currentAttack.splice(attackIndex, 1);
+  normalizeEvadeCapState(defender);
 
   return {
     ok: true,
