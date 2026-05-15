@@ -23,10 +23,11 @@ export function renderSlots(slots, slotOrder, container, onSlotClick) {
 
     const div = document.createElement("div");
     if (slot.gold) {
-  div.className = "slot goldSlot";
-} else {
-  div.className = slot.ex ? "slot exSlot" : "slot";
-}
+      div.className = "slot goldSlot";
+    } else {
+      div.className = slot.ex ? "slot exSlot" : "slot";
+    }
+
     div.innerHTML = `
       <span style="color:gray;font-size:10px;">${index + 1}</span>
       ${slot.label}
@@ -91,15 +92,23 @@ export function renderSpecialsStateToArea(state, area, handlers) {
     area.appendChild(div);
   });
 }
-function getEvadeDisplay(state) {
+
+function getEvadeDisplayHtml(state) {
   if (!state) return "回避:-";
+
+  const current = typeof state.evade === "number" ? state.evade : 0;
 
   const goldCap = typeof state.evadeGoldCap === "number"
     ? state.evadeGoldCap
     : state.evadeMax;
 
-  return `回避:${state.evade}/${goldCap}`;
+  const currentHtml = current > goldCap
+    ? `<span class="overEvadeValue">${current}</span>`
+    : `${current}`;
+
+  return `回避:${currentHtml}/${goldCap}`;
 }
+
 export function renderPlayerState(state, container, label, handlers) {
   const confuseText =
     state.isConfusedTurn && state.confuseHits > 0
@@ -121,8 +130,9 @@ export function renderPlayerState(state, container, label, handlers) {
       : "";
 
   const evadeHtml = `
-<div class="evadeInfo">赤→${getEvadeDisplay(state)}←金上限</div>
-`;
+    <div class="evadeInfo">${getEvadeDisplayHtml(state)}</div>
+  `;
+
   container.innerHTML = `
     <h3>${label}</h3>
     <div ${nameStyle}><b>${state.name}</b></div>
@@ -151,6 +161,7 @@ export function renderPlayerState(state, container, label, handlers) {
     canExecuteSpecial: handlers.canExecuteSpecial
   });
 }
+
 export function renderPlayerState2v2(team, container, label, handlers) {
   if (!team) {
     container.innerHTML = `<h3>${label}</h3><div>チーム未設定</div>`;
@@ -187,8 +198,9 @@ export function renderPlayerState2v2(team, container, label, handlers) {
       : "";
 
   const evadeHtml = `
-<div class="evadeInfo">赤→${getEvadeDisplay(activeState)}←金上限</div>
-`;
+    <div class="evadeInfo">${getEvadeDisplayHtml(activeState)}</div>
+  `;
+
   const focusDisabled = handlers.canChangeFocus ? "" : "disabled";
 
   container.innerHTML = `
@@ -202,14 +214,13 @@ export function renderPlayerState2v2(team, container, label, handlers) {
       <div style="margin-bottom:4px;">
         <b>1. ${team.unit1.name}</b>
         <div>HP:${team.unit1.hp}/${team.unit1.maxHp}</div>
-        <div>回避:${team.unit1.evade}/${team.unit1.evadeMax}</div>
+        <div>${getEvadeDisplayHtml(team.unit1)}</div>
       </div>
 
       <div>
-        <b>2. ${team.unit2 ? team.unit2.name : "空き"}
-</b>
+        <b>2. ${team.unit2 ? team.unit2.name : "空き"}</b>
         <div>${team.unit2 ? `HP:${team.unit2.hp}/${team.unit2.maxHp}` : "HP:-"}</div>
-        <div>${getEvadeDisplay(team.unit2)}</div>
+        <div>${getEvadeDisplayHtml(team.unit2)}</div>
       </div>
     </div>
 
@@ -312,10 +323,10 @@ function buildAttackTags(attack) {
     tags.push(renderTag("[ビ]", !!attack.addedBeam));
   }
 
-if (attack.moonlightButterfly) {
+  if (attack.moonlightButterfly) {
     tags.push(renderTag("[月光蝶]"));
-}
-  
+  }
+
   return tags.join("");
 }
 
@@ -336,9 +347,6 @@ export function renderPendingChoiceUI({
   titleDiv.textContent = title;
   attackLog.appendChild(titleDiv);
 
-  // =========================
-  // 数値入力モード
-  // =========================
   if (choiceType === "numberInput") {
     let value = currentValue || "";
 
@@ -396,9 +404,6 @@ export function renderPendingChoiceUI({
     return;
   }
 
-  // =========================
-  // 通常選択
-  // =========================
   const wrap = document.createElement("div");
 
   (choices || []).forEach((choice) => {
@@ -505,4 +510,4 @@ export function renderAttackChoicesUI({
   if (currentAttack.length === 0 && !battleNotice && !currentActionHeader && !currentActionLabel) {
     attackLog.textContent = "攻撃解決済み";
   }
-}
+                                         }
