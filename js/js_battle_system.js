@@ -198,20 +198,10 @@ export function evadeAttack({
     };
   }
 
-  defender.evade--;
-  currentAttack.splice(attackIndex, 1);
-
-  if (defender.overEvadeMode) {
-    if (defender.evade <= defender.evadeMax) {
-      defender.overEvadeMode = false;
-      defender.overEvadeCap = defender.evadeMax;
-      defender.overEvadeBaseMax = defender.evadeMax;
-    } else {
-      defender.overEvadeCap = Math.min(
-        typeof defender.overEvadeCap === "number" ? defender.overEvadeCap : defender.evade,
-        defender.evade
-      );
-    }
+  reduceEvade(defender, 1);
+currentAttack.splice(attackIndex, 1);
+normalizeEvadeCapState(defender);
+return { ok: true, defender, currentAttack };
   }
 
   return {
