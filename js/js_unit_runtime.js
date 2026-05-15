@@ -1,6 +1,6 @@
 import { unitRulesMap } from "./js_unit_rules_index.js";
 
-export const EVADE_GOLD_CAP_LIMIT = 50;
+export const EVADE_OVER_CAP_LIMIT = 50;
 
 function sortSlotKeys(slotKeys) {
   return [...slotKeys].sort((a, b) => {
@@ -141,40 +141,31 @@ export function getCurrentFormData(state) {
   return state.forms[state.formId] || null;
 }
 
-export function getEvadeGoldCap(state) {
-  if (!state) return 0;
-
-  const base = typeof state.evadeMax === "number" ? state.evadeMax : 0;
-  const gold =
-    typeof state.evadeGoldCap === "number"
-      ? state.evadeGoldCap
-      : base;
-
-  return Math.min(EVADE_GOLD_CAP_LIMIT, Math.max(base, gold));
-}
-
 export function normalizeEvadeCapState(state) {
   if (!state) return;
 
-  const goldCap = getEvadeGoldCap(state);
-  state.evadeGoldCap = goldCap;
+  const baseMax = typeof state.evadeMax === "number" ? state.evadeMax : 0;
 
   if (typeof state.evade !== "number") {
-    state.evade = goldCap;
+    state.evade = baseMax;
   }
 
   state.evade = Math.max(0, state.evade);
 
-  if (typeof state.evadeRedCap !== "number") {
-    state.evadeRedCap = goldCap;
+  state.overEvadeBaseMax = baseMax;
+  state.overEvadeAbsoluteMax = EVADE_OVER_CAP_LIMIT;
+
+  if (state.evade > baseMax) {
+    state.overEvadeMode = true;
+    state.overEvadeCap = Math.min(state.evade, EVADE_OVER_CAP_LIMIT);
+  } else {
+    state.overEvadeMode = false;
+    state.overEvadeCap = baseMax;
   }
 
-  state.evadeRedCap = Math.max(goldCap, state.evadeRedCap, state.evade);
-
-  state.overEvadeMode = state.evade > goldCap || state.evadeRedCap > goldCap;
-  state.overEvadeCap = state.evadeRedCap;
-  state.overEvadeBaseMax = goldCap;
-  state.overEvadeAbsoluteMax = EVADE_GOLD_CAP_LIMIT;
+  // 旧UI/旧処理の参照事故対策。金上限の実体は overEvadeCap === 50。
+  state.evadeGoldCap = state.overEvadeCap;
+  state.evadeRedCap = state.overEvadeCap;
 }
 
 export function addEvade(state, amount) {
@@ -184,13 +175,6 @@ export function addEvade(state, amount) {
   normalizeEvadeCapState(state);
 
   state.evade += add;
-
-  state.evadeGoldCap = Math.min(
-    EVADE_GOLD_CAP_LIMIT,
-    Math.max(state.evadeGoldCap, state.evade)
-  );
-
-  state.evadeRedCap = Math.max(state.evadeRedCap, state.evade);
 
   normalizeEvadeCapState(state);
 }
@@ -202,12 +186,6 @@ export function reduceEvade(state, amount = 1) {
 
   state.evade = Math.max(0, Number(state.evade || 0) - Number(amount || 0));
 
-  if (state.evade <= state.evadeGoldCap) {
-    state.evadeRedCap = state.evadeGoldCap;
-  } else {
-    state.evadeRedCap = Math.max(state.evadeRedCap, state.evade);
-  }
-
   normalizeEvadeCapState(state);
 }
 
@@ -216,31 +194,7 @@ export function doubleEvadeRedCap(state) {
 
   normalizeEvadeCapState(state);
 
-  const doubled = Math.max(0, Number(state.evade || 0) * 2);
-  state.evade = doubled;
-
-  state.evadeGoldCap = Math.min(
-    EVADE_GOLD_CAP_LIMIT,
-    Math.max(state.evadeGoldCap, doubled)
-  );
-
-  state.evadeRedCap = Math.max(state.evadeGoldCap, doubled);
-
-  normalizeEvadeCapState(state);
-}
-
-export function settleEvadeAtTurnEnd(state) {
-  if (!state) return;
-
-  normalizeEvadeCapState(state);
-
-  const goldCap = getEvadeGoldCap(state);
-
-  if (state.evade > goldCap) {
-    state.evade = goldCap;
-  }
-
-  state.evadeRedCap = goldCap;
+  state.evade = Math.max(0, Number(state.evade || 0) * 2);
 
   normalizeEvadeCapState(state);
 }
@@ -290,8 +244,6 @@ function setFormCore(state, nextFormId, options = {}) {
     state.evade = Math.max(0, prevEvade);
   } else {
     state.evade = state.evadeMax;
-    state.evadeGoldCap = state.evadeMax;
-    state.evadeRedCap = state.evadeMax;
   }
 
   normalizeEvadeCapState(state);
@@ -538,6 +490,12 @@ export function createBattleState(unit) {
 
     evade: defaultForm.evadeMax,
     evadeMax: defaultForm.evadeMax,
+
+    overEvadeMode: false,
+    overEvadeCap: defaultForm.evadeMax,
+    overEvadeBaseMax: defaultForm.evadeMax,
+    overEvadeAbsoluteMax: EVADE_OVER_CAP_LIMIT,
+
     evadeGoldCap: defaultForm.evadeMax,
     evadeRedCap: defaultForm.evadeMax,
 
@@ -576,11 +534,6 @@ export function createBattleState(unit) {
 
     z_bioSlot3Ex: false,
     z_usedBio3ExThisAction: false,
-
-    overEvadeMode: false,
-    overEvadeCap: defaultForm.evadeMax,
-    overEvadeBaseMax: defaultForm.evadeMax,
-    overEvadeAbsoluteMax: EVADE_GOLD_CAP_LIMIT,
 
     stateEffects: {},
     statusList: []
@@ -655,8 +608,8 @@ export function executeUnitModifyEvadeAttempt(defender, attacker, attack, contex
 
 export function executeUnitTurnEnd(state, context = {}) {
   const beforeEvade = state.evade;
-  const beforeGoldCap = state.evadeGoldCap;
-  const beforeRedCap = state.evadeRedCap;
+  const beforeCap = state.overEvadeCap;
+  const beforeMode = state.overEvadeMode;
 
   const rules = unitRulesMap[state.unitId];
 
@@ -665,12 +618,12 @@ export function executeUnitTurnEnd(state, context = {}) {
       ? rules.onTurnEnd(state, context)
       : { redraw: false, message: null };
 
-  settleEvadeAtTurnEnd(state);
+  normalizeEvadeCapState(state);
 
   const changed =
     beforeEvade !== state.evade ||
-    beforeGoldCap !== state.evadeGoldCap ||
-    beforeRedCap !== state.evadeRedCap;
+    beforeCap !== state.overEvadeCap ||
+    beforeMode !== state.overEvadeMode;
 
   return {
     ...result,
