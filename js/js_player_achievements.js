@@ -92,11 +92,12 @@ function ensureDefaultTitles(profile) {
   return changed;
 }
 
+
 function applyDefeatTitleRules(profile) {
   let changed = false;
 
   DEFEAT_TITLE_RULES.forEach(rule => {
-    const count = getDefeatedCount(profile, rule.category, rule.targetId);
+    const count = getTitleRuleProgress(profile, rule);
 
     if (count >= rule.count) {
       if (unlockTitle(profile, rule.id)) {
