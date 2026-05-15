@@ -162,7 +162,9 @@ export function onCpuWingZeroBeforeSlot(state, rolledSlotNumber, context = {}) {
   state.cpuWingZeroExtraUsedThisSlot = false;
 
   if (getHitSystem(state) && state.cpuWingZeroHitClearPending && context.enemyState) {
-    context.enemyState.evade = 0;
+   context.enemyState.evade = 0;
+context.enemyState.evadeRedCap = context.enemyState.evadeGoldCap || context.enemyState.evadeMax;
+normalizeEvadeCapState(context.enemyState);
     state.cpuWingZeroHitClearPending = false;
     return { redraw: true, message: "ウイングゼロ：ゼロシステム命中補正。相手回避0" };
   }
@@ -206,8 +208,8 @@ export function getCpuWingZeroExtraWeaponResult(state, context = {}) {
     Math.random() < state.evade / state.evadeMax &&
     context.slot
   ) {
-    state.evade = Math.max(0, state.evade - 3);
-    state.cpuWingZeroExtraUsedThisSlot = true;
+    reduceEvade(state, 3);
+      state.cpuWingZeroExtraUsedThisSlot = true;
 
     const effect = context.slot.effect || {};
     if (effect.type === "attack") {
