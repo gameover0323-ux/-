@@ -64,7 +64,11 @@ const attacks = createAttack(damage, count, {
       cannotEvade: !!effect.cannotEvade,
       ignoreReduction: !!effect.ignoreReduction,
       ignoreDefense: !!effect.ignoreDefense,
-
+psychommu: !!effect.psychommu,
+funnel: !!effect.funnel,
+dragoon: !!effect.dragoon,
+incom: !!effect.incom,
+specialAttribute: effect.specialAttribute || null,
       addedBeam: !!effect.addedBeam,
       addedCannotEvade: !!effect.addedCannotEvade,
       addedIgnoreReduction: !!effect.addedIgnoreReduction,
