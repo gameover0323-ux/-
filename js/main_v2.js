@@ -918,7 +918,8 @@ function getBossTrophyLabel(trophyId) {
   const rule = BOSS_TROPHY_RULES.find(rule => rule.trophyId === trophyId);
   return rule?.label || trophyId;
 }
-function renderTitleCustomizePanel() {
+async function renderTitleCustomizePanel() {
+  await refreshPlayerAchievementsNow();
   const profile = playerSession.profile;
   if (!profile) {
     showPopup("ログインしていません");
@@ -1004,7 +1005,8 @@ function renderTitleCustomizePanel() {
   updatePlayerCardUi();
   panel.style.display = "";
 }
-function renderTitleListPanel() {
+async function renderTitleListPanel() {
+  await refreshPlayerAchievementsNow();
   const profile = playerSession.profile;
   if (!profile) return;
 
