@@ -104,15 +104,15 @@ function consumeResonanceForAwaken(state) {
     };
   }
 
-  state.unicornResonanceStock -= 1;
-
   if (Math.random() < 0.5) {
     enterAwaken(state);
     return {
       ok: true,
-      message: `覚醒した`
+      message: "覚醒した"
     };
   }
+
+  state.unicornResonanceStock -= 1;
 
   const ntd = getStateEffect(state, "unicorn_ntd");
   if (ntd && typeof ntd.turns === "number") {
@@ -124,7 +124,6 @@ function consumeResonanceForAwaken(state) {
     message: "デストロイモードの強化ターン+1"
   };
 }
-
 function gainResonanceByEvadeCost(state, cost) {
   ensureUnicornState(state);
 
@@ -172,10 +171,21 @@ function applyBeamMagnumHit(attacker, defender, allowMinus) {
 export function getUnicornDerivedState(state) {
   ensureUnicornState(state);
 
+  const ntd = getStateEffect(state, "unicorn_ntd");
+  const awaken = getStateEffect(state, "unicorn_awaken");
+
   const status = [
     `特殊2保持:${state.unicornResonanceStock}`,
     `シールド:${state.unicornShieldCount}`
   ];
+
+  if (ntd && typeof ntd.turns === "number" && ntd.turns > 0) {
+    status.push(`NT-D 残${ntd.turns}ターン`);
+  }
+
+  if (awaken && typeof awaken.turns === "number" && awaken.turns > 0) {
+    status.push(`NT-D覚醒 残${awaken.turns}ターン`);
+  }
 
   const derived = { status };
 
