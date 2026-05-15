@@ -628,7 +628,7 @@ export function onWingZeroResolveChoice(
       };
     }
 
-    state.evade -= 3;
+    reduceEvade(state, 3);
 
     return {
       handled: true,
@@ -651,7 +651,7 @@ export function onWingZeroResolveChoice(
       };
     }
 
-    state.evade -= 2;
+    reduceEvade(state, 2);
 
     return {
       handled: true,
