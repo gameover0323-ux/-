@@ -22,6 +22,8 @@ import { cpu_shining_gundam } from "./js_units_cpu_shining_gundam.js";
 import { cpu_wing_zero } from "./js_units_cpu_wing_zero.js";
 import { cpu_strike_gundam } from "./js_units_cpu_strike_gundam.js";
 import { cpu_unicorn_gundam } from "./js_units_cpu_unicorn_gundam.js";
+import { cpu_jegan_d_type } from "./js_units_cpu_jegan_d_type.js";
+
 //デバッグ権限//
 import { daisy_ogre_ciel } from "./js_units_daisy_ogre_ciel.js";
 
@@ -46,7 +48,8 @@ export const cpuList = [
   cpu_shining_gundam,
   cpu_wing_zero,
   cpu_strike_gundam,
-  cpu_unicorn_gundam
+  cpu_unicorn_gundam,
+  cpu_jegan_d_type
 ];
 
 export const cpuBeginnerList = [
