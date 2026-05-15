@@ -1,3 +1,5 @@
+import { addEvade, reduceEvade, normalizeEvadeCapState } from "./js_unit_runtime.js";
+
 export function createAttack(damage, count, options = {}) {
   const attacks = [];
 
