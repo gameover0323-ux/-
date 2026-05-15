@@ -180,7 +180,7 @@ if (Number(attacker.pendingActionPenalty || 0) > 0) {
     }
 
     ctx.redrawBattleBoards();
-  
+  }
   function simulateSlot() {
     const attacker = ctx.getPlayerState(ctx.getCurrentPlayer());
     if (!attacker) return;
