@@ -220,11 +220,10 @@ export function renderPlayerState2v2(team, container, label, handlers) {
     Array.isArray(activeState.statusList) && activeState.statusList.length > 0
       ? `
         <div style="margin-top:6px;">
-          ${activeState.statusList.map((text) => `<div style="color:#d9b3ff;">${text}</div>`).join("")}
+          ${activeState.statusList.map((text) => getStatusLineHtml(text)).join("")}
         </div>
       `
       : "";
-
   const evadeHtml = `
     <div class="evadeInfo">${getEvadeDisplayHtml(activeState)}</div>
   `;
