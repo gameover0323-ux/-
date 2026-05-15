@@ -19,6 +19,7 @@ export function createAttack(damage, count, options = {}) {
 
       special: options.special || null,
       source: options.source || null,
+      sourceLabel: options.sourceLabel || null,
       onHit: options.onHit || null,
 
       moonlightButterfly: options.moonlightButterfly || false,
@@ -67,7 +68,6 @@ function applyAttackOnHitSpecial({ attacker, defender, attack }) {
 
   if (attack.special === "devil_finger_zero_evade") {
     defender.evade = 0;
-    defender.evadeRedCap = defender.evadeGoldCap || defender.evadeMax;
     normalizeEvadeCapState(defender);
     return `${defender.name} の回避が消滅`;
   }
