@@ -6,7 +6,7 @@ import {
   BOSS_TROPHY_RULES,
   getTitleConditionText
 } from "./js_player_titles.js";
-
+import { updatePlayerAchievements } from "./js_player_achievements.js";
 import {
   playerSession,
   loginPlayer,
