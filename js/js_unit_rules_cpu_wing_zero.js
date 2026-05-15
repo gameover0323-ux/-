@@ -1,5 +1,13 @@
-import { setForm, getStateEffect, setStateEffect, clearStateEffect } from "./js_unit_runtime.js";
-
+import {
+  setForm,
+  getStateEffect,
+  setStateEffect,
+  clearStateEffect,
+  addEvade,
+  reduceEvade,
+  doubleEvadeRedCap,
+  normalizeEvadeCapState
+} from "./js_unit_runtime.js";
 function ensureCpuWingZeroState(state) {
   if (typeof state.cpuWingZeroSlot6Ex !== "boolean") state.cpuWingZeroSlot6Ex = Math.random() < 0.5;
   if (typeof state.cpuWingZeroFullEvadeTurns !== "number") state.cpuWingZeroFullEvadeTurns = 0;
