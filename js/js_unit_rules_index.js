@@ -193,6 +193,18 @@ import {
   modifyCpuUnicornEvadeAttempt
 } from "./js_unit_rules_cpu_unicorn_gundam.js";
 import {
+  getCpuJeganDerivedState,
+  onCpuJeganBeforeSlot,
+  onCpuJeganEnemyBeforeSlot,
+  onCpuJeganAfterSlotResolved,
+  onCpuJeganActionResolved,
+  onCpuJeganDamaged,
+  onCpuJeganTurnEnd,
+  modifyCpuJeganTakenDamage,
+  modifyCpuJeganEvadeAttempt,
+  onCpuJeganResolveChoice
+} from "./js_unit_rules_cpu_jegan_d_type.js";
+import {
   getDaisyDerivedState,
   canUseDaisySpecial,
   executeDaisySpecial,
@@ -349,6 +361,19 @@ cpu_unicorn_gundam: {
   modifyTakenDamage: modifyCpuUnicornTakenDamage,
   modifyEvadeAttempt: modifyCpuUnicornEvadeAttempt
 },
+cpu_jegan_d_type: {
+    getDerivedState: getCpuJeganDerivedState,
+    onBeforeSlot: onCpuJeganBeforeSlot,
+    onEnemyBeforeSlot: onCpuJeganEnemyBeforeSlot,
+    onAfterSlotResolved: onCpuJeganAfterSlotResolved,
+    onActionResolved: onCpuJeganActionResolved,
+    onDamaged: onCpuJeganDamaged,
+    onTurnEnd: onCpuJeganTurnEnd,
+    modifyTakenDamage: modifyCpuJeganTakenDamage,
+    modifyEvadeAttempt: modifyCpuJeganEvadeAttempt,
+    onResolveChoice: onCpuJeganResolveChoice
+  },
+  
 jegan_d_type: {
   getDerivedState: getJeganDerivedState,
   canUseSpecial: canUseJeganSpecial,
