@@ -409,52 +409,10 @@ export function onCpuUnicornActionResolved(attacker, defender, context = {}) {
 export function onCpuUnicornTurnEnd(state, context = {}) {
   ensureCpuUnicornState(state);
 
+  state.cpuUnicornTurnTickedActionCount = -1;
+
   if (state.cpuUnicornFullEvadeTurns > 0) {
     state.cpuUnicornFullEvadeTurns -= 1;
-  }
-
-  if (isAwaken(state)) {
-    const awaken = getStateEffect(state, "cpu_unicorn_awaken");
-
-    if (awaken && typeof awaken.turns === "number") {
-      if (awaken.skipNextTick) {
-        awaken.skipNextTick = false;
-      } else {
-        awaken.turns -= 1;
-        state.unicornResonanceStock = Math.max(0, state.unicornResonanceStock - 1);
-      }
-
-      if (awaken.turns <= 0) {
-        state.unicornResonanceStock = 0;
-        returnToDestroy(state);
-
-        return {
-          redraw: true,
-          message: "覚醒終了。デストロイモードへ移行"
-        };
-      }
-    }
-
-    return { redraw: true, message: null };
-  }
-
-  const ntd = getStateEffect(state, "cpu_unicorn_ntd");
-  if (isDestroy(state) && ntd && typeof ntd.turns === "number") {
-    if (ntd.skipNextTick) {
-      ntd.skipNextTick = false;
-      return { redraw: false, message: null };
-    }
-
-    ntd.turns -= 1;
-
-    if (ntd.turns <= 0) {
-      returnToUnicorn(state);
-
-      return {
-        redraw: true,
-        message: "NT-D終了。ユニコーンモードへ戻った。"
-      };
-    }
   }
 
   return { redraw: false, message: null };
