@@ -3,7 +3,10 @@ import {
   setForm,
   getStateEffect,
   setStateEffect,
-  clearStateEffect
+  clearStateEffect,
+  doubleEvadeRedCap,
+  reduceEvade,
+  normalizeEvadeCapState
 } from "./js_unit_runtime.js";
 
 function ensureWingZeroState(state) {
