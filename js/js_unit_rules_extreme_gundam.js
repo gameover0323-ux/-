@@ -482,6 +482,7 @@ export function onExtremeGundamEnemyBeforeSlot(state) {
     setStateEffect(state, "extreme_overlimit", {
       turns: 5,
       level: 1,
+      boost: true,
       skipNextTick: true
     });
     return { redraw: true, message: "オーバーリミット発動：5ターン間、攻撃+5。スロットEX化" };
