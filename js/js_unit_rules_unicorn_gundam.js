@@ -492,13 +492,15 @@ export function onUnicornTurnEnd(state, context = {}) {
         awaken.skipNextTick = false;
       } else {
         awaken.turns -= 1;
+        state.unicornResonanceStock = Math.max(0, state.unicornResonanceStock - 1);
       }
 
       if (awaken.turns <= 0) {
+        state.unicornResonanceStock = 0;
         returnToDestroy(state);
         return {
           redraw: true,
-          message: "覚醒終了。デストロイモードへ以降"
+          message: "覚醒終了。デストロイモードへ移行"
         };
       }
     }
