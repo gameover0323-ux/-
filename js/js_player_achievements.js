@@ -53,7 +53,19 @@ function getDefeatedCount(profile, category, targetId) {
   const categoryBucket = defeated[category] || {};
   return Number(categoryBucket[targetId] || 0);
 }
+function getUnitUsedCount(profile, unitId) {
+  const units = profile?.stats?.units || {};
+  const unitStats = units[unitId] || {};
+  return Number(unitStats.used || 0);
+}
 
+function getTitleRuleProgress(profile, rule) {
+  if (rule.category === "playable") {
+    return getUnitUsedCount(profile, rule.targetId);
+  }
+
+  return getDefeatedCount(profile, rule.category, rule.targetId);
+}
 function ensureDefaultTitles(profile) {
   let changed = false;
 
