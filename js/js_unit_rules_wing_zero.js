@@ -507,20 +507,12 @@ export function onWingZeroActionResolved(attacker, defender, context = {}) {
   ) {
     const doubledEvade = attacker.evade * 2;
 
-    const changed = setForm(attacker, "ms", {
-      preserveHp: true,
-      preserveEvade: true
-    });
-
-    if (changed) {
-      attacker.evade = doubledEvade;
-      attacker.overEvadeMode = doubledEvade > attacker.evadeMax;
-      attacker.overEvadeCap = doubledEvade;
-      attacker.overEvadeBaseMax = 6;
-      attacker.overEvadeAbsoluteMax = null;
-      redraw = true;
-      messages.push("MS形態へ復帰");
-    }
+    const changed = setForm(attacker, "ms", { preserveHp: true, preserveEvade: true });
+if (changed) {
+  doubleEvadeRedCap(attacker);
+  redraw = true;
+  messages.push("MS形態へ復帰");
+}
   }
 
   if (canChaseThisAction && attacker.evade >= 3) {
