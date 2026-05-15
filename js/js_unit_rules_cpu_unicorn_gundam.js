@@ -84,15 +84,20 @@ function returnToDestroy(state) {
 }
 
 function returnToUnicorn(state) {
+  const beforeEvade = Number(state.evade || 0);
+
   setForm(state, "unicorn", {
     preserveHp: true,
     preserveEvade: true
   });
 
+  state.evade = Math.max(0, beforeEvade);
+
   clearStateEffect(state, "cpu_unicorn_ntd");
   clearStateEffect(state, "cpu_unicorn_awaken");
-}
 
+  normalizeEvadeCapState(state);
+}
 function isPsychommuAttack(attack) {
   if (!attack) return false;
 
