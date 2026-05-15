@@ -97,16 +97,32 @@ function getEvadeDisplayHtml(state) {
   if (!state) return "回避:-";
 
   const current = typeof state.evade === "number" ? state.evade : 0;
+  const baseMax = typeof state.evadeMax === "number" ? state.evadeMax : 0;
+  const overCap =
+    typeof state.overEvadeCap === "number"
+      ? state.overEvadeCap
+      : baseMax;
+  const absoluteMax =
+    typeof state.overEvadeAbsoluteMax === "number"
+      ? state.overEvadeAbsoluteMax
+      : 50;
 
-  const goldCap = typeof state.evadeGoldCap === "number"
-    ? state.evadeGoldCap
-    : state.evadeMax;
+  if (current <= baseMax) {
+    return `回避:${current}/${baseMax}`;
+  }
 
-  const currentHtml = current > goldCap
-    ? `<span class="overEvadeValue">${current}</span>`
-    : `${current}`;
+  const displayCap = Math.min(overCap, absoluteMax);
 
-  return `回避:${currentHtml}/${goldCap}`;
+  if (displayCap >= absoluteMax) {
+    const currentHtml =
+      current > displayCap
+        ? `<span class="evadeRedValue">${current}</span>`
+        : `${current}`;
+
+    return `回避:${currentHtml}/<span class="evadeGoldCap">${displayCap}</span>`;
+  }
+
+  return `回避:<span class="evadeRedValue">${current}</span>/<span class="evadeRedCap">${displayCap}</span>`;
 }
 
 export function renderPlayerState(state, container, label, handlers) {
@@ -510,4 +526,4 @@ export function renderAttackChoicesUI({
   if (currentAttack.length === 0 && !battleNotice && !currentActionHeader && !currentActionLabel) {
     attackLog.textContent = "攻撃解決済み";
   }
-                                         }
+}
