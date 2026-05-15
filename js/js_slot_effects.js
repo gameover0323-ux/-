@@ -111,7 +111,7 @@ function resolveLegacyDesc({ desc, actor }) {
 
   if (/^回避/.test(desc)) {
     const ev = parseInt(desc.match(/(\d+)/)[1], 10);
-    actor.evade += ev;
+    addEvade(actor, ev);
 
     result.kind = "evade";
     result.message = `${actor.name} の回避が ${ev} 増加`;
@@ -131,7 +131,7 @@ function resolveLegacyDesc({ desc, actor }) {
 
   if (attr.evade) {
     const ev = parseInt(desc.match(/(\d+)/)[1], 10);
-    actor.evade += ev;
+   addEvade(actor, ev);
 
     result.kind = "evade";
     result.message = `${actor.name} の回避が ${ev} 増加`;
