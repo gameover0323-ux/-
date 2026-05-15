@@ -92,7 +92,19 @@ export function renderSpecialsStateToArea(state, area, handlers) {
     area.appendChild(div);
   });
 }
+function getStatusLineHtml(text) {
+  if (typeof text !== "string") return "";
 
+  if (text.startsWith("NT-D覚醒 残")) {
+    return `<div style="color:#66ff99;font-weight:bold;">${text}</div>`;
+  }
+
+  if (text.startsWith("NT-D 残")) {
+    return `<div style="color:#ff4444;font-weight:bold;">${text}</div>`;
+  }
+
+  return `<div style="color:#d9b3ff;">${text}</div>`;
+}
 function getEvadeDisplayHtml(state) {
   if (!state) return "回避:-";
 
@@ -140,7 +152,7 @@ export function renderPlayerState(state, container, label, handlers) {
     Array.isArray(state.statusList) && state.statusList.length > 0
       ? `
         <div style="margin-top:6px;">
-          ${state.statusList.map((text) => `<div style="color:#d9b3ff;">${text}</div>`).join("")}
+          ${state.statusList.map((text) => getStatusLineHtml(text)).join("")}
         </div>
       `
       : "";
