@@ -14,6 +14,9 @@ import {
 import { createAttack } from "./js_battle_system.js";
 
 function ensureCpuUnicornState(state) {
+  if (typeof state.cpuUnicornTurnTickedActionCount !== "number") {
+    state.cpuUnicornTurnTickedActionCount = -1;
+  }
   if (!state) return;
 
   if (typeof state.unicornResonanceStock !== "number") {
