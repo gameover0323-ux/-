@@ -500,6 +500,10 @@ export function getTitleConditionText(titleId) {
 
   const targetName = nameMap[rule.targetId] || rule.targetId;
 
+  if (rule.category === "playable") {
+    return `${targetName}を${rule.count}回使用`;
+  }
+
   if (rule.category === "cpu") {
     return `${targetName}を${rule.count}機撃破`;
   }
@@ -508,7 +512,7 @@ export function getTitleConditionText(titleId) {
     return `${targetName}を${rule.count}回撃破`;
   }
 
-  return `${targetName}を${rule.count}機撃破`;
+  return `${targetName}を${rule.count}回達成`;
 }
 
 export const TITLE_GROUPS = [
