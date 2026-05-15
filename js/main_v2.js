@@ -750,7 +750,8 @@ async function refreshPlayerAchievementsNow() {
 
   updatePlayerCardUi();
 }
-function renderPlayerStatsPanel() {
+async function renderPlayerStatsPanel() {
+  await refreshPlayerAchievementsNow();
   const panel = document.getElementById("playerStatsPanel");
   const content = document.getElementById("playerStatsContent");
 
