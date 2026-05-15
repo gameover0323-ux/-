@@ -1437,7 +1437,7 @@ function getOpponentCategoryForBattle() {
 }
 
 function getUnitIdFromState(state) {
-  return state?.unit?.id || state?.id || "";
+  return state?.unitId || state?.unit?.id || state?.id || "";
 }
 
 function getTeamUnitIds(playerKey) {
