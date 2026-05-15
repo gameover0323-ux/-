@@ -188,10 +188,52 @@ export function getCpuUnicornDerivedState(state) {
   return derived;
 }
 
-export function onCpuUnicornBeforeSlot(state, enemyState, context = {}) {
+export function onCpuUnicornBeforeSlot(state, rolledSlotNumber, context = {}) {
   ensureCpuUnicornState(state);
 
+  const enemyState = context.enemyState;
   const messages = [];
+
+  const actionCountMarker = Number(state.actionCount || 0);
+
+  if (state.cpuUnicornTurnTickedActionCount !== actionCountMarker) {
+    state.cpuUnicornTurnTickedActionCount = actionCountMarker;
+
+    if (isAwaken(state)) {
+      state.hp = Math.min(state.maxHp, state.hp + 20);
+      messages.push("CPUユニコーン：覚醒回復20");
+
+      const awaken = getStateEffect(state, "cpu_unicorn_awaken");
+      if (awaken && typeof awaken.turns === "number") {
+        if (awaken.skipNextTick) {
+          awaken.skipNextTick = false;
+        } else {
+          awaken.turns -= 1;
+          state.unicornResonanceStock = Math.max(0, state.unicornResonanceStock - 1);
+        }
+
+        if (awaken.turns <= 0) {
+          state.unicornResonanceStock = 0;
+          returnToDestroy(state);
+          messages.push("覚醒終了。デストロイモードへ移行");
+        }
+      }
+    } else {
+      const ntd = getStateEffect(state, "cpu_unicorn_ntd");
+      if (isDestroy(state) && ntd && typeof ntd.turns === "number") {
+        if (ntd.skipNextTick) {
+          ntd.skipNextTick = false;
+        } else {
+          ntd.turns -= 1;
+        }
+
+        if (ntd.turns <= 0) {
+          returnToUnicorn(state);
+          messages.push("NT-D終了。ユニコーンモードへ戻った。");
+        }
+      }
+    }
+  }
 
   if (enemyState && hasBoostStateEffect(enemyState) && !state.cpuUnicornBoostSeen) {
     state.cpuUnicornBoostSeen = true;
@@ -222,15 +264,17 @@ export function onCpuUnicornBeforeSlot(state, enemyState, context = {}) {
     state.cpuUnicornBoostSeen = false;
   }
 
-  const cost = isDestroy(state) ? 2 : 1;
+  if (isDestroy(state) && !isAwaken(state) && state.unicornResonanceStock > 0) {
+    if (Math.random() < 0.05) {
+      enterAwaken(state);
+      messages.push("CPUユニコーン：覚醒保持値に反応。覚醒");
+    }
+  }
+
+  const cost = isDestroy(state) && !isAwaken(state) ? 2 : 1;
   const stockMessage = consumeEvadeForStockByRate(state, cost);
   if (stockMessage) {
     messages.push(`CPUユニコーン：${stockMessage}`);
-  }
-
-  if (isAwaken(state)) {
-    state.hp = Math.min(state.maxHp, state.hp + 20);
-    messages.push("CPUユニコーン：覚醒回復20");
   }
 
   return {
@@ -238,7 +282,6 @@ export function onCpuUnicornBeforeSlot(state, enemyState, context = {}) {
     message: messages.length > 0 ? messages.join("\n") : null
   };
 }
-
 export function onCpuUnicornAfterSlotResolved(state, slotNumber, payload = {}) {
   ensureCpuUnicornState(state);
 
