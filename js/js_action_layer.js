@@ -956,6 +956,7 @@ function resolvePendingChoice(selectedValue) {
     resolvePendingChoice,
     reserveAction,
     processReservedActionsForTrigger,
-    executeNextQueuedSlot
+    executeNextQueuedSlot,
+    executeCpuAutoSlotBatch
   };
 }
