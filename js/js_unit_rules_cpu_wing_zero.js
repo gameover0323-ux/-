@@ -95,13 +95,10 @@ function transformToNeoBird(state) {
 }
 
 function returnToMsWithDoubleEvade(state) {
-  const nextEvade = Math.max(0, state.evade * 2);
   const changed = setForm(state, "base", { preserveHp: true, preserveEvade: true });
-  state.evade = nextEvade;
-  state.overEvadeMode = true;
-  state.overEvadeCap = nextEvade;
-  state.overEvadeBaseMax = state.evadeMax;
-  state.overEvadeAbsoluteMax = null;
+  if (changed) {
+    doubleEvadeRedCap(state);
+  }
   return changed;
 }
 
@@ -237,13 +234,13 @@ export function onCpuWingZeroAfterSlotResolved(state, slotNumber, context = {}) 
 
   if (effectId === "cpu_wing_zero_full_evade_3") {
     state.cpuWingZeroFullEvadeTurns = Math.max(state.cpuWingZeroFullEvadeTurns, 1);
-    state.evade += 3;
+    addEvade(state, 3);
     return { redraw: true, message: "ウイングゼロ：次ターン全攻撃回避、回避+3" };
   }
 
   if (effectId === "cpu_wing_zero_full_evade_2") {
     state.cpuWingZeroFullEvadeTurns = Math.max(state.cpuWingZeroFullEvadeTurns, 1);
-    state.evade += 2;
+   addEvade(state, 2);
     return { redraw: true, message: "ウイングゼロ：次ターン全攻撃回避、回避+2" };
   }
 
