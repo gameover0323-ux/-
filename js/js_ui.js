@@ -91,7 +91,15 @@ export function renderSpecialsStateToArea(state, area, handlers) {
     area.appendChild(div);
   });
 }
+function getEvadeDisplay(state) {
+  if (!state) return "回避:-";
 
+  const goldCap = typeof state.evadeGoldCap === "number"
+    ? state.evadeGoldCap
+    : state.evadeMax;
+
+  return `回避:${state.evade}/${goldCap}`;
+}
 export function renderPlayerState(state, container, label, handlers) {
   const confuseText =
     state.isConfusedTurn && state.confuseHits > 0
