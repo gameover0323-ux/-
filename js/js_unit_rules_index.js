@@ -183,7 +183,9 @@ import {
   modifyCpuStrikeEvadeAttempt,
   getCpuStrikeExtraWeaponResult
 } from "./js_unit_rules_cpu_strike_gundam.js";
-
+import {
+  getCpuUnicornDerivedState
+} from "./js_unit_rules_cpu_unicorn_gundam.js";
 import {
   getDaisyDerivedState,
   canUseDaisySpecial,
@@ -332,7 +334,9 @@ cpu_strike_gundam: {
   modifyEvadeAttempt: modifyCpuStrikeEvadeAttempt,
   getExtraWeaponResult: getCpuStrikeExtraWeaponResult
 },
-
+cpu_unicorn_gundam: {
+  getDerivedState: getCpuUnicornDerivedState
+},
 jegan_d_type: {
   getDerivedState: getJeganDerivedState,
   canUseSpecial: canUseJeganSpecial,
