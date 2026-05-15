@@ -308,48 +308,6 @@ ctx.setCurrentAction(
 
     return true;
   }
-
-  function resolveSlot(slot, slotMeta = {}) {
-  ctx.setCurrentAttack([]);
-
-  const actor = ctx.getPlayerState(ctx.getCurrentPlayer());
-  const result = resolveSlotEffect({ slot, actor });
-
-  function mergeExtraResult(baseResult) {
-    const merged = {
-      attacks: [],
-      messages: [],
-      redraw: false
-    };
-
-    const extraResult = executeUnitExtraWeaponResult(actor, {
-      ownerPlayer: slotMeta.ownerPlayer,
-      enemyPlayer: slotMeta.enemyPlayer,
-      slotKey: slotMeta.slotKey,
-      slotNumber: slotMeta.slotNumber,
-      slot
-    });
-
-    if (!extraResult) return merged;
-
-    if (Array.isArray(extraResult.appendAttacks)) {
-      merged.attacks.push(...extraResult.appendAttacks);
-    }
-
-    if (Array.isArray(extraResult.appendMessages)) {
-      merged.messages.push(...extraResult.appendMessages.filter(Boolean));
-    }
-
-    if (extraResult.message) {
-      merged.messages.push(extraResult.message);
-    }
-
-    if (extraResult.redraw) {
-      merged.redraw = true;
-    }
-
-    return merged;
-  }
 function collectCpuSlotAction(ownerPlayer, slotKey, slotOverride = null, actionIndex = 1) {
     const enemyPlayer = ctx.getOpponentPlayer(ownerPlayer);
     const actor = ctx.getPlayerState(ownerPlayer);
@@ -584,7 +542,49 @@ function collectCpuSlotAction(ownerPlayer, slotKey, slotOverride = null, actionI
     );
 
     return usedCount > 0;
+          }
+  function resolveSlot(slot, slotMeta = {}) {
+  ctx.setCurrentAttack([]);
+
+  const actor = ctx.getPlayerState(ctx.getCurrentPlayer());
+  const result = resolveSlotEffect({ slot, actor });
+
+  function mergeExtraResult(baseResult) {
+    const merged = {
+      attacks: [],
+      messages: [],
+      redraw: false
+    };
+
+    const extraResult = executeUnitExtraWeaponResult(actor, {
+      ownerPlayer: slotMeta.ownerPlayer,
+      enemyPlayer: slotMeta.enemyPlayer,
+      slotKey: slotMeta.slotKey,
+      slotNumber: slotMeta.slotNumber,
+      slot
+    });
+
+    if (!extraResult) return merged;
+
+    if (Array.isArray(extraResult.appendAttacks)) {
+      merged.attacks.push(...extraResult.appendAttacks);
+    }
+
+    if (Array.isArray(extraResult.appendMessages)) {
+      merged.messages.push(...extraResult.appendMessages.filter(Boolean));
+    }
+
+    if (extraResult.message) {
+      merged.messages.push(extraResult.message);
+    }
+
+    if (extraResult.redraw) {
+      merged.redraw = true;
+    }
+
+    return merged;
   }
+
   function startAttackQte(attacks, extraContext = {}) {
   ctx.setCurrentAttack(attacks);
   ctx.setCurrentAttackContext({
