@@ -1622,19 +1622,14 @@ function get2v2StatsModeKey() {
 
   return "offline";
 }
-async function finishBattle(winnerPlayer) {
-  if (onlineBattleFinished) return;
-  onlineBattleFinished = true;
+function finishBattle(winnerPlayer) {
+  recordBattleResultIfNeeded(winnerPlayer).catch(error => {
+    console.error("戦績保存に失敗しました", error);
+  });
 
-  publishOnlineBattleEnd(winnerPlayer);
-
-try {
-  await saveBattleResultForCurrentPlayer(winnerPlayer);
-} catch (error) {
-  console.error(error);
-}
   const popup = document.getElementById("popup");
   if (!popup) return;
+
 
   popup.innerHTML = "";
 
