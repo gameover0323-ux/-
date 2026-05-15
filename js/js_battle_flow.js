@@ -149,23 +149,37 @@ if (Number(attacker.pendingActionPenalty || 0) > 0) {
     return;
   }
 
-  const slotKey = rollableSlotKeys[
-    Math.floor(Math.random() * rollableSlotKeys.length)
-  ];
-
   const ownerPlayer = ctx.getCurrentPlayer();
+    const isAutoEnemyTurn =
+      typeof ctx.isChallengeMode === "function" &&
+      ctx.isChallengeMode() &&
+      ownerPlayer === "B";
 
-  const started = ctx.startSlotAction(ownerPlayer, slotKey);
-  if (!started) return;
+    if (
+      isAutoEnemyTurn &&
+      typeof ctx.executeCpuAutoSlotBatch === "function" &&
+      Number(attacker.actionCount || 0) > 1
+    ) {
+      const handled = ctx.executeCpuAutoSlotBatch(ownerPlayer);
+      if (handled) {
+        return;
+      }
+    }
 
-  consumeActionCount(attacker, 1);
+    const slotKey = rollableSlotKeys[
+      Math.floor(Math.random() * rollableSlotKeys.length)
+    ];
 
-  if (ctx.onSlotActionResolved) {
-    ctx.onSlotActionResolved(ownerPlayer, slotKey);
-  }
+    const started = ctx.startSlotAction(ownerPlayer, slotKey);
+    if (!started) return;
 
-  ctx.redrawBattleBoards();
-  }
+    consumeActionCount(attacker, 1);
+
+    if (ctx.onSlotActionResolved) {
+      ctx.onSlotActionResolved(ownerPlayer, slotKey);
+    }
+
+    ctx.redrawBattleBoards();
   
   function simulateSlot() {
     const attacker = ctx.getPlayerState(ctx.getCurrentPlayer());
