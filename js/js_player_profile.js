@@ -332,18 +332,16 @@ export async function record2v2BattleResult({
   modeKey,
   playerUnitIds,
   defeatedUnitIds,
-  result
+  result,
+  opponentCategory = "playable"
 }) {
   const profile = playerSession.profile;
-
-  if (!profile) return;
-  if (profile.role === "debug") return;
+  if (!profile) return { ok: false, message: "ゲスト参戦のため保存しません" };
+  if (profile.role === "debug") return { ok: false, message: "デバッグアカウントの戦績は通常保存しません" };
 
   playerUnitIds.forEach(unitId => {
     const unitStats = ensureUnitStats(profile, unitId);
-
     const twoVtwo = ensureTwoVtwoStats(unitStats);
-
     const bucket = twoVtwo[modeKey];
 
     if (result === "win") {
@@ -352,8 +350,23 @@ export async function record2v2BattleResult({
       addTwoVtwoLose(bucket);
     }
   });
-updatePlayerAchievements(profile);
+
+  if (result === "win") {
+    defeatedUnitIds.forEach(unitId => {
+      if (opponentCategory === "boss") {
+        addDefeated(profile, "boss", unitId);
+      } else if (opponentCategory === "cpu") {
+        addDefeated(profile, "cpu", unitId);
+      } else {
+        addDefeated(profile, "playable", unitId);
+      }
+    });
+  }
+
+  updatePlayerAchievements(profile);
   await writePlayerProfile(profile.id, profile);
+
+  return { ok: true };
 }
 export async function restorePlayerSession() {
   const id = sessionStorage.getItem(SESSION_KEY);
