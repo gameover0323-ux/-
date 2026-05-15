@@ -66,7 +66,16 @@ import {
   modifyStrikeEvadeAttempt,
   onStrikeResolveChoice
 } from "./js_unit_rules_strike_gundam.js";
-
+import {
+  getUnicornDerivedState,
+  canUseUnicornSpecial,
+  executeUnicornSpecial,
+  onUnicornAfterSlotResolved,
+  onUnicornActionResolved,
+  onUnicornTurnEnd,
+  modifyUnicornTakenDamage,
+  onUnicornDispelBoostState
+} from "./js_unit_rules_unicorn_gundam.js";
 import {
   getJeganDerivedState,
   canUseJeganSpecial,
