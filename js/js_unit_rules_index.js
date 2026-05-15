@@ -267,7 +267,16 @@ export const unitRulesMap = {
     modifyEvadeAttempt: modifyStrikeEvadeAttempt,
     onResolveChoice: onStrikeResolveChoice
   },
-  
+  unicorn_gundam: {
+  getDerivedState: getUnicornDerivedState,
+  canUseSpecial: canUseUnicornSpecial,
+  executeSpecial: executeUnicornSpecial,
+  onAfterSlotResolved: onUnicornAfterSlotResolved,
+  onActionResolved: onUnicornActionResolved,
+  onTurnEnd: onUnicornTurnEnd,
+  modifyTakenDamage: modifyUnicornTakenDamage,
+  onDispelBoostState: onUnicornDispelBoostState
+},
 //CPU専用機体//
 cpu_gundam_mc: {
   getDerivedState: getCpuGundamMcDerivedState,
