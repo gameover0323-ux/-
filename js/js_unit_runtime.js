@@ -529,7 +529,9 @@ export function createBattleState(unit) {
     hp: defaultForm.hp,
     maxHp: defaultForm.hp,
     evade: defaultForm.evadeMax,
-    evadeMax: defaultForm.evadeMax,
+evadeMax: defaultForm.evadeMax,
+evadeGoldCap: defaultForm.evadeMax,
+evadeRedCap: defaultForm.evadeMax,
     
     actionCount: 1,
     baseActionCount: 1,
