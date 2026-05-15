@@ -398,3 +398,17 @@ button{
   color: #ff3b3b;
   font-weight: bold;
 }
+.evadeRedValue {
+  color: #ff3333;
+  font-weight: bold;
+}
+
+.evadeRedCap {
+  color: #ff3333;
+  font-weight: bold;
+}
+
+.evadeGoldCap {
+  color: #ffd966;
+  font-weight: bold;
+}
