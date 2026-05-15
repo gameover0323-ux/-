@@ -1,4 +1,3 @@
-import { createAttack } from "./js_battle_system.js";
 import {
   setForm,
   getStateEffect,
@@ -320,8 +319,9 @@ export function executeWingZeroSpecial(state, specialKey, context = {}) {
       boostName: "ゼロシステム(命中)"
     });
 
-    state.evade = 3;
+    state.evade = Math.max(state.evade, 3);
     normalizeEvadeCapState(state);
+
     state.zeroBerserkUsed = true;
     state.zeroSystemActivated = true;
 
@@ -374,6 +374,8 @@ export function onWingZeroTurnEnd(state, context = {}) {
   const changedEvade = tickWingZeroEffect(state, "wing_zero_evade");
   const changedHit = tickWingZeroEffect(state, "wing_zero_hit");
 
+  normalizeEvadeCapState(state);
+
   return {
     redraw: changedEvade || changedHit,
     message: null
@@ -387,7 +389,6 @@ export function onWingZeroBeforeSlot(state, rolledSlotNumber, context = {}) {
 
   if (hasWingZeroHit(state) && !state.wingZeroHitAppliedThisTurn && context.enemyState) {
     context.enemyState.evade = 0;
-    context.enemyState.evadeRedCap = context.enemyState.evadeGoldCap || context.enemyState.evadeMax;
     normalizeEvadeCapState(context.enemyState);
 
     state.wingZeroHitAppliedThisTurn = true;
@@ -635,4 +636,4 @@ export function onWingZeroResolveChoice(
     redraw: false,
     message: null
   };
-      }
+}
