@@ -26,7 +26,7 @@ export const wing_zero = {
           }
         },
         slot2: {
-          label: "🅱ビームサーベル 30ダメージ×2回",
+          label: "ビームサーベル 30ダメージ×2回",
           desc: "30ダメージ×2回。格闘、ビーム属性",
           effect: {
             type: "attack",
@@ -45,7 +45,7 @@ export const wing_zero = {
           }
         },
         slot4: {
-          label: "🅱バスターライフル 70ダメージ",
+          label: "バスターライフル 70ダメージ",
           desc: "70ダメージ。射撃、ビーム属性",
           effect: {
             type: "attack",
