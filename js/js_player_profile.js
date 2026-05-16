@@ -2,9 +2,9 @@ import { updatePlayerAchievements } from "./js_player_achievements.js";
 import {
   readPlayerProfile,
   writePlayerProfile,
-  updatePlayerProfile
+  updatePlayerProfile,
+  readPlayerProfiles
 } from "./js_online_firebase.js";
-
 const SESSION_KEY = "gbs_current_player_id";
 
 export const playerSession = {
@@ -47,8 +47,8 @@ function createInitialStats() {
 
 function createProfile({ id, passwordHash, name }) {
   const isDebug = id === "testgameover";
-  const isCielDebugger = id === "syuuyaCIELgodlove";
-
+const isCielDebugger = id === "syuuyaCIELgodlove";
+const isAccountViewer = id === "accountviewer";
   return {
     id,
     passwordHash,
@@ -57,7 +57,13 @@ function createProfile({ id, passwordHash, name }) {
     comment: "",
     equippedTitles: [],
     registeredAt: todayYmdSlash(),
-    role: isDebug ? "debug" : isCielDebugger ? "Ciel_debugger" : "player",
+    role: isDebug
+  ? "debug"
+  : isCielDebugger
+    ? "Ciel_debugger"
+    : isAccountViewer
+      ? "account_viewer"
+      : "player",
     stats: createInitialStats(),
     unlocks: {},
     titles: {
