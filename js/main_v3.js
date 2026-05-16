@@ -1,3 +1,4 @@
+import { createOnlineBattleUi } from "./js_online_battle_ui.js";
 import { createRandomMatchController } from "./js_random_match_controller.js";
 import { createPlayerStatsUi } from "./js_player_stats_ui.js";
 import {
@@ -311,6 +312,7 @@ let isTestMode = false;
 let battleMode = "1v1";
 let playerStatsUi = null;
 let randomMatchController = null;
+let onlineBattleUi = null;
 /*
   battleMode:
   - 1v1
