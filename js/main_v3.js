@@ -3126,30 +3126,26 @@ randomMatchController = createRandomMatchController({
   abortCurrentBattleWithoutRecordForRandomMatch,
 
   enterRandomMatchedRoom: ({ roomId, playerSide }) => {
-    randomMatchState.enteringRoom = true;
+  onlineState.enabled = true;
+  onlineState.roomId = roomId;
+  onlineState.myPlayer = playerSide;
+  onlineState.isHost = playerSide === "A";
+  onlineState.lastAppliedActionId = 0;
+  onlineState.isApplyingRemote = false;
 
-    cleanupRandomMatchListeners();
+  onlineSelectEntered = false;
+  onlineBattleStarted = false;
+  onlineBattleFinished = false;
+  onlineActionSeq = 0;
 
-    onlineState.enabled = true;
-    onlineState.roomId = roomId;
-    onlineState.myPlayer = playerSide;
-    onlineState.isHost = playerSide === "A";
-    onlineState.lastAppliedActionId = 0;
-    onlineState.isApplyingRemote = false;
+  onlineRoomStatus.textContent = `ランダムマッチ成立。あなたはPLAYER ${playerSide}です。`;
 
-    onlineSelectEntered = false;
-    onlineBattleStarted = false;
-    onlineBattleFinished = false;
-    onlineActionSeq = 0;
+  listenRoom(roomId, roomData => {
+    if (!roomData) return;
 
-    onlineRoomStatus.textContent = `ランダムマッチ成立。あなたはPLAYER ${playerSide}です。`;
-
-    listenRoom(roomId, roomData => {
-      if (!roomData) return;
-
-      enterOnlineSelect();
-      applyOnlineRoomData(roomData);
-    });
+    enterOnlineSelect();
+    applyOnlineRoomData(roomData);
+  });
   }
 });
 playerStatsUi = createPlayerStatsUi({
