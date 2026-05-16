@@ -2951,8 +2951,8 @@ function ensureOnlineTopPlayerHud() {
 
   battleScreen.prepend(hud);
 
-  document.getElementById("onlineChatSendBtnA")?.addEventListener("click", () => sendOnlineChatFrom("A"));
-  document.getElementById("onlineChatSendBtnB")?.addEventListener("click", () => sendOnlineChatFrom("B"));
+  document.getElementById("onlineChatSendBtnA")?.addEventListener("click", () => sendOnlineChat("A"));
+document.getElementById("onlineChatSendBtnB")?.addEventListener("click", () => sendOnlineChat("B"));
 }
 
 function ensureOnlineCenterButtons() {
