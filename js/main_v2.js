@@ -2138,6 +2138,133 @@ let randomMatchState = {
   sessionUnsubscribe: null,
   enteringRoom: false
 };
+let randomMatchAnnouncementUnsubscribe = null;
+let lastSeenRandomMatchAnnouncementId = "";
+let randomMatchInviteShowing = false;
+
+function getRandomMatchNotifySettings() {
+  const notify = playerSession.profile?.randomMatchNotify || {};
+  return {
+    title: notify.title === true,
+    vsCpu: notify.vsCpu === true,
+    vsBoss: notify.vsBoss === true
+  };
+}
+
+function getCurrentRandomMatchNotifyScene() {
+  const visibleTitle = screens.title && screens.title.style.display !== "none";
+  const visibleBattle = screens.battle && screens.battle.style.display !== "none";
+
+  if (visibleTitle) return "title";
+
+  if (visibleBattle) {
+    if (battleMode === "vscpu1v1" || battleMode === "vscpu2v2") return "vsCpu";
+    if (battleMode === "challenge1v1" || battleMode === "challenge2v2") return "vsBoss";
+  }
+
+  return "";
+}
+
+function canReceiveRandomMatchAnnouncement(data) {
+  if (!playerSession.profile) return false;
+  if (!data || !data.id) return false;
+  if (data.profileId && data.profileId === playerSession.profile.id) return false;
+  if (data.id === lastSeenRandomMatchAnnouncementId) return false;
+  if (randomMatchInviteShowing) return false;
+  if (onlineState.enabled || randomMatchState.enabled) return false;
+
+  const scene = getCurrentRandomMatchNotifyScene();
+  if (!scene) return false;
+
+  const settings = getRandomMatchNotifySettings();
+  return settings[scene] === true;
+}
+
+function listenRandomMatchAnnouncementsOnceReady() {
+  if (randomMatchAnnouncementUnsubscribe) return;
+
+  randomMatchAnnouncementUnsubscribe = listenRandomMatchAnnouncement(data => {
+    if (!canReceiveRandomMatchAnnouncement(data)) return;
+
+    lastSeenRandomMatchAnnouncementId = data.id;
+    showRandomMatchInvitePopup(data);
+  });
+}
+
+function showRandomMatchInvitePopup(data) {
+  const popup = document.getElementById("popup");
+  if (!popup) return;
+
+  randomMatchInviteShowing = true;
+
+  popup.innerHTML = `
+    <div style="font-weight:bold; margin-bottom:8px;">
+      誰かがランダムマッチを募集しました。
+    </div>
+    <div style="margin-bottom:10px;">
+      今すぐ駆けつけますか？
+    </div>
+    <div style="font-size:12px; opacity:0.8; margin-bottom:10px;">
+      募集者：${data.profileName || "プレイヤー"}
+    </div>
+    <button id="acceptRandomMatchInviteBtn">はい</button>
+    <button id="declineRandomMatchInviteBtn">いいえ</button>
+  `;
+
+  popup.style.display = "block";
+
+  document.getElementById("acceptRandomMatchInviteBtn")?.addEventListener("click", () => {
+    randomMatchInviteShowing = false;
+    popup.style.display = "none";
+    popup.innerHTML = "";
+    jumpToRandomMatchFromAnnouncement();
+  });
+
+  document.getElementById("declineRandomMatchInviteBtn")?.addEventListener("click", () => {
+    randomMatchInviteShowing = false;
+    popup.style.display = "none";
+    popup.innerHTML = "";
+  });
+}
+
+function abortCurrentBattleWithoutRecordForRandomMatch() {
+  currentAttack = [];
+  currentAttackContext = null;
+  currentAttackContexts = [];
+  pendingChoice = null;
+  battleNotice = "";
+  currentActionHeader = "";
+  currentActionLabel = "";
+
+  teamA = null;
+  teamB = null;
+  playerAState = null;
+  playerBState = null;
+  selectedUnitA = null;
+  selectedUnitB = null;
+  selectingPlayer = "A";
+  currentTurn = 1;
+  currentPlayer = "A";
+
+  onlineBattleStarted = false;
+  onlineBattleFinished = false;
+  onlineSelectEntered = false;
+  onlineActionSeq = 0;
+}
+
+function jumpToRandomMatchFromAnnouncement() {
+  abortCurrentBattleWithoutRecordForRandomMatch();
+
+  battleMode = "online1v1";
+  showScreen("onlineRoom");
+
+  if (onlineRoomStatus) {
+    onlineRoomStatus.textContent = "ランダムマッチへ駆けつけています…";
+  }
+
+  ensureRandomMatchUi();
+  startRandomMatch();
+}
 function getUnitById(unitId) {
   const allUnits = [
   ...unitList,
