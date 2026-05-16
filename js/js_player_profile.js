@@ -164,6 +164,9 @@ export async function loginPlayer(id, password) {
 if (profile.id === "syuuyaCIELgodlove") {
   profile.role = "Ciel_debugger";
 }
+  if (profile.id === "accountviewer") {
+  profile.role = "account_viewer";
+  }
   normalizeProfileShape(profile);
 updatePlayerAchievements(profile);
 await writePlayerProfile(profile.id, profile);
@@ -420,6 +423,9 @@ export async function restorePlayerSession() {
 if (profile.id === "syuuyaCIELgodlove") {
   profile.role = "Ciel_debugger";
 }
+  if (profile.id === "accountviewer") {
+  profile.role = "account_viewer";
+  }
   normalizeProfileShape(profile);
 updatePlayerAchievements(profile);
 await writePlayerProfile(profile.id, profile);
