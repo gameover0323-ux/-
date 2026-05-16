@@ -8,6 +8,7 @@ import {
 } from "./js_player_titles.js";
 import { updatePlayerAchievements } from "./js_player_achievements.js";
 import {
+import {
   playerSession,
   loginPlayer,
   registerPlayer,
@@ -16,7 +17,8 @@ import {
   recordBattleResult,
   record2v2BattleResult,
   restorePlayerSession,
-  saveCurrentPlayerProfile
+  saveCurrentPlayerProfile,
+  readAccountListForViewer
 } from "./js_player_profile.js";
 import {
   createRoomId,
