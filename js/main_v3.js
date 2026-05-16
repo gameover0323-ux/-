@@ -3090,6 +3090,68 @@ setCurrentAttackContexts,
   getCurrentAttack,
 renderAttackChoices
 });
+randomMatchController = createRandomMatchController({
+  getScreens: () => screens,
+  getBattleMode: () => battleMode,
+  setBattleMode: (value) => { battleMode = value; },
+
+  getPlayerProfile: () => playerSession.profile,
+  getTitleName,
+
+  isOnlineEnabled: () => onlineState.enabled,
+
+  getOnlineRoomStatus: () => onlineRoomStatus,
+  getCreateOnlineRoomBtn: () => createOnlineRoomBtn,
+
+  showScreen,
+  showPopup,
+
+  createRoomId,
+  writeRoom,
+  buildInitialRoomData,
+
+  cleanupOldRandomMatch,
+  writeRandomMatchWaiting,
+  updateRandomMatchWaiting,
+  removeRandomMatchWaiting,
+  readRandomMatchWaiting,
+  listenRandomMatchWaiting,
+  writeRandomMatchSession,
+  updateRandomMatchSession,
+  listenRandomMatchSession,
+  removeRandomMatchSession,
+  writeRandomMatchAnnouncement,
+  listenRandomMatchAnnouncement,
+
+  abortCurrentBattleWithoutRecordForRandomMatch,
+
+  enterRandomMatchedRoom: ({ roomId, playerSide }) => {
+    randomMatchState.enteringRoom = true;
+
+    cleanupRandomMatchListeners();
+
+    onlineState.enabled = true;
+    onlineState.roomId = roomId;
+    onlineState.myPlayer = playerSide;
+    onlineState.isHost = playerSide === "A";
+    onlineState.lastAppliedActionId = 0;
+    onlineState.isApplyingRemote = false;
+
+    onlineSelectEntered = false;
+    onlineBattleStarted = false;
+    onlineBattleFinished = false;
+    onlineActionSeq = 0;
+
+    onlineRoomStatus.textContent = `ランダムマッチ成立。あなたはPLAYER ${playerSide}です。`;
+
+    listenRoom(roomId, roomData => {
+      if (!roomData) return;
+
+      enterOnlineSelect();
+      applyOnlineRoomData(roomData);
+    });
+  }
+});
 playerStatsUi = createPlayerStatsUi({
   getPlayerProfile: () => playerSession.profile,
 
