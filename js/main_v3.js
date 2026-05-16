@@ -1,3 +1,4 @@
+import { createOnlineActionSync } from "./js_online_action_sync.js";
 import { createOnlineBattleUi } from "./js_online_battle_ui.js";
 import { createRandomMatchController } from "./js_random_match_controller.js";
 import { createPlayerStatsUi } from "./js_player_stats_ui.js";
@@ -313,6 +314,7 @@ let battleMode = "1v1";
 let playerStatsUi = null;
 let randomMatchController = null;
 let onlineBattleUi = null;
+let onlineActionSync = null;
 /*
   battleMode:
   - 1v1
@@ -669,7 +671,33 @@ function clearPendingChoice() {
   pendingChoice = null;
 }
 
+function publishOnlineChoiceAction(choice, selectedValue) {
+  return onlineActionSync.publishOnlineChoiceAction(choice, selectedValue);
+}
 
+function publishOnlineSpecialAction(ownerPlayer, specialKey) {
+  return onlineActionSync.publishOnlineSpecialAction(ownerPlayer, specialKey);
+}
+
+function publishOnlineQteAction(kind, index) {
+  return onlineActionSync.publishOnlineQteAction(kind, index);
+}
+
+function publishOnlineEndTurnAction(actorPlayer) {
+  return onlineActionSync.publishOnlineEndTurnAction(actorPlayer);
+}
+
+function publishOnlineSlotAction(ownerPlayer, slotKey) {
+  return onlineActionSync.publishOnlineSlotAction(ownerPlayer, slotKey);
+}
+
+function publishOnlineBattleEnd(winnerPlayer) {
+  return onlineActionSync.publishOnlineBattleEnd(winnerPlayer);
+}
+
+function applyOnlineAction(action) {
+  return onlineActionSync.applyOnlineAction(action);
+}
 
 function toggleTestMode() {
   if (!canUseTestMode()) {
@@ -1753,212 +1781,6 @@ function canOperateOnlinePlayer() {
   if (!onlineState.enabled) return true;
   return currentPlayer === onlineState.myPlayer;
 }
-function publishOnlineChoiceAction(choice, selectedValue) {
-  if (!onlineState.enabled) return;
-  if (onlineState.isApplyingRemote) return;
-  if (!choice) return;
-
-  onlineActionSeq += 1;
-  onlineState.lastAppliedActionId = onlineActionSeq;
-
-  updateRoom(onlineState.roomId, {
-    action: {
-      actionId: onlineActionSeq,
-      actor: choice.ownerPlayer,
-      type: "choice",
-      payload: {
-        source: choice.source || null,
-        choiceType: choice.choiceType || null,
-        selectedValue
-      },
-      createdAt: Date.now()
-    },
-    "meta/updatedAt": Date.now()
-  });
-}
-
-function publishOnlineSpecialAction(ownerPlayer, specialKey) {
-  if (!onlineState.enabled) return;
-  if (onlineState.isApplyingRemote) return;
-  if (ownerPlayer !== onlineState.myPlayer) return;
-
-  onlineActionSeq += 1;
-  onlineState.lastAppliedActionId = onlineActionSeq;
-
-  updateRoom(onlineState.roomId, {
-    action: {
-      actionId: onlineActionSeq,
-      actor: ownerPlayer,
-      type: "special",
-      payload: {
-        specialKey
-      },
-      createdAt: Date.now()
-    },
-    "meta/updatedAt": Date.now()
-  });
-}
-
-function publishOnlineQteAction(kind, index) {
-  if (!onlineState.enabled) return;
-  if (onlineState.isApplyingRemote) return;
-
-  onlineActionSeq += 1;
-  onlineState.lastAppliedActionId = onlineActionSeq;
-
-  updateRoom(onlineState.roomId, {
-    action: {
-      actionId: onlineActionSeq,
-      actor: onlineState.myPlayer,
-      type: "qte",
-      payload: {
-        kind,
-        index
-      },
-      createdAt: Date.now()
-    },
-    "meta/updatedAt": Date.now()
-  });
-}
-
-function publishOnlineEndTurnAction(actorPlayer) {
-  if (!onlineState.enabled) return;
-  if (onlineState.isApplyingRemote) return;
-  if (actorPlayer !== onlineState.myPlayer) return;
-
-  onlineActionSeq += 1;
-  onlineState.lastAppliedActionId = onlineActionSeq;
-
-  updateRoom(onlineState.roomId, {
-    action: {
-      actionId: onlineActionSeq,
-      actor: actorPlayer,
-      type: "endTurn",
-      payload: {},
-      createdAt: Date.now()
-    },
-    "meta/updatedAt": Date.now()
-  });
-}
-
-function publishOnlineSlotAction(ownerPlayer, slotKey) {
-  if (!onlineState.enabled) return;
-  if (onlineState.isApplyingRemote) return;
-  if (ownerPlayer !== onlineState.myPlayer) return;
-
-  onlineActionSeq += 1;
-  onlineState.lastAppliedActionId = onlineActionSeq;
-
-  updateRoom(onlineState.roomId, {
-    action: {
-      actionId: onlineActionSeq,
-      actor: ownerPlayer,
-      type: "slot",
-      payload: {
-        slotKey
-      },
-      createdAt: Date.now()
-    },
-    "meta/updatedAt": Date.now()
-  });
-}
-
-function applyOnlineAction(action) {
-  if (!onlineState.enabled || !action) return;
-  if (typeof action.actionId !== "number") return;
-  if (action.actionId <= onlineState.lastAppliedActionId) return;
-
-  onlineState.lastAppliedActionId = action.actionId;
-  onlineActionSeq = Math.max(onlineActionSeq, action.actionId);
-
-  if (action.actor === onlineState.myPlayer) return;
-
-  onlineState.isApplyingRemote = true;
-
-  if (action.type === "slot") {
-    const slotKey = action.payload?.slotKey;
-    if (!slotKey) {
-      onlineState.isApplyingRemote = false;
-      return;
-    }
-
-    const actor = getPlayerState(action.actor);
-    if (!actor) {
-      onlineState.isApplyingRemote = false;
-      return;
-    }
-
-    ensureActionState(actor);
-
-    const started = startSlotAction(action.actor, slotKey);
-    if (started) {
-      consumeActionCount(actor, 1);
-      redrawBattleBoards();
-    }
-
-    onlineState.isApplyingRemote = false;
-    return;
-  }
-
-if (action.type === "special") {
-    const specialKey = action.payload?.specialKey;
-    if (!specialKey) {
-      onlineState.isApplyingRemote = false;
-      return;
-    }
-
-    actionLayer.executeSpecial(action.actor, specialKey);
-
-    onlineState.isApplyingRemote = false;
-    return;
-}
-
-if (action.type === "choice") {
-    const selectedValue = action.payload?.selectedValue;
-
-    actionLayer.resolvePendingChoice(selectedValue);
-
-    onlineState.isApplyingRemote = false;
-    return;
-}
-  
-  if (action.type === "qte") {
-    const kind = action.payload?.kind;
-    const index = action.payload?.index;
-
-    if (kind === "hit") {
-      attackResolution.takeHit(index);
-      checkBattleEnd();
-    } else if (kind === "evade") {
-      attackResolution.evadeAttack(index);
-    } else if (kind === "supportDefense") {
-      attackResolution.supportDefenseAttack(index);
-      checkBattleEnd();
-    }
-
-    onlineState.isApplyingRemote = false;
-    return;
-  }
-if (action.type === "battleEnd") {
-  const winner = action.payload?.winner;
-  if (!winner) {
-    onlineState.isApplyingRemote = false;
-    return;
-  }
-
-  finishBattle(winner);
-
-  onlineState.isApplyingRemote = false;
-  return;
-}
-  if (action.type === "endTurn") {
-    battleFlow.endTurn();
-    onlineState.isApplyingRemote = false;
-    return;
-  }
-
-  onlineState.isApplyingRemote = false;
-}
 
 function initOnline1v1Battle(unitA, unitB) {
   playerAState = createBattleState(unitA);
@@ -1988,26 +1810,54 @@ applyBattleDisplayNames();
   showScreen("battle");
 }
 
-function publishOnlineBattleEnd(winnerPlayer) {
-  if (!onlineState.enabled) return;
-  if (onlineState.isApplyingRemote) return;
 
-  onlineActionSeq += 1;
-  onlineState.lastAppliedActionId = onlineActionSeq;
+onlineActionSync = createOnlineActionSync({
+  isOnlineEnabled: () => onlineState.enabled,
+  getOnlineRoomId: () => onlineState.roomId,
+  getOnlineMyPlayer: () => onlineState.myPlayer,
 
-  updateRoom(onlineState.roomId, {
-    action: {
-      actionId: onlineActionSeq,
-      actor: winnerPlayer,
-      type: "battleEnd",
-      payload: {
-        winner: winnerPlayer
-      },
-      createdAt: Date.now()
-    },
-    "meta/updatedAt": Date.now()
-  });
-}
+  isApplyingRemote: () => onlineState.isApplyingRemote,
+  setApplyingRemote: (value) => {
+    onlineState.isApplyingRemote = value;
+  },
+
+  getLastAppliedActionId: () => onlineState.lastAppliedActionId,
+  setLastAppliedActionId: (value) => {
+    onlineState.lastAppliedActionId = value;
+  },
+
+  getOnlineActionSeq: () => onlineActionSeq,
+  setOnlineActionSeq: (value) => {
+    onlineActionSeq = value;
+  },
+  nextOnlineActionSeq: () => {
+    onlineActionSeq += 1;
+    onlineState.lastAppliedActionId = onlineActionSeq;
+    return onlineActionSeq;
+  },
+
+  updateRoom,
+
+  getPlayerState,
+  ensureActionState,
+  consumeActionCount,
+  startSlotAction,
+  redrawBattleBoards,
+
+  executeSpecialRaw: (ownerPlayer, specialKey) =>
+    actionLayer.executeSpecial(ownerPlayer, specialKey),
+
+  resolvePendingChoiceRaw: (selectedValue) =>
+    actionLayer.resolvePendingChoice(selectedValue),
+
+  takeHitRaw: (index) => attackResolution.takeHit(index),
+  evadeAttackRaw: (index) => attackResolution.evadeAttack(index),
+  supportDefenseAttackRaw: (index) => attackResolution.supportDefenseAttack(index),
+
+  checkBattleEnd,
+  finishBattle,
+  endTurnRaw: () => battleFlow.endTurn()
+});
 onlineBattleUi = createOnlineBattleUi({
   isOnlineEnabled: () => onlineState.enabled,
   getOnlineRoomId: () => onlineState.roomId,
