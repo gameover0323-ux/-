@@ -422,6 +422,7 @@ function bindBeforeUnloadLeaveHandler() {
     requestOnlineSurrender,
     applyOnlineMetaResult,
     applyOnlinePeaceRequest,
+    bindBeforeUnloadLeaveHandler,
     markOnlinePlayerLeft
   };
 }
