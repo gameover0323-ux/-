@@ -1,4 +1,159 @@
 export function createGameSetup(ctx) {
+  const PLAYABLE_UNIT_DESCRIPTIONS = {
+    "ガンダム(ﾏｸﾞﾈｯﾄｺｰﾃｨﾝｸﾞ)": `強さ☆☆☆
+回避を消費した追加行動、
+読み成功で回避数補充、
+終盤の押し込みや足掻きの出来る
+堅実な機体。
+ポテンシャルが引き出せれば
+更に上位の機体と戦える。`,
+
+    "Zガンダム": `強さ☆☆☆
+ウェイブライダー変形による回避所持数
+大幅補填が可能であり、各種のスロット
+強化による搦手も豊富。
+また、バイオセンサー発動時の防御性能、
+高い攻撃力、回避消滅効果が魅力。
+運用と運次第で格上とも渡り合える。`,
+
+    "シャイニングガンダム": `強さ☆☆☆
+スーパーモードを発動するまでは貧弱。
+スーパーモード中は強さが飛躍的に上がる。
+さらに、条件を達成して明鏡止水を
+発動すれば、その性能は☆☆☆☆をも
+圧倒するほど。`,
+
+    "ウイングガンダムゼロ": `強さ☆☆☆☆
+ゼロシステム2種による強力なバフ効果、
+ツインバスターライフルの決め撃ち性能、
+変形、そして変形中6EXで回避を
+倍加して立ち回る、☆☆☆☆の中でも
+安定を求めたスタイルの機体。
+ゼロシステム中は被ダメが増加し、
+撃たれ弱いため、被弾しないように
+立ち回る必要がある。`,
+
+    "ストライクガンダム": `強さ☆☆☆
+ストライカーパックを交換しながら
+状況に対応する機体。エールで覚醒、
+ソードで決めに行き、ランチャーで
+火力を取る。
+初手ターンは生ストライクなので注意。
+S.E.E.D.覚醒をどう活かすかが決め手。`,
+
+    "ジェガンD型": `強さ☆☆☆
+本当は強さ☆☆だが、しっかり考えた
+運用を行えば格上と渡り合える、
+自由度が高い代わりに性能が低い
+玄人向け機体。
+全てを熟知して扱えば☆☆☆☆にも
+迫ることができる。`,
+
+    "ユニコーンガンダム": `強さ☆☆☆☆
+ビームマグナムによる回避の強制、
+強力なNT-Dで立ち回る機体。普段も
+そこまで貧弱ではないが、本当に
+決めに行くのであれば、回避を特殊
+行動で使用し、覚醒値を溜めて
+NT-D覚醒を決めに行こう。`
+  };
+
+  const CPU_UNIT_DESCRIPTIONS = {
+    "ガンダム(ﾏｸﾞﾈｯﾄｺｰﾃｨﾝｸﾞ)": `難易度☆☆☆☆
+よく避け、よく撃ち、粘る、
+とても嫌らしい相手。
+必中や回避消滅などがあると
+相手にしやすい。
+最後のラストシューティングには
+注意すべし。`,
+
+    "Zガンダム": `難易度☆☆☆
+バイオセンサーになるまでは注意すれば
+そこまで驚異ではない。
+しかし、バイオセンサーになった時は
+選択を間違えると一気にゲームオーバー
+になる可能性もある。`,
+
+    "シャイニングガンダム": `難易度☆☆☆
+非常に火力が高く、連撃性能が高い。
+スーパーモードになった時は強力な
+攻撃が来ても対処できるように
+備えておこう。
+明鏡止水になったら早めに潰さないと
+強力なトドメが来るぞ。`,
+
+    "ウイングガンダムゼロ": `難易度☆☆☆☆
+よく避け、よく当てる。
+しかし、ゼロシステム中はダメージが
+増加するので、回避ができない状態
+の時に畳かけよう。
+しかし油断すると極大のダメージを
+放ってくる。`,
+
+    "ストライクガンダム": `強さ☆☆☆
+色々な形態にランダムで切り替えながら
+戦闘してくる。その時々の形態に
+合わせてよく対処すればそれほど
+難しい相手ではないはず。
+しかし、耐久も高く、よく粘る。`,
+
+    "ジェガンD型": `強さ☆☆
+人が使わなければこんなもの
+みたいな強さをしている。
+しかし、換装時のステータスをよく
+知らないと、手痛い一撃が
+くるかもしれない。`,
+
+    "ユニコーンガンダム": `強さ☆☆☆☆
+回避が困難かつ、非常に火力が高い。
+デストロイモードの時に大量に攻撃をしかけないと、回避を保有している数だけ
+強力な攻撃を放ってくる。
+覚醒形態になった時は選択を
+間違わないように。`,
+
+    "ザクII(一般兵)": `難易度☆
+論外級に弱いザコ。
+まずはこいつを相手にして、機体の
+性能を知ろう。
+真価を発揮する前に撃墜してしまう
+可能性も高い…。`,
+
+    "グフ": `難易度☆☆
+若干火力が高く、食らうと若干ムカつく
+技を放ってくるザコ。
+しかし真面目に戦えばそこまで強くは
+無いので、油断せずに立ち向かおう。`,
+
+    "モビルジン": `難易度☆☆☆
+いつ避けるか、いつ食らうかを判断
+出来なければやられる、そんな敵。
+相手はコーディネイターなので、
+油断せずに戦おう。
+慣れた人なら相手にならないだろう。`
+  };
+
+  const BOSS_UNIT_DESCRIPTIONS = {
+    "デビルガンダム": `難易度 ☆☆☆☆☆
+第1形態→ランタオ島形態→最終形態
+に体力変動で進化するボス。
+体力の回復量がとんでもなく、
+火力が足りなければ削りきれない。
+最終形態ではあと一歩の押し込みを
+用意していなければ祈るしかない。
+勝利するとボストロフィー[D]が
+手に入る。`,
+
+    "エクストリームガンダム": `ランダムで強力なフェイズ換装を行う
+エクバのボス。HPの量は原作準拠。
+共通耐久を減らし、換装解除したタイミングで攻撃を当てて倒そう。
+カルネージはダメージ軽減
+タキオンは時限強化
+イグニスは回避性能
+ミスティックは最強性能。
+勝利するとボストロフィー[EX]が
+手に入る。`
+  };
+
   function isChallengeMode() {
     return ctx.getBattleMode() === "challenge1v1" ||
       ctx.getBattleMode() === "challenge2v2" ||
@@ -17,8 +172,7 @@ export function createGameSetup(ctx) {
   }
 
   function isOnlineMode() {
-    return ctx.getBattleMode &&
-      String(ctx.getBattleMode()).startsWith("online");
+    return ctx.getBattleMode && String(ctx.getBattleMode()).startsWith("online");
   }
 
   function getPendingUnit() {
@@ -32,23 +186,22 @@ export function createGameSetup(ctx) {
       ctx.setPendingSelectedUnit(unit);
     }
   }
-function getDebugUnits() {
+
+  function getDebugUnits() {
     return Array.isArray(ctx.debugUnits) ? ctx.debugUnits : [];
   }
 
   function canUseDebugUnit() {
     return typeof ctx.canUseDebugUnit === "function" && ctx.canUseDebugUnit();
   }
+
   function getSelectList() {
-    const extraUnits =
-      typeof ctx.getExtraUnlockedUnits === "function"
-        ? ctx.getExtraUnlockedUnits()
-        : [];
+    const extraUnits = typeof ctx.getExtraUnlockedUnits === "function"
+      ? ctx.getExtraUnlockedUnits()
+      : [];
 
     if (!isChallengeMode()) {
-      return isOnlineMode()
-        ? ctx.units
-        : [...ctx.units, ...extraUnits];
+      return isOnlineMode() ? ctx.units : [...ctx.units, ...extraUnits];
     }
 
     if (isVsCpuMode() && ctx.getSelectingPlayer() === "B") {
@@ -65,15 +218,80 @@ function getDebugUnits() {
     return ctx.units;
   }
 
+  function getUnitDescription(unit) {
+    if (!unit) return "";
+
+    const mode = ctx.getBattleMode();
+    const selectingPlayer = ctx.getSelectingPlayer();
+    const name = unit.name;
+
+    if (
+      selectingPlayer === "B" &&
+      (mode === "vscpu1v1" || mode === "vscpu2v2")
+    ) {
+      return CPU_UNIT_DESCRIPTIONS[name] || "";
+    }
+
+    if (
+      selectingPlayer === "B" &&
+      (mode === "challenge1v1" || mode === "challenge2v2")
+    ) {
+      return BOSS_UNIT_DESCRIPTIONS[name] || "";
+    }
+
+    return PLAYABLE_UNIT_DESCRIPTIONS[name] || "";
+  }
+
+  function ensureSelectDescriptionBox() {
+    let box = document.getElementById("selectedUnitDescription");
+    if (box) return box;
+
+    box = document.createElement("div");
+    box.id = "selectedUnitDescription";
+    box.style.margin = "16px auto 0";
+    box.style.maxWidth = "520px";
+    box.style.padding = "12px 14px";
+    box.style.border = "2px solid #777";
+    box.style.borderRadius = "10px";
+    box.style.background = "#111";
+    box.style.color = "#fff";
+    box.style.fontSize = "15px";
+    box.style.lineHeight = "1.55";
+    box.style.whiteSpace = "pre-line";
+    box.style.textAlign = "left";
+    box.style.display = "none";
+
+    if (ctx.confirmSelectedUnitBtn && ctx.confirmSelectedUnitBtn.parentNode) {
+      ctx.confirmSelectedUnitBtn.insertAdjacentElement("afterend", box);
+    } else if (ctx.unitButtons && ctx.unitButtons.parentNode) {
+      ctx.unitButtons.parentNode.insertBefore(box, ctx.unitButtons);
+    }
+
+    return box;
+  }
+
+  function updateSelectDescription() {
+    const box = ensureSelectDescriptionBox();
+    const pending = getPendingUnit();
+    const description = getUnitDescription(pending);
+
+    if (!pending || !description) {
+      box.style.display = "none";
+      box.textContent = "";
+      return;
+    }
+
+    box.style.display = "";
+    box.textContent = `${pending.name}\n${description}`;
+  }
+
   function makeUnitButton(unit) {
     const btn = document.createElement("button");
     btn.textContent = unit.name;
-
     btn.addEventListener("click", () => {
       setPendingUnit(unit);
       updateSelectUi();
     });
-
     return btn;
   }
 
@@ -82,7 +300,6 @@ function getDebugUnits() {
       ctx.confirmSelectedUnitBtn.onclick = () => {
         const unit = getPendingUnit();
         if (!unit) return;
-
         setPendingUnit(null);
         selectUnit(unit);
       };
@@ -99,156 +316,140 @@ function getDebugUnits() {
   }
 
   function loadUnitButtons() {
-  ctx.unitButtons.innerHTML = "";
+    ctx.unitButtons.innerHTML = "";
 
-  function appendUnitSection(titleText, units, className) {
-    if (!units || units.length <= 0) return;
+    function appendUnitSection(titleText, units, className) {
+      if (!units || units.length <= 0) return;
 
-    const section = document.createElement("div");
-    section.className = className;
+      const section = document.createElement("div");
+      section.className = className;
 
-    const title = document.createElement("div");
-    title.className = "selectSectionTitle";
-    title.textContent = titleText;
+      const title = document.createElement("div");
+      title.className = "selectSectionTitle";
+      title.textContent = titleText;
 
-    const buttonArea = document.createElement("div");
-    buttonArea.className = "selectSectionButtons";
+      const buttonArea = document.createElement("div");
+      buttonArea.className = "selectSectionButtons";
 
-    units.forEach(unit => {
-      buttonArea.appendChild(makeUnitButton(unit));
-    });
+      units.forEach(unit => {
+        buttonArea.appendChild(makeUnitButton(unit));
+      });
 
-    section.appendChild(title);
-    section.appendChild(buttonArea);
-    ctx.unitButtons.appendChild(section);
-  }
-
-  if (isVsCpuMode() && ctx.getSelectingPlayer() === "B") {
-    appendUnitSection("CPU機体", ctx.cpus || [], "cpuNormalSection");
-    appendUnitSection("初心者向けCPU", ctx.cpuBeginnerList || [], "cpuBeginnerSection");
-  } else {
-    const normalUnits = getSelectList();
-    const debugUnits =
-      canUseDebugUnit() && !isOnlineMode()
-        ? getDebugUnits()
-        : [];
-
-    appendUnitSection("プレイアブル機体", normalUnits, "playableSection");
-
-    if (debugUnits.length > 0) {
-      appendUnitSection("デバッグ権限", debugUnits, "debugUnitSection");
+      section.appendChild(title);
+      section.appendChild(buttonArea);
+      ctx.unitButtons.appendChild(section);
     }
+
+    if (isVsCpuMode() && ctx.getSelectingPlayer() === "B") {
+      appendUnitSection("CPU機体", ctx.cpus || [], "cpuNormalSection");
+      appendUnitSection("初心者向けCPU", ctx.cpuBeginnerList || [], "cpuBeginnerSection");
+    } else {
+      const normalUnits = getSelectList();
+      const debugUnits = canUseDebugUnit() && !isOnlineMode() ? getDebugUnits() : [];
+
+      appendUnitSection("プレイアブル機体", normalUnits, "playableSection");
+
+      if (debugUnits.length > 0) {
+        appendUnitSection("デバッグ権限", debugUnits, "debugUnitSection");
+      }
+    }
+
+    if (isSelectableEnemy2v2() && ctx.getSelectingPlayer() === "B") {
+      const decideBtn = document.createElement("button");
+      decideBtn.textContent = "この編成で開始";
+      decideBtn.addEventListener("click", () => {
+        const teamB = ctx.getTeamB();
+        const enemyList = teamB?.units || [];
+        if (enemyList.length < 1) return;
+        startChallengePreview2v2(ctx.getTeamA().units, enemyList);
+      });
+      ctx.unitButtons.appendChild(decideBtn);
+    }
+
+    setupFixedButtons();
+    ensureSelectDescriptionBox();
+    updateSelectUi();
   }
 
-  if (isSelectableEnemy2v2() && ctx.getSelectingPlayer() === "B") {
-    const decideBtn = document.createElement("button");
-    decideBtn.textContent = "この編成で開始";
-
-    decideBtn.addEventListener("click", () => {
-      const teamB = ctx.getTeamB();
-      const enemyList = teamB?.units || [];
-
-      if (enemyList.length < 1) return;
-
-      startChallengePreview2v2(ctx.getTeamA().units, enemyList);
-    });
-
-    ctx.unitButtons.appendChild(decideBtn);
-  }
-
-  setupFixedButtons();
-  updateSelectUi();
-  }
   function updateSelectUi() {
     const pending = getPendingUnit();
 
     if (ctx.confirmSelectedUnitBtn) {
       ctx.confirmSelectedUnitBtn.disabled = !pending;
-      ctx.confirmSelectedUnitBtn.textContent = pending
-        ? `${pending.name} に決定`
-        : "決定";
+      ctx.confirmSelectedUnitBtn.textContent = pending ? `${pending.name} に決定` : "決定";
     }
 
     if (ctx.selectGuide) {
       if (ctx.getBattleMode() === "challenge1v1") {
-        ctx.selectGuide.textContent =
-          ctx.getSelectingPlayer() === "A"
-            ? "PLAYER A の機体を選択"
-            : "チャレンジボスを選択";
+        ctx.selectGuide.textContent = ctx.getSelectingPlayer() === "A"
+          ? "PLAYER A の機体を選択"
+          : "チャレンジボスを選択";
       } else if (
         ctx.getBattleMode() === "challenge2v2" ||
         ctx.getBattleMode() === "vscpu2v2"
       ) {
-        ctx.selectGuide.textContent =
-          ctx.getSelectingPlayer() === "A"
-            ? "PLAYER A チームの機体を2機選択"
-            : ctx.getBattleMode() === "vscpu2v2"
-              ? "CPUチームの機体を選択（1体だけならこの編成で開始）"
-              : "チャレンジボスを選択（1体だけならこの編成で開始）";
+        ctx.selectGuide.textContent = ctx.getSelectingPlayer() === "A"
+          ? "PLAYER A チームの機体を2機選択"
+          : ctx.getBattleMode() === "vscpu2v2"
+            ? "CPUチームの機体を選択（1体だけならこの編成で開始）"
+            : "チャレンジボスを選択（1体だけならこの編成で開始）";
       } else {
-        ctx.selectGuide.textContent =
-          ctx.getSelectingPlayer() === "A"
-            ? "PLAYER A の機体を選択"
-            : "PLAYER B の機体を選択";
+        ctx.selectGuide.textContent = ctx.getSelectingPlayer() === "A"
+          ? "PLAYER A の機体を選択"
+          : "PLAYER B の機体を選択";
       }
     }
 
-    if (!ctx.selectedUnitsPreview) return;
+    if (ctx.selectedUnitsPreview) {
+      if (
+        ctx.getBattleMode() === "2v2" ||
+        ctx.getBattleMode() === "challenge2v2" ||
+        ctx.getBattleMode() === "vscpu2v2"
+      ) {
+        const teamA = ctx.getTeamA();
+        const teamB = ctx.getTeamB();
+        const aList = teamA?.units || [];
+        const bList = teamB?.units || [];
 
-    if (
-      ctx.getBattleMode() === "2v2" ||
-      ctx.getBattleMode() === "challenge2v2" ||
-      ctx.getBattleMode() === "vscpu2v2"
-    ) {
-      const teamA = ctx.getTeamA();
-      const teamB = ctx.getTeamB();
+        const aText = aList.length > 0
+          ? `PLAYER A: ${aList.map(u => u.name).join(" / ")}`
+          : "PLAYER A: 未選択";
 
-      const aList = teamA?.units || [];
-      const bList = teamB?.units || [];
-
-      const aText = aList.length > 0
-        ? `PLAYER A: ${aList.map(u => u.name).join(" / ")}`
-        : "PLAYER A: 未選択";
-
-      const bLabel =
-        ctx.getBattleMode() === "challenge2v2"
+        const bLabel = ctx.getBattleMode() === "challenge2v2"
           ? "BOSS"
           : ctx.getBattleMode() === "vscpu2v2"
             ? "CPU"
             : "PLAYER B";
 
-      const bText = bList.length > 0
-        ? `${bLabel}: ${bList.map(u => u.name).join(" / ")}`
-        : `${bLabel}: 未選択`;
+        const bText = bList.length > 0
+          ? `${bLabel}: ${bList.map(u => u.name).join(" / ")}`
+          : `${bLabel}: 未選択`;
 
-      const pendingText = pending
-        ? `<br>選択中: ${pending.name}`
-        : "";
+        const pendingText = pending ? `<br>選択中: ${pending.name}` : "";
+        ctx.selectedUnitsPreview.innerHTML = `${aText}<br>${bText}${pendingText}`;
+        updateSelectDescription();
+        return;
+      }
 
-      ctx.selectedUnitsPreview.innerHTML = `${aText}<br>${bText}${pendingText}`;
-      return;
-    }
+      const a = ctx.getSelectedUnitA();
+      const b = ctx.getSelectedUnitB();
 
-    const a = ctx.getSelectedUnitA();
-    const b = ctx.getSelectedUnitB();
+      const aText = a ? `PLAYER A: ${a.name}` : "PLAYER A: 未選択";
 
-   const aText = a ? `PLAYER A: ${a.name}` : "PLAYER A: 未選択";
-
-    const bLabel =
-      ctx.getBattleMode() === "challenge1v1" ||
-      ctx.getBattleMode() === "vscpu1v1"
+      const bLabel = ctx.getBattleMode() === "challenge1v1" ||
+        ctx.getBattleMode() === "vscpu1v1"
         ? ctx.getBattleMode() === "vscpu1v1"
           ? "CPU"
           : "BOSS"
         : "PLAYER B";
 
-    const bText = b ? `${bLabel}: ${b.name}` : `${bLabel}: 未選択`;
+      const bText = b ? `${bLabel}: ${b.name}` : `${bLabel}: 未選択`;
+      const pendingText = pending ? `<br>選択中: ${pending.name}` : "";
 
-    const pendingText = pending
-      ? `<br>選択中: ${pending.name}`
-      : "";
+      ctx.selectedUnitsPreview.innerHTML = `${aText}<br>${bText}${pendingText}`;
+    }
 
-    ctx.selectedUnitsPreview.innerHTML = `${aText}<br>${bText}${pendingText}`;
+    updateSelectDescription();
   }
 
   function selectUnit(unit) {
@@ -388,4 +589,4 @@ function getDebugUnits() {
     loadUnitButtons,
     updateSelectUi
   };
-}
+        }
