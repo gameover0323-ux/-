@@ -4,7 +4,7 @@ export const unicorn_gundam = {
   defaultFormId: "unicorn",
   forms: {
     unicorn: {
-      name: "ユニコーンガンダム(ユニコーンモード)",
+      name: "ユニコーンガンダム",
       hp: 750,
       evadeMax: 2,
       rollableSlotOrder: ["slot1", "slot2", "slot3", "slot4", "slot5", "slot6"],
