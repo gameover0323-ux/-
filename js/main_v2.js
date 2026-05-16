@@ -640,6 +640,7 @@ function updatePlayerCardUi() {
   registerBtn.style.display = "none";
   logoutBtn.style.display = "";
   statsBtn.style.display = "";
+  ensureAccountListButton();
 }
 function getUnitNameById(unitId) {
   const allUnits = [
