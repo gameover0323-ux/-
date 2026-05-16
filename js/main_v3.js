@@ -360,6 +360,17 @@ function getTitleName(titleId) {
   return TITLE_NAME_MAP[titleId] || titleId;
 }
 
+function ensureRandomMatchUi() {
+  return randomMatchController.ensureRandomMatchUi();
+}
+
+function listenRandomMatchAnnouncementsOnceReady() {
+  return randomMatchController.listenRandomMatchAnnouncementsOnceReady();
+}
+
+function startRandomMatch() {
+  return randomMatchController.startRandomMatch();
+}
 function getUnitTrophyText(profile, unitId) {
   const trophies =
     profile?.trophies?.byUnit?.[unitId] || [];
@@ -1503,14 +1514,6 @@ let randomMatchAnnouncementUnsubscribe = null;
 let lastSeenRandomMatchAnnouncementId = "";
 let randomMatchInviteShowing = false;
 
-function getRandomMatchNotifySettings() {
-  const notify = playerSession.profile?.randomMatchNotify || {};
-  return {
-    title: notify.title === true,
-    vsCpu: notify.vsCpu === true,
-    vsBoss: notify.vsBoss === true
-  };
-}
 
 function getCurrentRandomMatchNotifyScene() {
   const visibleTitle = screens.title && screens.title.style.display !== "none";
