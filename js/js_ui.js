@@ -163,7 +163,7 @@ export function renderPlayerState(state, container, label, handlers) {
 
   container.innerHTML = `
     <h3>${label}</h3>
-    <div ${nameStyle}><b>${state.name}</b></div>
+    <div ${nameStyle}><b>${state.displayName || state.name}</b></div>
     <div>HP:${state.hp}/${state.maxHp}</div>
     <div class="hpbar">
       <div class="hpfill" style="width:${Math.max(0, state.hp / state.maxHp * 100)}%"></div>
