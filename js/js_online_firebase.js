@@ -159,6 +159,14 @@ export function writePlayerProfile(playerId, data) {
 export function updatePlayerProfile(playerId, patch) {
   return update(getPlayerProfileRef(playerId), patch);
 }
+export function getPlayerProfilesRef() {
+  return ref(db, "players");
+}
+
+export async function readPlayerProfiles() {
+  const snapshot = await get(getPlayerProfilesRef());
+  return snapshot.exists() ? snapshot.val() : {};
+}
 export function getRandomMatchWaitingRef(ticketId = null) {
   return ticketId
     ? ref(db, `randomMatch/waiting/${ticketId}`)
