@@ -428,6 +428,72 @@ function applyBattleDisplayNames() {
     if (teamB.unit2) teamB.unit2.displayName = getUnitDisplayNameWithTrophy(teamB.unit2, null);
   }
 }
+function resetRandomMatchState() {
+  return randomMatchController.resetRandomMatchState();
+}
+
+function ensureRandomMatchUi() {
+  return randomMatchController.ensureRandomMatchUi();
+}
+
+function listenRandomMatchAnnouncementsOnceReady() {
+  return randomMatchController.listenRandomMatchAnnouncementsOnceReady();
+}
+
+function startRandomMatch() {
+  return randomMatchController.startRandomMatch();
+}
+function ensureOnlineBattleExtraUi() {
+  return onlineBattleUi.ensureOnlineBattleExtraUi();
+}
+
+function ensureOnlineTopPlayerHud() {
+  return onlineBattleUi.ensureOnlineTopPlayerHud();
+}
+
+function ensureOnlineCenterButtons() {
+  return onlineBattleUi.ensureOnlineCenterButtons();
+}
+
+function sendOnlineChat(playerKey) {
+  return onlineBattleUi.sendOnlineChat(playerKey);
+}
+
+function renderOnlineExtraUi(roomData) {
+  return onlineBattleUi.renderOnlineExtraUi(roomData);
+}
+
+function requestOnlinePeace() {
+  return onlineBattleUi.requestOnlinePeace();
+}
+
+function respondOnlinePeace(accept) {
+  return onlineBattleUi.respondOnlinePeace(accept);
+}
+
+function showOnlinePeaceRequestPopup(requester) {
+  return onlineBattleUi.showOnlinePeaceRequestPopup(requester);
+}
+
+function showOnlinePeaceFinishedPopup() {
+  return onlineBattleUi.showOnlinePeaceFinishedPopup();
+}
+
+function requestOnlineSurrender() {
+  return onlineBattleUi.requestOnlineSurrender();
+}
+
+function applyOnlineMetaResult(roomData) {
+  return onlineBattleUi.applyOnlineMetaResult(roomData);
+}
+
+function applyOnlinePeaceRequest(roomData) {
+  return onlineBattleUi.applyOnlinePeaceRequest(roomData);
+}
+
+function markOnlinePlayerLeft() {
+  return onlineBattleUi.markOnlinePlayerLeft();
+}
 function resetOnlineStateForLocalBattle() {
   onlineState.enabled = false;
   onlineState.roomId = null;
@@ -1592,39 +1658,6 @@ function getOnlineTitleText(playerData) {
   return titleIds.map(id => `[${getTitleName(id)}]`).join("");
 }
 
-function ensureOnlineBattleExtraUi() {
-  ensureOnlineTopPlayerHud();
-
-  if (!document.getElementById("onlineBattleExtraArea")) {
-    const area = document.createElement("div");
-    area.id = "onlineBattleExtraArea";
-    area.style.margin = "12px 0";
-    area.style.padding = "8px";
-    area.style.borderTop = "2px solid #fff";
-    area.style.borderBottom = "2px solid #fff";
-    area.style.display = onlineState.enabled ? "" : "none";
-
-    area.innerHTML = `
-      <div id="onlinePeaceStatusArea" style="font-size:14px;margin-bottom:8px;"></div>
-      <div id="onlineChatFixedArea" style="text-align:left;margin-bottom:8px;">
-        <div id="onlineChatA">[PLAYER Aチャット]</div>
-        <div id="onlineChatB">[PLAYER Bチャット]</div>
-      </div>
-    `;
-
-    const attackLog = document.getElementById("attackLog");
-    if (attackLog?.parentNode) {
-      attackLog.parentNode.insertBefore(area, attackLog);
-    }
-  }
-
-  ensureOnlineCenterButtons();
-}
-function ensureOnlineTopPlayerHud() {
-  if (document.getElementById("onlineTopPlayerHud")) {
-    return;
-  }
-
   const battleScreen = document.getElementById("battle");
   if (!battleScreen) return;
 
@@ -1669,353 +1702,6 @@ function ensureOnlineTopPlayerHud() {
 document.getElementById("onlineChatSendBtnB")?.addEventListener("click", () => sendOnlineChat("B"));
 }
 
-function ensureOnlineCenterButtons() {
-  if (!onlineState.enabled) return;
-  if (document.getElementById("onlinePeaceSurrenderBox")) return;
-
-  const actionCounterValue = document.getElementById("actionCounterValue");
-  const actionBox = actionCounterValue?.parentNode;
-  if (!actionBox?.parentNode) return;
-
-  const wrap = document.createElement("div");
-  wrap.id = "onlinePeaceSurrenderBox";
-  wrap.style.marginTop = "4px";
-  wrap.style.display = "flex";
-  wrap.style.flexDirection = "column";
-  wrap.style.alignItems = "center";
-  wrap.style.gap = "4px";
-
-  wrap.innerHTML = `
-  <button id="onlinePeaceBtn"
-    style="
-      width:33px;
-      height:33px;
-      font-size:12px;
-      padding:0;
-    ">
-    和平
-  </button>
-
-  <button id="onlineSurrenderBtn"
-    style="
-      width:33px;
-      height:33px;
-      font-size:12px;
-      padding:0;
-    ">
-    降伏
-  </button>
-`;
-
-  actionBox.parentNode.appendChild(wrap);
-
-  document.getElementById("onlinePeaceBtn")?.addEventListener("click", requestOnlinePeace);
-  document.getElementById("onlineSurrenderBtn")?.addEventListener("click", requestOnlineSurrender);
-}
-async function sendOnlineChat(playerKey) {
-  if (!onlineState.enabled || !onlineState.roomId) return;
-
-  if (playerKey !== onlineState.myPlayer) {
-    showPopup("自分側のチャット欄だけ送信できます");
-    return;
-  }
-
-  const input = document.getElementById(`onlineChatInput${playerKey}`);
-  const text = String(input?.value || "").trim().slice(0, 50);
-
-  await updateRoom(onlineState.roomId, {
-    [`chat/${playerKey}/text`]: text,
-    [`chat/${playerKey}/updatedAt`]: Date.now(),
-    [`players/${playerKey}/lastSeen`]: Date.now(),
-    "meta/updatedAt": Date.now()
-  });
-
-  if (input) {
-    input.value = "";
-  }
-}
-function renderOnlineExtraUi(roomData) {
-  ensureOnlineBattleExtraUi();
-
-  const area = document.getElementById("onlineBattleExtraArea");
-  if (area) {
-    area.style.display = onlineState.enabled ? "" : "none";
-  }
-
-  if (!onlineState.enabled || !roomData) return;
-
-  const playerA = roomData.players?.A || {};
-  const playerB = roomData.players?.B || {};
-  const chatA = roomData.chat?.A?.text || "";
-  const chatB = roomData.chat?.B?.text || "";
-
-  const topHud = document.getElementById("onlineTopPlayerHud");
-if (topHud) {
-  topHud.style.display = onlineState.enabled ? "grid" : "none";
-}
-
-const inputA = document.getElementById("onlineChatInputA");
-const inputB = document.getElementById("onlineChatInputB");
-const sendA = document.getElementById("onlineChatSendBtnA");
-const sendB = document.getElementById("onlineChatSendBtnB");
-
-if (inputA) inputA.disabled = onlineState.myPlayer !== "A";
-if (inputB) inputB.disabled = onlineState.myPlayer !== "B";
-if (sendA) sendA.disabled = onlineState.myPlayer !== "A";
-if (sendB) sendB.disabled = onlineState.myPlayer !== "B";
-
-const infoA = document.getElementById("onlinePlayerInfoA");
-const infoB = document.getElementById("onlinePlayerInfoB");
-
-if (infoA) {
-  infoA.innerHTML = `
-    <div>${playerA.profileName || "ゲスト"}</div>
-  `;
-}
-
-if (infoB) {
-  infoB.innerHTML = `
-    <div>${playerB.profileName || "ゲスト"}</div>
-  `;
-}
-
-  const chatADiv = document.getElementById("onlineChatA");
-  const chatBDiv = document.getElementById("onlineChatB");
-
-  if (chatADiv) {
-    chatADiv.textContent = `[PLAYER Aチャット] ${chatA}`;
-  }
-
-  if (chatBDiv) {
-    chatBDiv.textContent = `[PLAYER Bチャット] ${chatB}`;
-  }
-
-  const peaceArea = document.getElementById("onlinePeaceStatusArea");
-  if (peaceArea) {
-    const peace = roomData.peace || {};
-    if (peace.status === "requested") {
-      peaceArea.textContent = `和平交渉中：PLAYER ${peace.requestedBy}`;
-    } else if (peace.status === "accepted") {
-      peaceArea.textContent = "和平成立";
-    } else if (peace.status === "rejected") {
-      peaceArea.textContent = "和平拒否";
-    } else {
-      peaceArea.textContent = "";
-    }
-  }
-}
-
-async function requestOnlinePeace() {
-  if (!onlineState.enabled || !onlineState.roomId) return;
-
-  const ok = confirm("和平交渉しますか？");
-  if (!ok) return;
-
-  await updateRoom(onlineState.roomId, {
-    "peace/requestedBy": onlineState.myPlayer,
-    "peace/status": "requested",
-    "peace/updatedAt": Date.now(),
-    "meta/notice": `PLAYER ${onlineState.myPlayer} が和平交渉を申し込みました`,
-    "meta/updatedAt": Date.now()
-  });
-
-  showPopup("相手に和平交渉中です");
-}
-
-async function respondOnlinePeace(accept) {
-  if (!onlineState.enabled || !onlineState.roomId) return;
-
-if (accept) {
-  await updateRoom(onlineState.roomId, {
-    "peace/status": "accepted",
-    "peace/updatedAt": Date.now(),
-    "meta/status": "peace",
-    "meta/result": {
-      type: "peace",
-      reason: "peace",
-      finishedAt: Date.now()
-    },
-    "meta/notice": "和平成立しました",
-    "meta/updatedAt": Date.now()
-  });
-
-  onlineBattleFinished = true;
-  showOnlinePeaceFinishedPopup();
-  return;
-}
-
-  await updateRoom(onlineState.roomId, {
-    "peace/status": "rejected",
-    "peace/updatedAt": Date.now(),
-    "meta/notice": `PLAYER ${onlineState.myPlayer} が和平を拒否しました`,
-    "meta/updatedAt": Date.now()
-  });
-
-  showPopup("和平を拒否しました");
-}
-
-function showOnlinePeaceRequestPopup(requester) {
-  const popup = document.getElementById("popup");
-  if (!popup) return;
-
-  popup.innerHTML = "";
-
-  const msg = document.createElement("div");
-  msg.innerHTML = `
-    <div>和平交渉が来ました。</div>
-    <div>和平するとこの戦闘の戦績はなかったことになります。</div>
-  `;
-
-  const yes = document.createElement("button");
-  yes.textContent = "和平する";
-  yes.addEventListener("click", () => {
-    popup.style.display = "none";
-    respondOnlinePeace(true);
-  });
-
-  const no = document.createElement("button");
-  no.textContent = "和平しない";
-  no.addEventListener("click", () => {
-    popup.style.display = "none";
-    respondOnlinePeace(false);
-  });
-
-  popup.appendChild(msg);
-  popup.appendChild(yes);
-  popup.appendChild(no);
-  popup.style.display = "block";
-}
-
-function showOnlinePeaceFinishedPopup() {
-  const popup = document.getElementById("popup");
-  if (!popup) return;
-
-  popup.innerHTML = "";
-
-  const msg = document.createElement("div");
-  msg.textContent = "和平成立した！";
-
-  const btn = document.createElement("button");
-  btn.textContent = "タイトルにもどる";
-  btn.addEventListener("click", () => {
-  popup.style.display = "none";
-  popup.innerHTML = "";
-  cleanupOnlineBattleUi();
-  resetOnlineStateForLocalBattle();
-  resetLocalSelectionAndBattleState();
-  showScreen("title");
-});
-
-  popup.appendChild(msg);
-  popup.appendChild(btn);
-  popup.style.display = "block";
-}
-
-async function requestOnlineSurrender() {
-  if (!onlineState.enabled || !onlineState.roomId || !onlineState.myPlayer) return;
-
-  const ok = confirm("降伏しますか？");
-  if (!ok) return;
-
-  const loser = onlineState.myPlayer;
-  const winner = loser === "A" ? "B" : "A";
-
-  await updateRoom(onlineState.roomId, {
-    "meta/status": "finished",
-    "meta/result": {
-      type: "surrender",
-      winner,
-      loser,
-      reason: "surrender",
-      finishedAt: Date.now()
-    },
-    "meta/notice": `PLAYER ${loser} が降伏しました`,
-    "meta/updatedAt": Date.now()
-  });
-
-  finishBattle(winner);
-}
-
-function applyOnlineMetaResult(roomData) {
-  const result = roomData?.meta?.result;
-  if (!result) return;
-
-  if (result.type === "peace") {
-    if (onlineBattleFinished) return;
-    onlineBattleFinished = true;
-    showOnlinePeaceFinishedPopup();
-    return;
-  }
-
-  if (result.type === "surrender" || result.type === "leave") {
-    if (onlineBattleFinished) return;
-    finishBattle(result.winner);
-  }
-}
-
-function applyOnlinePeaceRequest(roomData) {
-  const peace = roomData?.peace;
-  if (!peace) return;
-  if (peace.status !== "requested") return;
-  if (!peace.requestedBy) return;
-  if (peace.requestedBy === onlineState.myPlayer) return;
-
-  const popup = document.getElementById("popup");
-  if (popup && popup.style.display === "block") return;
-
-  showOnlinePeaceRequestPopup(peace.requestedBy);
-}
-
-async function markOnlinePlayerLeft() {
-  if (onlineBattleFinished) return;
-  if (!onlineState.enabled || !onlineState.roomId || !onlineState.myPlayer) return;
-
-  const leaver = onlineState.myPlayer;
-  const winner = leaver === "A" ? "B" : "A";
-
-  try {
-    await updateRoom(onlineState.roomId, {
-      [`players/${leaver}/left`]: true,
-      [`players/${leaver}/lastSeen`]: Date.now(),
-      "meta/status": "finished",
-      "meta/result": {
-        type: "leave",
-        winner,
-        loser: leaver,
-        reason: "leave",
-        finishedAt: Date.now()
-      },
-      "meta/notice": `PLAYER ${leaver} が退室しました`,
-      "meta/updatedAt": Date.now()
-    });
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-window.addEventListener("beforeunload", () => {
-  if (onlineBattleFinished) return;
-  if (!onlineBattleStarted) return;
-  if (!onlineState.enabled || !onlineState.roomId || !onlineState.myPlayer) return;
-
-  const leaver = onlineState.myPlayer;
-  const winner = leaver === "A" ? "B" : "A";
-
-  updateRoom(onlineState.roomId, {
-    [`players/${leaver}/left`]: true,
-    [`players/${leaver}/lastSeen`]: Date.now(),
-    "meta/status": "finished",
-    "meta/result": {
-      type: "leave",
-      winner,
-      loser: leaver,
-      reason: "leave",
-      finishedAt: Date.now()
-    },
-    "meta/notice": `PLAYER ${leaver} が退室しました`,
-    "meta/updatedAt": Date.now()
-  });
-});
 function applyOnlineRoomData(roomData) {
   if (!onlineState.enabled || !roomData) return;
 renderOnlineExtraUi(roomData);
@@ -2322,7 +2008,26 @@ function publishOnlineBattleEnd(winnerPlayer) {
     "meta/updatedAt": Date.now()
   });
 }
+onlineBattleUi = createOnlineBattleUi({
+  isOnlineEnabled: () => onlineState.enabled,
+  getOnlineRoomId: () => onlineState.roomId,
+  getOnlineMyPlayer: () => onlineState.myPlayer,
 
+  getOnlineBattleFinished: () => onlineBattleFinished,
+  setOnlineBattleFinished: (value) => {
+    onlineBattleFinished = value;
+  },
+
+  updateRoom,
+
+  showPopup,
+  showScreen,
+  finishBattle,
+
+  cleanupOnlineBattleUi,
+  resetOnlineStateForLocalBattle,
+  resetLocalSelectionAndBattleState
+});
 uiController = createUiController({
   screens,
 
