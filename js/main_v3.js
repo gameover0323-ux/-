@@ -1,3 +1,4 @@
+import { createRandomMatchController } from "./js_random_match_controller.js";
 import { createPlayerStatsUi } from "./js_player_stats_ui.js";
 import {
   TITLE_DEFINITIONS,
@@ -309,6 +310,7 @@ let isTestMode = false;
 
 let battleMode = "1v1";
 let playerStatsUi = null;
+let randomMatchController = null;
 /*
   battleMode:
   - 1v1
