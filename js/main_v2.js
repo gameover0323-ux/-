@@ -977,7 +977,7 @@ async function renderPlayerStatsPanel() {
   <summary>出会ったプレイヤー一覧</summary>
   ${renderEncounteredPlayerList(profile.encounteredPlayers)}
 </details>
-    <button id="openTitleCustomizeBtn">称号・トロフィーカスタム</button>
+    <button id="openTitleCustomizeBtn">プレイヤーカスタム・通知設定</button>
   `;
 document.getElementById("openTitleCustomizeBtn")?.addEventListener("click", renderTitleCustomizePanel);
   content.querySelectorAll(".encountered-player-btn").forEach(btn => {
@@ -1095,6 +1095,28 @@ async function renderTitleCustomizePanel() {
 <hr>
 <div>
   <h3>プレイヤーカード設定</h3>
+  <hr>
+<div>
+  <h3>ランダムマッチ募集通知</h3>
+  <div style="font-size:13px; margin-bottom:6px;">
+    誰かがランダムマッチを募集した時に通知する場面を選びます。
+  </div>
+
+  <label style="display:block;">
+    <input type="checkbox" id="notifyRandomMatchTitle">
+    タイトル画面
+  </label>
+
+  <label style="display:block;">
+    <input type="checkbox" id="notifyRandomMatchVsCpu">
+    vsCPU中
+  </label>
+
+  <label style="display:block;">
+    <input type="checkbox" id="notifyRandomMatchVsBoss">
+    vsボス中
+  </label>
+</div>
   <div>一言コメント（最大20文字・10文字で自動改行）</div>
   <input id="playerCommentInput" maxlength="20">
   <button id="savePlayerCommentBtn">コメント保存</button>
@@ -1106,6 +1128,31 @@ async function renderTitleCustomizePanel() {
     <button id="openTrophyCustomizeBtn">トロフィーカスタム</button>
     <button id="backToStatsBtn">戦績に戻る</button>
   `;
+  const notify = profile.randomMatchNotify || {
+  title: false,
+  vsCpu: false,
+  vsBoss: false
+};
+
+const notifyTitle = document.getElementById("notifyRandomMatchTitle");
+const notifyVsCpu = document.getElementById("notifyRandomMatchVsCpu");
+const notifyVsBoss = document.getElementById("notifyRandomMatchVsBoss");
+
+if (notifyTitle) notifyTitle.checked = notify.title === true;
+if (notifyVsCpu) notifyVsCpu.checked = notify.vsCpu === true;
+if (notifyVsBoss) notifyVsBoss.checked = notify.vsBoss === true;
+
+[notifyTitle, notifyVsCpu, notifyVsBoss].forEach(input => {
+  input?.addEventListener("change", async () => {
+    profile.randomMatchNotify = {
+      title: notifyTitle?.checked === true,
+      vsCpu: notifyVsCpu?.checked === true,
+      vsBoss: notifyVsBoss?.checked === true
+    };
+
+    await savePlayerCustomizeState();
+  });
+});
 const commentInput = document.getElementById("playerCommentInput");
 if (commentInput) {
   commentInput.value = String(profile.comment || "").replace(/\s+/g, "").slice(0, 20);
@@ -2332,6 +2379,9 @@ function resetRandomMatchState() {
 }
 
 function ensureRandomMatchUi() {
+  if (!playerSession.profile) {
+  return;
+  }
   if (document.getElementById("randomMatchBtn")) return;
 
   const btn = document.createElement("button");
