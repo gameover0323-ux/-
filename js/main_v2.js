@@ -4059,4 +4059,5 @@ restorePlayerSession().then(() => {
   updateDebugButtonVisibility();
   ensureRandomMatchUi();
   bootOnlineFromUrl();
+  listenRandomMatchAnnouncementsOnceReady();
 });
