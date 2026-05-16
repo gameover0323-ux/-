@@ -653,7 +653,78 @@ function getUnitNameById(unitId) {
   const unit = allUnits.find(u => u.id === unitId);
   return unit ? unit.name : unitId;
 }
+function ensureAccountListButton() {
+  const statsBtn = document.getElementById("playerStatsBtn");
+  if (!statsBtn) return null;
 
+  let btn = document.getElementById("accountListBtn");
+  if (!btn) {
+    btn = document.createElement("button");
+    btn.id = "accountListBtn";
+    btn.textContent = "アカウントリスト";
+    statsBtn.insertAdjacentElement("afterend", btn);
+    btn.addEventListener("click", renderAccountListPanel);
+  }
+
+  const role = playerSession.profile?.role;
+  btn.style.display =
+    role === "debug" || role === "Ciel_debugger" || role === "account_viewer"
+      ? ""
+      : "none";
+
+  return btn;
+}
+
+async function renderAccountListPanel() {
+  const panel = document.getElementById("playerStatsPanel");
+  const content = document.getElementById("playerStatsContent");
+  if (!panel || !content) return;
+
+  const result = await readAccountListForViewer();
+  if (!result.ok) {
+    showPopup(result.message);
+    return;
+  }
+
+  const rows = result.list.map(profile => `
+    <tr>
+      <td>${profile.id}</td>
+      <td>${profile.name}</td>
+      <td>${profile.role}</td>
+      <td>${profile.registeredAt}</td>
+      <td>${profile.usedTotal}</td>
+      <td>${profile.favoriteUnitId || "-"}</td>
+      <td>${profile.comment || ""}</td>
+    </tr>
+  `).join("");
+
+  content.innerHTML = `
+    <h3>アカウントリスト</h3>
+    <div class="player-stats-line">登録数：${result.list.length}</div>
+    <table class="account-list-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>名前</th>
+          <th>権限</th>
+          <th>登録日</th>
+          <th>使用回数</th>
+          <th>お気に入り</th>
+          <th>コメント</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows || `<tr><td colspan="7">登録アカウントなし</td></tr>`}
+      </tbody>
+    </table>
+    <button id="backToStatsFromAccountListBtn">戦績に戻る</button>
+  `;
+
+  document.getElementById("backToStatsFromAccountListBtn")
+    ?.addEventListener("click", renderPlayerStatsPanel);
+
+  panel.style.display = "";
+}
 function formatWinLose(record) {
   const win = record?.win || 0;
   const lose = record?.lose || 0;
