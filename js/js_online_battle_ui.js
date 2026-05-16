@@ -384,7 +384,31 @@ export function createOnlineBattleUi(ctx) {
       console.error(error);
     }
   }
+function bindBeforeUnloadLeaveHandler() {
+  window.addEventListener("beforeunload", () => {
+    if (ctx.getOnlineBattleFinished()) return;
+    if (!ctx.getOnlineBattleStarted()) return;
+    if (!ctx.isOnlineEnabled() || !ctx.getOnlineRoomId() || !ctx.getOnlineMyPlayer()) return;
 
+    const leaver = ctx.getOnlineMyPlayer();
+    const winner = leaver === "A" ? "B" : "A";
+
+    ctx.updateRoom(ctx.getOnlineRoomId(), {
+      [`players/${leaver}/left`]: true,
+      [`players/${leaver}/lastSeen`]: Date.now(),
+      "meta/status": "finished",
+      "meta/result": {
+        type: "leave",
+        winner,
+        loser: leaver,
+        reason: "leave",
+        finishedAt: Date.now()
+      },
+      "meta/notice": `PLAYER ${leaver} が退室しました`,
+      "meta/updatedAt": Date.now()
+    });
+  });
+}
   return {
     ensureOnlineBattleExtraUi,
     ensureOnlineTopPlayerHud,
