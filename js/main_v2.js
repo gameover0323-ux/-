@@ -3672,7 +3672,7 @@ currentActionLabel = "";
     selectingPlayer = "A";
     selectedUnitA = null;
     selectedUnitB = null;
-
+applyBattleDisplayNames();
     redrawBattleBoards();
     document.getElementById("attackLog").textContent = "バトル開始待機中";
   updateDebugButtonVisibility();
@@ -3710,7 +3710,7 @@ currentActionLabel = "";
     selectingPlayer = "A";
     selectedUnitA = null;
     selectedUnitB = null;
-
+applyBattleDisplayNames();
     redrawBattleBoards();
     document.getElementById("attackLog").textContent = "バトル開始待機中";
   updateDebugButtonVisibility();
@@ -3738,7 +3738,7 @@ currentActionLabel = "";
     selectingPlayer = "A";
     selectedUnitA = null;
     selectedUnitB = null;
-
+applyBattleDisplayNames();
     redrawBattleBoards();
     document.getElementById("attackLog").textContent = "チャレンジバトル開始";
    updateDebugButtonVisibility();
@@ -3787,7 +3787,7 @@ currentActionLabel = "";
     selectingPlayer = "A";
     selectedUnitA = null;
     selectedUnitB = null;
-
+applyBattleDisplayNames();
     redrawBattleBoards();
     document.getElementById("attackLog").textContent = "2機チャレンジバトル開始";
    updateDebugButtonVisibility();
