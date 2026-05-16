@@ -2455,7 +2455,19 @@ async function startRandomMatch() {
     const myTicketId = createRoomId() + "_" + Date.now();
     const myProfile = getRandomMatchProfileData();
     const now = Date.now();
+if (!playerSession.profile) {
+  showPopup("ランダムマッチはプレイヤー登録・ログイン中のみ利用できます");
+  resetRandomMatchState();
+  return;
+}
 
+await writeRandomMatchAnnouncement({
+  id: myTicketId,
+  profileId: playerSession.profile.id,
+  profileName: playerSession.profile.name || playerSession.profile.id || "プレイヤー",
+  createdAt: now,
+  updatedAt: now
+});
     randomMatchState.ticketId = myTicketId;
 
     const waitingSnapshot = await readRandomMatchWaiting();
