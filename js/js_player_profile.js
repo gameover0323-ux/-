@@ -109,7 +109,40 @@ export function getCurrentPlayerProfile() {
 export function canUseTestMode() {
   return playerSession.profile?.role === "debug";
 }
+export function canViewAccountList() {
+  const role = playerSession.profile?.role;
+  return role === "debug" || role === "Ciel_debugger" || role === "account_viewer";
+}
 
+export async function readAccountListForViewer() {
+  if (!canViewAccountList()) {
+    return {
+      ok: false,
+      message: "アカウントリスト閲覧権限がありません"
+    };
+  }
+
+  const profiles = await readPlayerProfiles();
+
+  const list = Object.values(profiles || {})
+    .filter(profile => profile && profile.id)
+    .map(profile => ({
+      id: profile.id,
+      name: profile.name || profile.id,
+      role: profile.role || "player",
+      registeredAt: profile.registeredAt || "不明",
+      favoriteUnitId: profile.favoriteUnitId || "",
+      comment: profile.comment || "",
+      usedTotal: Object.values(profile.stats?.units || {})
+        .reduce((sum, unitStats) => sum + Number(unitStats?.used || 0), 0)
+    }))
+    .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+
+  return {
+    ok: true,
+    list
+  };
+}
 export async function loginPlayer(id, password) {
   if (!validateHalfWidthAlnum(id) || !validateHalfWidthAlnum(password)) {
     return { ok: false, message: "IDとパスワードは半角英数字のみです" };
