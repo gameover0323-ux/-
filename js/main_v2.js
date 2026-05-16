@@ -364,7 +364,58 @@ function getUnitTrophyText(profile, unitId) {
 
   return trophies.join("");
 }
+function formatPlayerComment(text) {
+  const raw = String(text || "")
+    .replace(/\s+/g, "")
+    .slice(0, 20);
 
+  if (!raw) return "";
+
+  const lines = [];
+  for (let i = 0; i < raw.length; i += 10) {
+    lines.push(raw.slice(i, i + 10));
+  }
+  return lines.join("<br>");
+}
+
+function getFavoriteUnitIds(profile) {
+  if (Array.isArray(profile?.favoriteUnitIds)) {
+    return profile.favoriteUnitIds.filter(Boolean).slice(0, 3);
+  }
+
+  if (profile?.favoriteUnitId) {
+    return [profile.favoriteUnitId];
+  }
+
+  return [];
+}
+
+function getUnitDisplayNameWithTrophy(unit, profile) {
+  if (!unit) return "";
+  return `${unit.name}${getUnitTrophyText(profile, unit.id)}`;
+}
+
+function applyBattleDisplayNames() {
+  const profile = playerSession.profile;
+
+  if (playerAState) {
+    playerAState.displayName = getUnitDisplayNameWithTrophy(playerAState, profile);
+  }
+
+  if (playerBState) {
+    playerBState.displayName = getUnitDisplayNameWithTrophy(playerBState, null);
+  }
+
+  if (teamA) {
+    if (teamA.unit1) teamA.unit1.displayName = getUnitDisplayNameWithTrophy(teamA.unit1, profile);
+    if (teamA.unit2) teamA.unit2.displayName = getUnitDisplayNameWithTrophy(teamA.unit2, profile);
+  }
+
+  if (teamB) {
+    if (teamB.unit1) teamB.unit1.displayName = getUnitDisplayNameWithTrophy(teamB.unit1, null);
+    if (teamB.unit2) teamB.unit2.displayName = getUnitDisplayNameWithTrophy(teamB.unit2, null);
+  }
+}
 function resetOnlineStateForLocalBattle() {
   onlineState.enabled = false;
   onlineState.roomId = null;
