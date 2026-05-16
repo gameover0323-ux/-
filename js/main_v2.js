@@ -36,6 +36,8 @@ import {
   updateRandomMatchSession,
   listenRandomMatchSession,
   removeRandomMatchSession,
+  writeRandomMatchAnnouncement,
+listenRandomMatchAnnouncement
   cleanupOldRandomMatch
 } from "./js_online_firebase.js";
 import { onlineState } from "./js_online_state.js";
