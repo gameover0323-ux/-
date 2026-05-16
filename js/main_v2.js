@@ -8,7 +8,6 @@ import {
 } from "./js_player_titles.js";
 import { updatePlayerAchievements } from "./js_player_achievements.js";
 import {
-import {
   playerSession,
   loginPlayer,
   registerPlayer,
