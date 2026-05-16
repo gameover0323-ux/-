@@ -2998,8 +2998,8 @@ function ensureOnlineCenterButtons() {
   document.getElementById("onlinePeaceBtn")?.addEventListener("click", requestOnlinePeace);
   document.getElementById("onlineSurrenderBtn")?.addEventListener("click", requestOnlineSurrender);
 }
-async function sendOnlineChatFrom(playerKey) {
-  if (!onlineState.enabled || !onlineState.roomId || !onlineState.myPlayer) return;
+async function sendOnlineChat(playerKey) {
+  if (!onlineState.enabled || !onlineState.roomId) return;
 
   if (playerKey !== onlineState.myPlayer) {
     showPopup("自分側のチャット欄だけ送信できます");
@@ -3580,7 +3580,7 @@ function initOnline1v1Battle(unitA, unitB) {
 onlineBattleFinished = false;
   
   isTestMode = false;
-
+applyBattleDisplayNames();
   redrawBattleBoards();
   ensureOnlineBattleExtraUi();
   document.getElementById("attackLog").textContent = "オンラインバトル開始";
@@ -4065,8 +4065,9 @@ document.getElementById("playerLoginBtn")?.addEventListener("click", async () =>
 syncExtraUnlockedUnitsFromProfile();
 updatePlayerCardUi();
 updateDebugButtonVisibility();
+ensureRandomMatchUi();
+listenRandomMatchAnnouncementsOnceReady();
 showPopup("ログインしました");
-});
 
 document.getElementById("playerRegisterBtn")?.addEventListener("click", async () => {
   const id = prompt("登録するプレイヤーIDを半角英数字で入力してください");
@@ -4088,11 +4089,11 @@ document.getElementById("playerRegisterBtn")?.addEventListener("click", async ()
     return;
   }
 syncExtraUnlockedUnitsFromProfile();
-  updatePlayerCardUi();
-  updateDebugButtonVisibility();
-  showPopup("プレイヤー登録しました");
-});
-
+updatePlayerCardUi();
+updateDebugButtonVisibility();
+ensureRandomMatchUi();
+listenRandomMatchAnnouncementsOnceReady();
+showPopup("プレイヤー登録しました");
 document.getElementById("playerLogoutBtn")?.addEventListener("click", () => {
   logoutPlayer();
   extraUnlockedUnits = [];
