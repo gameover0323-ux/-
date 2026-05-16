@@ -167,6 +167,19 @@ export async function readPlayerProfiles() {
   const snapshot = await get(getPlayerProfilesRef());
   return snapshot.exists() ? snapshot.val() : {};
 }
+export function getRandomMatchAnnouncementRef() {
+  return ref(db, "randomMatch/announcements/current");
+}
+
+export function writeRandomMatchAnnouncement(data) {
+  return set(getRandomMatchAnnouncementRef(), data);
+}
+
+export function listenRandomMatchAnnouncement(callback) {
+  return onValue(getRandomMatchAnnouncementRef(), snapshot => {
+    callback(snapshot.val());
+  });
+}
 export function getRandomMatchWaitingRef(ticketId = null) {
   return ticketId
     ? ref(db, `randomMatch/waiting/${ticketId}`)
