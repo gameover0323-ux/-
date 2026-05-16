@@ -4062,12 +4062,14 @@ document.getElementById("playerLoginBtn")?.addEventListener("click", async () =>
     showPopup(result.message || "ログインに失敗しました");
     return;
   }
-syncExtraUnlockedUnitsFromProfile();
-updatePlayerCardUi();
-updateDebugButtonVisibility();
-ensureRandomMatchUi();
-listenRandomMatchAnnouncementsOnceReady();
-showPopup("ログインしました");
+
+  syncExtraUnlockedUnitsFromProfile();
+  updatePlayerCardUi();
+  updateDebugButtonVisibility();
+  ensureRandomMatchUi();
+  listenRandomMatchAnnouncementsOnceReady();
+  showPopup("ログインしました");
+});
 
 document.getElementById("playerRegisterBtn")?.addEventListener("click", async () => {
   const id = prompt("登録するプレイヤーIDを半角英数字で入力してください");
@@ -4088,12 +4090,15 @@ document.getElementById("playerRegisterBtn")?.addEventListener("click", async ()
     showPopup(result.message || "登録に失敗しました");
     return;
   }
-syncExtraUnlockedUnitsFromProfile();
-updatePlayerCardUi();
-updateDebugButtonVisibility();
-ensureRandomMatchUi();
-listenRandomMatchAnnouncementsOnceReady();
-showPopup("プレイヤー登録しました");
+
+  syncExtraUnlockedUnitsFromProfile();
+  updatePlayerCardUi();
+  updateDebugButtonVisibility();
+  ensureRandomMatchUi();
+  listenRandomMatchAnnouncementsOnceReady();
+  showPopup("プレイヤー登録しました");
+});
+
 document.getElementById("playerLogoutBtn")?.addEventListener("click", () => {
   logoutPlayer();
   extraUnlockedUnits = [];
@@ -4111,8 +4116,6 @@ document.getElementById("closePlayerStatsBtn")?.addEventListener("click", () => 
   const panel = document.getElementById("playerStatsPanel");
   if (panel) panel.style.display = "none";
 });
-
-
 
 loadUnitButtons();
 
