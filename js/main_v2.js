@@ -678,13 +678,21 @@ function updatePlayerCardUi() {
       .map(id => `[${getTitleName(id)}]`)
       .join("")
   : "称号なし";
-  summary.innerHTML = `
-    ID：${profile.id}<br>
-    名前：${profile.name}<br>
-    登録日：${profile.registeredAt}<br>
-    権限：${profile.role}<br>
-    称号：${titleText}
-  `;
+  const favoriteUnitText = getFavoriteUnitIds(profile)
+  .map(unitId => `${getUnitNameById(unitId)}${getUnitTrophyText(profile, unitId)}`)
+  .join("<br>") || "未設定";
+
+const commentHtml = formatPlayerComment(profile.comment) || "未設定";
+
+summary.innerHTML = `
+ID：${profile.id}<br>
+名前：${profile.name}<br>
+登録日：${profile.registeredAt}<br>
+権限：${profile.role}<br>
+一言：<br>${commentHtml}<br>
+お気に入り機体：<br>${favoriteUnitText}<br>
+称号：${titleText}
+`;
 
   loginBtn.style.display = "none";
   registerBtn.style.display = "none";
@@ -1082,12 +1090,65 @@ async function renderTitleCustomizePanel() {
         </button>
       `).join("")}
     </div>
+<hr>
+<div>
+  <h3>プレイヤーカード設定</h3>
+  <div>一言コメント（最大20文字・10文字で自動改行）</div>
+  <input id="playerCommentInput" maxlength="20">
+  <button id="savePlayerCommentBtn">コメント保存</button>
 
+  <div style="margin-top:8px;">お気に入り機体（最大3機）</div>
+  <div id="favoriteUnitCustomizeArea"></div>
+</div>
     <button id="openTitleListBtn">称号一覧</button>
     <button id="openTrophyCustomizeBtn">トロフィーカスタム</button>
     <button id="backToStatsBtn">戦績に戻る</button>
   `;
+const commentInput = document.getElementById("playerCommentInput");
+if (commentInput) {
+  commentInput.value = String(profile.comment || "").replace(/\s+/g, "").slice(0, 20);
+}
 
+document.getElementById("savePlayerCommentBtn")?.addEventListener("click", async () => {
+  profile.comment = String(commentInput?.value || "")
+    .replace(/\s+/g, "")
+    .slice(0, 20);
+
+  await savePlayerCustomizeState();
+  renderTitleCustomizePanel();
+});
+
+const favoriteArea = document.getElementById("favoriteUnitCustomizeArea");
+if (favoriteArea) {
+  const selected = getFavoriteUnitIds(profile);
+
+  favoriteArea.innerHTML = unitList.map(unit => {
+    const checked = selected.includes(unit.id) ? "checked" : "";
+    return `
+      <label style="display:block;">
+        <input type="checkbox" class="favorite-unit-check" value="${unit.id}" ${checked}>
+        ${unit.name}${getUnitTrophyText(profile, unit.id)}
+      </label>
+    `;
+  }).join("");
+
+  favoriteArea.querySelectorAll(".favorite-unit-check").forEach(check => {
+    check.addEventListener("change", async () => {
+      let ids = Array.from(favoriteArea.querySelectorAll(".favorite-unit-check:checked"))
+        .map(input => input.value)
+        .slice(0, 3);
+
+      profile.favoriteUnitIds = ids;
+
+      favoriteArea.querySelectorAll(".favorite-unit-check").forEach(input => {
+        input.checked = ids.includes(input.value);
+      });
+
+      await savePlayerCustomizeState();
+      updatePlayerCardUi();
+    });
+  });
+}
   content.querySelectorAll(".owned-title").forEach(btn => {
   btn.addEventListener("click", async () => {
     const titleId = btn.dataset.titleId;
