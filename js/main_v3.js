@@ -2012,7 +2012,7 @@ onlineBattleUi = createOnlineBattleUi({
   isOnlineEnabled: () => onlineState.enabled,
   getOnlineRoomId: () => onlineState.roomId,
   getOnlineMyPlayer: () => onlineState.myPlayer,
-
+getOnlineBattleStarted: () => onlineBattleStarted,
   getOnlineBattleFinished: () => onlineBattleFinished,
   setOnlineBattleFinished: (value) => {
     onlineBattleFinished = value;
