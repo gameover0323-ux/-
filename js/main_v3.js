@@ -488,11 +488,6 @@ function showTitle() {
 
   showScreen("title");
 }
-function isTeamBattleMode() {
-  return battleMode === "2v2" ||
-    battleMode === "challenge2v2" ||
-    battleMode === "vscpu2v2";
-}
 
 function isChallengeMode() {
   return battleMode === "challenge1v1" ||
@@ -513,86 +508,47 @@ function getOpponentPlayer(playerKey) {
   return playerKey === "A" ? "B" : "A";
 }
 
-function getTeam(playerKey) {
-  return playerKey === "A" ? teamA : teamB;
-}
-
-function getActiveUnitState(playerKey) {
-  const team = getTeam(playerKey);
-  if (!team) return null;
-
-  return team[team.activeUnitKey] || null;
-}
-
-function getFocusUnitState(playerKey) {
-  const team = getTeam(playerKey);
-  if (!team) return null;
-
-  return team[team.focusUnitKey] || null;
-}
-
-function setActiveUnit(playerKey, unitKey) {
-  const team = getTeam(playerKey);
-  if (!team) return;
-  if (unitKey !== "unit1" && unitKey !== "unit2") return;
-
-  team.activeUnitKey = unitKey;
-}
-
-function getCombatTargetState(playerKey) {
-  if (isTeamBattleMode()) {
-    return getFocusUnitState(playerKey);
-  }
-
-  return getPlayerState(playerKey);
-}
-
-function canChangeFocus(playerKey) {
-  if (!isTeamBattleMode()) return false;
-  if (playerKey !== currentPlayer) return false;
-  if (pendingChoice) return false;
-  if (currentAttack.length > 0) return false;
-  return true;
-}
-
-function setFocusUnit(playerKey, unitKey) {
-  const team = getTeam(playerKey);
-  if (!team) return;
-  if (unitKey !== "unit1" && unitKey !== "unit2") return;
-
-  team.focusUnitKey = unitKey;
-}
-
-function toggleTeamMode(playerKey) {
-  const team = getTeam(playerKey);
-  if (!team) return;
-
-  showPopup("統合型は未実装です");
-}
-
 function setBattleNotice(text) {
   battleNotice = text || "";
 }
+function isTeamBattleMode() {
+  return twoVtwoCore.isTeamBattleMode();
+}
+
+function getTeam(playerKey) {
+  return twoVtwoCore.getTeam(playerKey);
+}
+
+function getActiveUnitState(playerKey) {
+  return twoVtwoCore.getActiveUnitState(playerKey);
+}
+
+function getFocusUnitState(playerKey) {
+  return twoVtwoCore.getFocusUnitState(playerKey);
+}
+
+function setActiveUnit(playerKey, unitKey) {
+  return twoVtwoCore.setActiveUnit(playerKey, unitKey);
+}
+
+function getCombatTargetState(playerKey) {
+  return twoVtwoCore.getCombatTargetState(playerKey);
+}
+
+function canChangeFocus(playerKey) {
+  return twoVtwoCore.canChangeFocus(playerKey);
+}
+
+function setFocusUnit(playerKey, unitKey) {
+  return twoVtwoCore.setFocusUnit(playerKey, unitKey);
+}
+
+function toggleTeamMode(playerKey) {
+  return twoVtwoCore.toggleTeamMode(playerKey);
+}
 
 function createTeam(unit1, unit2) {
-  return {
-    unit1: createBattleState(unit1),
-    unit2: createBattleState(unit2),
-
-    mode: "split", // "split" or "unified"
-
-    activeUnitKey: "unit1",
-    focusUnitKey: "unit1",
-
-    // 統合用
-    unified: {
-      baseHpA: 0,
-      baseHpB: 0,
-      totalDamage: 0,
-      healA: 0,
-      healB: 0
-    }
-  };
+  return twoVtwoCore.createTeam(unit1, unit2);
 }
 function isUnifiedTeam(playerKey) {
   return twoVtwoHelpers.isUnifiedTeam(playerKey);
@@ -3984,7 +3940,21 @@ applyBattleDisplayNames();
     showScreen("battle");
   }
 });
+twoVtwoCore = create2v2Core({
+  getBattleMode: () => battleMode,
+  getCurrentPlayer: () => currentPlayer,
 
+  getTeamA: () => teamA,
+  getTeamB: () => teamB,
+
+  getPlayerStateRaw,
+
+  hasPendingChoice: () => !!pendingChoice,
+  hasCurrentAttack: () => currentAttack.length > 0,
+
+  createBattleState,
+  showPopup
+});
 twoVtwoHelpers = create2v2Helpers({
   getBattleMode: () => battleMode,
   getTeam
