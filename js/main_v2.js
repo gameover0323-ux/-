@@ -2864,14 +2864,12 @@ const infoB = document.getElementById("onlinePlayerInfoB");
 
 if (infoA) {
   infoA.innerHTML = `
-    <div>${getOnlineTitleText(playerA)}</div>
     <div>${playerA.profileName || "ゲスト"}</div>
   `;
 }
 
 if (infoB) {
   infoB.innerHTML = `
-    <div>${getOnlineTitleText(playerB)}</div>
     <div>${playerB.profileName || "ゲスト"}</div>
   `;
 }
