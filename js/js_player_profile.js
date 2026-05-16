@@ -55,6 +55,11 @@ const isAccountViewer = id === "accountviewer";
     name: isDebug ? "げむおば(デバッグ)" : name,
     favoriteUnitIds: [],
 comment: "",
+    randomMatchNotify: {
+  title: false,
+  vsCpu: false,
+  vsBoss: false
+},
     equippedTitles: [],
     registeredAt: todayYmdSlash(),
     role: isDebug
@@ -110,6 +115,15 @@ if (typeof profile.comment !== "string") {
 profile.comment = profile.comment
   .replace(/\s+/g, "")
   .slice(0, 20);
+  if (!profile.randomMatchNotify || typeof profile.randomMatchNotify !== "object") {
+  profile.randomMatchNotify = {};
+}
+
+profile.randomMatchNotify = {
+  title: profile.randomMatchNotify.title === true,
+  vsCpu: profile.randomMatchNotify.vsCpu === true,
+  vsBoss: profile.randomMatchNotify.vsBoss === true
+};
   return profile;
 }
 export function isLoggedIn() {
