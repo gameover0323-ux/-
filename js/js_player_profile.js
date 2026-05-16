@@ -53,8 +53,8 @@ const isAccountViewer = id === "accountviewer";
     id,
     passwordHash,
     name: isDebug ? "げむおば(デバッグ)" : name,
-    favoriteUnitId: "",
-    comment: "",
+    favoriteUnitIds: [],
+comment: "",
     equippedTitles: [],
     registeredAt: todayYmdSlash(),
     role: isDebug
@@ -95,7 +95,21 @@ function normalizeProfileShape(profile) {
   if (!profile.encounteredPlayers) {
     profile.encounteredPlayers = {};
   }
+if (!Array.isArray(profile.favoriteUnitIds)) {
+  profile.favoriteUnitIds = profile.favoriteUnitId ? [profile.favoriteUnitId] : [];
+}
 
+profile.favoriteUnitIds = profile.favoriteUnitIds
+  .filter(Boolean)
+  .slice(0, 3);
+
+if (typeof profile.comment !== "string") {
+  profile.comment = "";
+}
+
+profile.comment = profile.comment
+  .replace(/\s+/g, "")
+  .slice(0, 20);
   return profile;
 }
 export function isLoggedIn() {
