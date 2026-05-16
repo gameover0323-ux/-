@@ -2017,7 +2017,7 @@ getOnlineBattleStarted: () => onlineBattleStarted,
   setOnlineBattleFinished: (value) => {
     onlineBattleFinished = value;
   },
-
+onlineBattleUi.bindBeforeUnloadLeaveHandler();
   updateRoom,
 
   showPopup,
