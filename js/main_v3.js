@@ -1,3 +1,4 @@
+import { createBattleRecordController } from "./js_battle_record_controller.js";
 import { createOnlineActionSync } from "./js_online_action_sync.js";
 import { createOnlineBattleUi } from "./js_online_battle_ui.js";
 import { createRandomMatchController } from "./js_random_match_controller.js";
@@ -315,6 +316,8 @@ let playerStatsUi = null;
 let randomMatchController = null;
 let onlineBattleUi = null;
 let onlineActionSync = null;
+let twoVtwoCore = null;
+let battleRecordController = null;
 /*
   battleMode:
   - 1v1
@@ -1436,15 +1439,7 @@ let onlineBattleStarted = false;
 let onlineBattleFinished = false;
 let onlineActionSeq = 0;
 let onlineSelectEntered = false;
-let randomMatchState = {
-  enabled: false,
-  ticketId: null,
-  sessionId: null,
-  playerSide: null,
-  waitingUnsubscribe: null,
-  sessionUnsubscribe: null,
-  enteringRoom: false
-};
+
 
 function getUnitById(unitId) {
   const allUnits = [
