@@ -1467,33 +1467,7 @@ function syncExtraUnlockedUnitsFromProfile() {
 
 }
 
-    await writeRandomMatchWaiting(myTicketId, {
-      ticketId: myTicketId,
-      status: "waiting",
-      sessionId: null,
-      createdAt: now,
-      updatedAt: now,
-      ...myProfile
-    });
 
-    randomMatchState.waitingUnsubscribe = listenRandomMatchWaiting(myTicketId, data => {
-      if (!data) return;
-
-      if (data.status === "matched" && data.sessionId) {
-        cleanupRandomMatchListeners();
-
-        randomMatchState.sessionId = data.sessionId;
-        randomMatchState.playerSide = "A";
-
-        listenRandomMatchSessionById(data.sessionId);
-      }
-    });
-  } catch (error) {
-    console.error(error);
-    showPopup(`ランダムマッチ開始エラー：${error.message}`);
-    resetRandomMatchState();
-  }
-}
 
 function getOnlineProfilePatch(playerKey) {
   const profile = playerSession.profile;
