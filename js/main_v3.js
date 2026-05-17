@@ -1087,203 +1087,49 @@ function isSideDefeated(playerKey) {
 
   return isUnitDefeated(getPlayerStateRaw(playerKey));
 }
+
 function getBattleRecordModeKey() {
-  if (battleMode === "online1v1" || battleMode === "online2v2") return "online";
-  if (battleMode === "vscpu1v1" || battleMode === "vscpu2v2") return "cpu";
-  return "offline";
+  return battleRecordController.getBattleRecordModeKey();
 }
 
 function getOpponentCategoryForBattle() {
-  if (battleMode === "challenge1v1" || battleMode === "challenge2v2") return "boss";
-  if (battleMode === "vscpu1v1" || battleMode === "vscpu2v2") return "cpu";
-  return "playable";
+  return battleRecordController.getOpponentCategoryForBattle();
 }
 
 function getUnitIdFromState(state) {
-  return state?.unitId || state?.unit?.id || state?.id || "";
+  return battleRecordController.getUnitIdFromState(state);
 }
 
 function getTeamUnitIds(playerKey) {
-  const team = getTeam(playerKey);
-  if (!team) return [];
-
-  return [team.unit1, team.unit2]
-    .filter(Boolean)
-    .map(unit => getUnitIdFromState(unit))
-    .filter(Boolean);
+  return battleRecordController.getTeamUnitIds(playerKey);
 }
 
 function get1v1UnitId(playerKey) {
-  return getUnitIdFromState(getPlayerStateRaw(playerKey));
+  return battleRecordController.get1v1UnitId(playerKey);
 }
 
-async function recordBattleResultIfNeeded(winnerPlayer) {
-  if (!playerSession.profile) return;
-
-  const opponentCategory = getOpponentCategoryForBattle();
-
-  // オンラインは、自分側プレイヤーの結果だけ保存
-  const recordPlayer = onlineState.enabled && onlineState.myPlayer
-    ? onlineState.myPlayer
-    : "A";
-
-  const opponentPlayer = getOpponentPlayer(recordPlayer);
-  const result = winnerPlayer === recordPlayer ? "win" : "lose";
-
-  if (isTeamBattleMode()) {
-    const playerUnitIds = getTeamUnitIds(recordPlayer);
-    const defeatedUnitIds = getTeamUnitIds(opponentPlayer);
-
-    if (playerUnitIds.length === 0 || defeatedUnitIds.length === 0) return;
-
-    await record2v2BattleResult({
-      modeKey: getBattleRecordModeKey(),
-      playerUnitIds,
-      defeatedUnitIds,
-      result,
-      opponentCategory
-    });
-
-    return;
-  }
-
-  const playerUnitId = get1v1UnitId(recordPlayer);
-  const opponentUnitId = get1v1UnitId(opponentPlayer);
-
-  if (!playerUnitId || !opponentUnitId) return;
-
-  await recordBattleResult({
-    mode: getBattleRecordModeKey(),
-    playerUnitId,
-    opponentUnitId,
-    opponentPlayerId: "",
-    opponentCategory,
-    result
-  });
+function recordBattleResultIfNeeded(winnerPlayer) {
+  return battleRecordController.recordBattleResultIfNeeded(winnerPlayer);
 }
+
 function getOpponentCategoryByMode() {
-  if (battleMode === "vscpu1v1" || battleMode === "vscpu2v2") return "cpu";
-  if (battleMode === "challenge1v1" || battleMode === "challenge2v2") return "boss";
-  return "playable";
+  return battleRecordController.getOpponentCategoryByMode();
 }
 
 function getBattleRecordMode() {
-  if (onlineState.enabled) return "online";
-  return "offline";
+  return battleRecordController.getBattleRecordMode();
 }
-async function saveOnlineEncounteredPlayer(roomData) {
-  if (!onlineState.enabled) return;
-  if (onlineEncounterSaved) return;
-  if (!playerSession.profile) return;
 
-  const mySide = onlineState.myPlayer;
-  if (mySide !== "A" && mySide !== "B") return;
-
-  const enemySide = mySide === "A" ? "B" : "A";
-  const enemy = roomData?.players?.[enemySide];
-
-  if (!enemy?.profileId) return;
-if (enemy.profileId === playerSession.profile.id) return;
-  
-  onlineEncounterSaved = true;
-  currentOnlineOpponentPlayerId = enemy.profileId;
-
-  if (!playerSession.profile.encounteredPlayers) {
-    playerSession.profile.encounteredPlayers = {};
-  }
-
-  const old = playerSession.profile.encounteredPlayers[enemy.profileId] || {};
-
-  playerSession.profile.encounteredPlayers[enemy.profileId] = {
-    profileId: enemy.profileId,
-    profileName: enemy.profileName || old.profileName || enemy.profileId,
-    equippedTitles: Array.isArray(enemy.equippedTitles)
-      ? enemy.equippedTitles
-      : [],
-    count: (old.count || 0) + 1,
-    lastMatchedAt: new Date().toISOString()
-  };
-
-  try {
-    await saveCurrentPlayerProfile();
-  } catch (error) {
-    console.error(error);
-  }
+function saveOnlineEncounteredPlayer(roomData) {
+  return battleRecordController.saveOnlineEncounteredPlayer(roomData);
 }
-async function saveBattleResultForCurrentPlayer(winnerPlayer) {
-  if (isTeamBattleMode()) {
-    if (battleMode === "challenge2v2") {
-      return;
-    }
 
-    const playerSide =
-      onlineState.enabled ? onlineState.myPlayer : "A";
-
-    const opponentSide =
-      playerSide === "A" ? "B" : "A";
-
-    const playerTeam = getTeam(playerSide);
-    const opponentTeam = getTeam(opponentSide);
-
-    if (!playerTeam || !opponentTeam) {
-      return;
-    }
-
-    const playerUnitIds = [
-      playerTeam.unit1?.unitId,
-      playerTeam.unit2?.unitId
-    ].filter(Boolean);
-
-    const defeatedUnitIds = [
-      opponentTeam.unit1?.unitId,
-      opponentTeam.unit2?.unitId
-    ].filter(Boolean);
-
-    const result =
-      winnerPlayer === playerSide
-        ? "win"
-        : "lose";
-
-    await record2v2BattleResult({
-      modeKey: get2v2StatsModeKey(),
-      playerUnitIds,
-      defeatedUnitIds,
-      result
-    });
-
-    return;
-  }
-  if (!playerSession.profile) return;
-  if (isTestMode) return;
-
-  const playerSide = onlineState.enabled ? onlineState.myPlayer : "A";
-  if (playerSide !== "A" && playerSide !== "B") return;
-
-  const opponentSide = playerSide === "A" ? "B" : "A";
-  const playerState = getPlayerStateRaw(playerSide);
-  const opponentState = getPlayerStateRaw(opponentSide);
-
-  if (!playerState || !opponentState) return;
-
-  await recordBattleResult({
-    mode: getBattleRecordMode(),
-    playerUnitId: playerState.unitId,
-    opponentUnitId: opponentState.unitId,
-    opponentPlayerId: onlineState.enabled ? currentOnlineOpponentPlayerId : "",
-    opponentCategory: getOpponentCategoryByMode(),
-    result: winnerPlayer === playerSide ? "win" : "lose"
-  });
+function saveBattleResultForCurrentPlayer(winnerPlayer) {
+  return battleRecordController.saveBattleResultForCurrentPlayer(winnerPlayer);
 }
+
 function get2v2StatsModeKey() {
-  if (battleMode === "vscpu2v2") {
-    return "cpu";
-  }
-
-  if (battleMode === "online2v2") {
-    return "online";
-  }
-
-  return "offline";
+  return battleRecordController.get2v2StatsModeKey();
 }
 function finishBattle(winnerPlayer) {
   recordBattleResultIfNeeded(winnerPlayer).catch(error => {
@@ -1916,7 +1762,34 @@ ensureActionState,
   build1v1RenderHandlers,
   build2v2RenderHandlers
 });
+battleRecordController = createBattleRecordController({
+  getBattleMode: () => battleMode,
+  getIsTestMode: () => isTestMode,
 
+  isOnlineEnabled: () => onlineState.enabled,
+  getOnlineMyPlayer: () => onlineState.myPlayer,
+
+  getPlayerProfile: () => playerSession.profile,
+
+  isTeamBattleMode,
+  getOpponentPlayer,
+  getTeam,
+  getPlayerStateRaw,
+
+  recordBattleResult,
+  record2v2BattleResult,
+  saveCurrentPlayerProfile,
+
+  getOnlineEncounterSaved: () => onlineEncounterSaved,
+  setOnlineEncounterSaved: (value) => {
+    onlineEncounterSaved = value;
+  },
+
+  getCurrentOnlineOpponentPlayerId: () => currentOnlineOpponentPlayerId,
+  setCurrentOnlineOpponentPlayerId: (value) => {
+    currentOnlineOpponentPlayerId = value;
+  }
+});
 attackResolution = createAttackResolution({
   getBattleMode: () => battleMode,
   getCurrentPlayer: () => currentPlayer,
